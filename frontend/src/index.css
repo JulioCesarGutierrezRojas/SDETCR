@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+@theme {
+  --color-nude-100: #FEF9F6;  /* casi blanco con matiz piel */
+  --color-nude-200: #FCEFE9;  /* rosa claro suave */
+  --color-nude-300: #F8DFD1;  /* durazno muy claro */
+  --color-nude-400: #F2CDB9;  /* beige rosado claro */
+  --color-nude-500: #E8B89D;  /* nude clásico */
+  --color-nude-600: #D8A084;  /* más intenso y cálido */
+  --color-nude-700: #C28670;  /* marrón rosado */
+  --color-nude-800: #A56B57;  /* nude oscuro, terroso */
+  --color-nude-900: #7C4D3D;  /* chocolate rosado */
+  --color-nude-950: #4A2C23;  /* marrón profundo, acento fuerte */
+
+  --color-lavanda-100: #F8F6FC;   /* blanco con toque lila */
+  --color-lavanda-200: #EDE7FA;   /* lila muy claro pastel */
+  --color-lavanda-300: #DDD3F5;   /* lavanda empolvado */
+  --color-lavanda-400: #C8B9F0;   /* lila suave */
+  --color-lavanda-500: #B19AE9;   /* tono principal */
+  --color-lavanda-600: #9B7CDE;   /* lila con fuerza */
+  --color-lavanda-700: #825FCF;   /* lavanda profundo */
+  --color-lavanda-800: #6A48B2;   /* violeta moderado */
+  --color-lavanda-900: #55378C;   /* violeta oscuro */
+  --color-lavanda-950: #321E56;   /* acento muy oscuro, elegante */
+
+
+  /* Paleta gris personalizada */
+  --color-gris-100: #EFF0F3;
+  --color-gris-200: #E7E8EC;
+  --color-gris-300: #E0E1E6;
+  --color-gris-400: #D8D9E0;
+  --color-gris-500: #CDCED7;
+  --color-gris-600: #B9BBC6;
+  --color-gris-700: #8B8D98;
+  --color-gris-800: #80828D;
+  --color-gris-900: #62636C;
+  --color-gris-950: #1E1F24;
+
+  /* Colores adicionales */
+  --color-verde-feedback: #4CAF50;
+  /* retroalimentación positiva */
+  --color-amarillo-aviso: #FFC107;
+  /* advertencia o sugerencia */
+  --color-rojo-error: #F44336;
+  /* retroalimentación crítica */
+  --color-verde-claro: #DFF5E3;
+  /* fondo de mensaje positivo */
+  --color-amarillo-claro: #FFF8E1;
+  /* fondo de mensaje sugerencia */
+  --color-rojo-claro: #FFE5E5;
+  /* fondo de error leve */
+}
