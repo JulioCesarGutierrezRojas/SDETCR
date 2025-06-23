@@ -7,7 +7,7 @@ const userController = require('../modules/users/controller/user.controller')
 
 //TODO: CREACION DE USUARIO CON ENCRIPTACION (PRUEBA)
 // const bcrypt = require('bcryptjs')
-//const User = require('../modules/users/model/user.model')
+// const User = require('../modules/users/model/user.model')
 
 // async function crearUsuarioDePrueba() {
 //   const email = '20223tn124@utez.edu.mx'
