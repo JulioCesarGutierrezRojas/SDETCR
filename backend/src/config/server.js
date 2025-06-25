@@ -52,6 +52,7 @@ app.get('/', (request, response) => {
 })
 
 app.post('/api/users/login', userController.login)
+app.post('/restaurar-password', userController.restaurarPassword)
 
 /**
  * Endpoints

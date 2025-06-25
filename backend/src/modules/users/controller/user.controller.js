@@ -1,4 +1,4 @@
-const { login } = require('../service/user.service')
+const { login, restaurarPassword } = require('../service/user.service')
 
 const loginController = async (req, res) => {
     try{
@@ -11,6 +11,18 @@ const loginController = async (req, res) => {
     }
 }
 
+const restaurarPasswordController = async (req, res) =>{
+    try{
+        const {email, nuevaPassword, confirmarPassword } =  req.body
+        const result = await restaurarPassword(email, nuevaPassword, confirmarPassword)
+        return res.json(result)
+    }catch(error){
+        console.log('Error en restaurarPasswordController: ', error.message)
+        return res.status(error.statusCode || 500).json({ message: error.message })
+    }
+}
+
 module.exports = {
-    login: loginController
+    login: loginController,
+    restaurarPassword: restaurarPasswordController
 }
