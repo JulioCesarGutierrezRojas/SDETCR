@@ -66,7 +66,10 @@ const restaurarPassword = async (email, nuevaPassword, confirmarPassword) => {
         }
 
         const nuevaPasswordHash = await hashPassword(nuevaPassword)
+
         user.password = nuevaPasswordHash
+        user.reset_token = null
+        user.reset_token_expiration =null
         await user.save()
 
         return {message: 'Contraseña actualizada correctamente'}
