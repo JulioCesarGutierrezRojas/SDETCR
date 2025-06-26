@@ -1,5 +1,5 @@
 const User = require('../model/user.model')
-const { compararPassword } = require('../../../kernel/bcrypt')
+const { compararPassword, hashPassword } = require('../../../kernel/bcrypt')
 const { generarToken } = require('../../../security/jwt')
 
 const login = async (email, password) => {
@@ -41,6 +41,45 @@ const login = async (email, password) => {
     }
 }
 
+const restaurarPassword = async (email, nuevaPassword, confirmarPassword) => {
+    try{
+        if(!email || !nuevaPassword || !confirmarPassword){
+            const error = new Error('Todos los campos son requeridos')
+            error.statusCode = 400
+            throw error
+        }
+
+        if(nuevaPassword !== confirmarPassword){
+            const error = new Error('La contraseña de confirmacion no coincide con la contraseña')
+            error.statusCode = 400
+            throw error
+        }
+
+        const user = await User.findOne({
+            where: {email}
+        })
+
+        if(!user){
+            const error = new Error('Usuario no encontrado')
+            error.statusCode = 404
+            throw error
+        }
+
+        const nuevaPasswordHash = await hashPassword(nuevaPassword)
+
+        user.password = nuevaPasswordHash
+        user.reset_token = null
+        user.reset_token_expiration =null
+        await user.save()
+
+        return {message: 'Contraseña actualizada correctamente'}
+    }catch(error){
+        console.log('Error en restaurarPassword service: ', error.message)
+        throw error
+    }
+}
+
 module.exports = {
-    login
+    login,
+    restaurarPassword
 }
