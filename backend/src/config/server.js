@@ -4,6 +4,8 @@ const cors = require('cors')
 const path = require('path')
 
 const userController = require('../modules/users/controller/user.controller')
+const { updateSimulator } = require('../modules/simulators/controller/simulator.controller')
+const simulatorController = require('../modules/simulators/controller/simulator.controller')
 const categoryController = require('../modules/categories/controller/category.controller')
 
 //TODO: CREACION DE USUARIO CON ENCRIPTACION (PRUEBA)
@@ -51,7 +53,7 @@ app.use(express.json({limit: '50mb'}))
 app.get('/', (request, response) => {
     response.send('Simulador de Entrevistas con Retroalimentación')
 })
-
+app.put('/api/simulators/:id', simulatorController.updateSimulator)
 app.post('/api/users/login', userController.login)
 app.post('/restaurar-password', userController.restaurarPassword)
 app.post('/api/categories/create', categoryController.createCategory)
