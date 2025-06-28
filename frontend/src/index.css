@@ -49,4 +49,15 @@
   /* fondo de mensaje sugerencia */
   --color-rojo-claro: #FFE5E5;
   /* fondo de error leve */
+
+  
+
+}
+
+:root {
+  --primary: var(--color-lavanda-700);        /* Lavanda profundo */
+  --secondary: var(--color-nude-500);         /* Nude clásico */
+  --white: var(--color-nude-100);             /* Casi blanco */
+  --tomato: var(--color-lavanda-500);         /* Lavanda tono medio */
+  --blue: var(--color-gris-400);              /* Gris claro para bordes */
 }
