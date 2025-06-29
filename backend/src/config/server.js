@@ -5,6 +5,7 @@ const path = require('path')
 
 const userController = require('../modules/users/controller/user.controller')
 const categoryController = require('../modules/categories/controller/category.controller')
+const questionController = require('../modules/questions/controller/question.controller')
 
 //TODO: CREACION DE USUARIO CON ENCRIPTACION (PRUEBA)
 // const bcrypt = require('bcryptjs')
@@ -55,6 +56,7 @@ app.get('/', (request, response) => {
 app.post('/api/users/login', userController.login)
 app.post('/restaurar-password', userController.restaurarPassword)
 app.post('/api/categories/create', categoryController.createCategory)
+app.post('/api/questions', questionController.createQuestion)
 
 /**
  * Endpoints
