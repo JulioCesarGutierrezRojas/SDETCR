@@ -1,6 +1,8 @@
 const User = require('../model/user.model')
 const { compararPassword, hashPassword } = require('../../../kernel/bcrypt')
 const { generarToken } = require('../../../security/jwt')
+const { sendEmail } = require('../../../kernel/configEmail')
+const crypto = require('crypto')
 
 const login = async (email, password) => {
     try{
@@ -79,7 +81,40 @@ const restaurarPassword = async (email, nuevaPassword, confirmarPassword) => {
     }
 }
 
+const enviarCodigoRecuperacion = async (email) => {
+    try {
+        if (!email) {
+            const error = new Error('El correo es requerido')
+            error.statusCode = 400
+            throw error
+        }
+
+        const user = await User.findOne({ where: { email } })
+
+        if (!user) {
+            const error = new Error('Usuario no encontrado')
+            error.statusCode = 404
+            throw error
+        }
+
+        const code = crypto.randomInt(100000, 999999).toString()
+
+        user.reset_token = code
+        user.reset_token_expiration = new Date(Date.now() + 15 * 60 * 1000)
+        await user.save()
+
+        await sendEmail(user, code)
+
+        return { message: 'Código de recuperación enviado al correo' }
+    } catch (error) {
+        console.log('Error en enviarCodigoRecuperacion service:', error.message)
+        throw error
+    }
+}
+
+
 module.exports = {
     login,
-    restaurarPassword
+    restaurarPassword,
+    enviarCodigoRecuperacion
 }
