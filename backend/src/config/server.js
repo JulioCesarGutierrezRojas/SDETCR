@@ -54,6 +54,7 @@ app.get('/', (request, response) => {
 
 app.post('/api/users/login', userController.login)
 app.post('/restaurar-password', userController.restaurarPassword)
+app.get('/api/categories', categoryController.getAllCategories)
 app.post('/api/categories/create', categoryController.createCategory)
 
 /**
