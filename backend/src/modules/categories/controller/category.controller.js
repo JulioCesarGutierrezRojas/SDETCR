@@ -1,4 +1,6 @@
 const { createCategory } = require('../service/category.service')
+const { Router } = require('express')
+const routerCategory = Router()
 
 const createCategoryController = async (req, res) => {
     try{
@@ -11,6 +13,8 @@ const createCategoryController = async (req, res) => {
     }
 }
 
+routerCategory.post('/create', createCategoryController)
+
 module.exports = {
-    createCategory: createCategoryController
+    routerCategory
 }

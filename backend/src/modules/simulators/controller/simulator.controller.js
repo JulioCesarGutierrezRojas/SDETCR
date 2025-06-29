@@ -1,5 +1,7 @@
-const { json } = require('sequelize');
+//const { json } = require('sequelize');
 const { updateSimulator } = require('../service/simulator.service');
+const { Router } = require('express');
+const routerSimulator = Router();
 
 const updateSimulatorController = async (req, res) => {
     try{
@@ -13,6 +15,8 @@ const updateSimulatorController = async (req, res) => {
     }
 }
 
+routerSimulator.put('/:id', [] ,updateSimulatorController)
+
 module.exports = {
-    updateSimulator: updateSimulatorController
+    routerSimulator
 }
