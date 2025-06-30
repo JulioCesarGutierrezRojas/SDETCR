@@ -75,6 +75,7 @@ app.get('/', (request, response) => {
  * Por ruta se entiende que son las que se traen del archivo router,
  * las cuales se importaron mas arriba
  */
+
 app.use('/api/simulators', routerSimulator)
 app.use('/api/categories', routerCategory)
 app.use('/api/users', routerUser)
