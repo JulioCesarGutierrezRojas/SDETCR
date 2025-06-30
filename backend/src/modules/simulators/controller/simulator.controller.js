@@ -1,6 +1,18 @@
+const { updateSimulator } = require('../service/simulator.service');
+const { Router } = require('express');
+const routerSimulator = Router();
 
-const { disableSimulator, createSimulator } = require('../service/simulator.service')
+const updateSimulatorController = async (req, res) => {
+    try{
+        const { id } = req.params
+        const data = req.body
 
+        const result = await updateSimulator(id, data)
+        return res.json(result)
+    }catch(error){
+        return res.status(error.statusCode || 500).json({ message: error.message})
+    }
+}
 
 const createSimulatorController = async (req, res) => {
     try {
@@ -24,7 +36,10 @@ const disableSimulatorController = async (req, res) => {
     }
 }
 
+routerSimulator.put('/:id', [] ,updateSimulatorController)
+routerSimulator.post('/', [], createSimulatorController)
+routerSimulator.patch('/', [], disableSimulatorController)
+
 module.exports = {
-    createSimulator: createSimulatorController,
-    disableSimulator: disableSimulatorController
+    routerSimulator
 }
