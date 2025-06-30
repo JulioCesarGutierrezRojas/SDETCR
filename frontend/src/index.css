@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@theme {
+:root {
   --color-nude-100: #FEF9F6;  /* casi blanco con matiz piel */
   --color-nude-200: #FCEFE9;  /* rosa claro suave */
   --color-nude-300: #F8DFD1;  /* durazno muy claro */
