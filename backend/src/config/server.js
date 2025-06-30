@@ -7,6 +7,7 @@ const userController = require('../modules/users/controller/user.controller')
 const { updateSimulator } = require('../modules/simulators/controller/simulator.controller')
 const simulatorController = require('../modules/simulators/controller/simulator.controller')
 const categoryController = require('../modules/categories/controller/category.controller')
+const questionController = require('../modules/questions/controller/question.controller')
 
 const { routerSimulator } = require('../modules/simulators/controller/simulator.controller')
 const { routerCategory } = require('../modules/categories/controller/category.controller')
@@ -58,6 +59,8 @@ app.use(express.json({limit: '50mb'}))
 app.get('/', (request, response) => {
     response.send('Simulador de Entrevistas con Retroalimentación')
 })
+
+app.post('/api/questions', questionController.createQuestion)
 
 //app.put('/api/simulators/:id', simulatorController.updateSimulator)
 //app.post('/api/users/login', userController.login)
