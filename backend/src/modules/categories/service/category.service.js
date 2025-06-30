@@ -1,5 +1,15 @@
 const Category = require('../model/category.model')
 
+const getAllCategories = async () => {
+    try {
+        const categorias = await Category.findAll()
+        return categorias
+    } catch (error) {
+        console.log('Error en getAllCategories:', error.message)
+        throw error
+    }
+}
+
 const createCategory = async (name, description) => {
     try{
         if(!name || !description){
@@ -29,5 +39,6 @@ const createCategory = async (name, description) => {
 }
 
 module.exports = {
+    getAllCategories,
     createCategory
 }

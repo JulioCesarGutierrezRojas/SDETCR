@@ -64,7 +64,6 @@ app.get('/', (request, response) => {
 //app.post('/restaurar-password', userController.restaurarPassword)
 //app.post('/api/categories/create', categoryController.createCategory)
 
-
 /**
  * Endpoints
  * 
