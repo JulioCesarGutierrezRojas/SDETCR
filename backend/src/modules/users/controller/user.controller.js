@@ -1,4 +1,6 @@
 const { login, restaurarPassword } = require('../service/user.service')
+const { Router } = require('express')
+const routerUser = Router()
 
 const loginController = async (req, res) => {
     try{
@@ -22,7 +24,10 @@ const restaurarPasswordController = async (req, res) =>{
     }
 }
 
+routerUser.post('/login', loginController)
+routerUser.post('/restaurar-password', restaurarPasswordController)
+
+
 module.exports = {
-    login: loginController,
-    restaurarPassword: restaurarPasswordController
+    routerUser
 }

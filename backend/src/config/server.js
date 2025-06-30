@@ -4,7 +4,12 @@ const cors = require('cors')
 const path = require('path')
 
 const userController = require('../modules/users/controller/user.controller')
+const { updateSimulator } = require('../modules/simulators/controller/simulator.controller')
+const simulatorController = require('../modules/simulators/controller/simulator.controller')
 const categoryController = require('../modules/categories/controller/category.controller')
+const { routerSimulator } = require('../modules/simulators/controller/simulator.controller')
+const { routerCategory } = require('../modules/categories/controller/category.controller')
+const { routerUser } = require('../modules/users/controller/user.controller')
 
 //TODO: CREACION DE USUARIO CON ENCRIPTACION (PRUEBA)
 // const bcrypt = require('bcryptjs')
@@ -51,10 +56,10 @@ app.use(express.json({limit: '50mb'}))
 app.get('/', (request, response) => {
     response.send('Simulador de Entrevistas con Retroalimentación')
 })
-
-app.post('/api/users/login', userController.login)
-app.post('/restaurar-password', userController.restaurarPassword)
-app.post('/api/categories/create', categoryController.createCategory)
+//app.put('/api/simulators/:id', simulatorController.updateSimulator)
+//app.post('/api/users/login', userController.login)
+//app.post('/restaurar-password', userController.restaurarPassword)
+//app.post('/api/categories/create', categoryController.createCategory)
 
 /**
  * Endpoints
@@ -67,6 +72,9 @@ app.post('/api/categories/create', categoryController.createCategory)
  * Por ruta se entiende que son las que se traen del archivo router,
  * las cuales se importaron mas arriba
  */
+app.use('/api/simulators', routerSimulator)
+app.use('/api/categories', routerCategory)
+app.use('/api/users', routerUser)
 
 module.exports = {
     app
