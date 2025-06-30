@@ -3,6 +3,40 @@ const express = require('express')
 const cors = require('cors')
 const path = require('path')
 
+const userController = require('../modules/users/controller/user.controller')
+
+//TODO: CREACION DE USUARIO CON ENCRIPTACION (PRUEBA)
+// const bcrypt = require('bcryptjs')
+// const User = require('../modules/users/model/user.model')
+
+// async function crearUsuarioDePrueba() {
+//   const email = '20223tn124@utez.edu.mx'
+
+//   const existente = await User.findOne({ where: { email } })
+//   if (existente) {
+//     console.log('🔁 Usuario ya existe, no se crea de nuevo.')
+//     return
+//   }
+
+//   const hash = await bcrypt.hash('123456', 10)
+
+//   await User.create({
+//     name: 'Carlos',
+//     lastname: 'Galán',
+//     email: email,
+//     enrollment: 'ABC123',
+//     role: 'mentor',
+//     password: hash,
+//     category: null,
+//     mentor_id: null
+//   })
+
+//   console.log('✅ Usuario de prueba creado con contraseña segura')
+// }
+
+// crearUsuarioDePrueba()
+
+
 //En esta parte se mandan a traer las rutas del archivo router, por lo que se importa de ese archivo
 //const {} = require()
 
@@ -16,6 +50,8 @@ app.use(express.json({limit: '50mb'}))
 app.get('/', (request, response) => {
     response.send('Simulador de Entrevistas con Retroalimentación')
 })
+
+app.post('/api/users/login', userController.login)
 
 /**
  * Endpoints
