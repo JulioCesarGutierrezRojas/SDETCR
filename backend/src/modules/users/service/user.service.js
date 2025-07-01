@@ -1,6 +1,8 @@
 const User = require('../model/user.model')
-const { compararPassword } = require('../../../kernel/bcrypt')
+const { compararPassword, hashPassword } = require('../../../kernel/bcrypt')
 const { generarToken } = require('../../../security/jwt')
+const { sendEmail } = require('../../../kernel/configEmail')
+const crypto = require('crypto')
 
 const login = async (email, password) => {
     try{
@@ -41,6 +43,78 @@ const login = async (email, password) => {
     }
 }
 
+const restaurarPassword = async (email, nuevaPassword, confirmarPassword) => {
+    try{
+        if(!email || !nuevaPassword || !confirmarPassword){
+            const error = new Error('Todos los campos son requeridos')
+            error.statusCode = 400
+            throw error
+        }
+
+        if(nuevaPassword !== confirmarPassword){
+            const error = new Error('La contraseña de confirmacion no coincide con la contraseña')
+            error.statusCode = 400
+            throw error
+        }
+
+        const user = await User.findOne({
+            where: {email}
+        })
+
+        if(!user){
+            const error = new Error('Usuario no encontrado')
+            error.statusCode = 404
+            throw error
+        }
+
+        const nuevaPasswordHash = await hashPassword(nuevaPassword)
+
+        user.password = nuevaPasswordHash
+        user.reset_token = null
+        user.reset_token_expiration =null
+        await user.save()
+
+        return {message: 'Contraseña actualizada correctamente'}
+    }catch(error){
+        console.log('Error en restaurarPassword service: ', error.message)
+        throw error
+    }
+}
+
+const enviarCodigoRecuperacion = async (email) => {
+    try {
+        if (!email) {
+            const error = new Error('El correo es requerido')
+            error.statusCode = 400
+            throw error
+        }
+
+        const user = await User.findOne({ where: { email } })
+
+        if (!user) {
+            const error = new Error('Usuario no encontrado')
+            error.statusCode = 404
+            throw error
+        }
+
+        const code = crypto.randomInt(100000, 999999).toString()
+
+        user.reset_token = code
+        user.reset_token_expiration = new Date(Date.now() + 15 * 60 * 1000)
+        await user.save()
+
+        await sendEmail(user, code)
+
+        return { message: 'Código de recuperación enviado al correo' }
+    } catch (error) {
+        console.log('Error en enviarCodigoRecuperacion service:', error.message)
+        throw error
+    }
+}
+
+
 module.exports = {
-    login
+    login,
+    restaurarPassword,
+    enviarCodigoRecuperacion
 }
