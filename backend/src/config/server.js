@@ -12,6 +12,7 @@ const questionController = require('../modules/questions/controller/question.con
 const { routerSimulator } = require('../modules/simulators/controller/simulator.controller')
 const { routerCategory } = require('../modules/categories/controller/category.controller')
 const { routerUser } = require('../modules/users/controller/user.controller')
+const {routerAnswer} = require('../modules/answers/controller/answer.controller')
 
 
 //TODO: CREACION DE USUARIO CON ENCRIPTACION (PRUEBA)
@@ -82,6 +83,7 @@ app.post('/api/questions', questionController.createQuestion)
 app.use('/api/simulators', routerSimulator)
 app.use('/api/categories', routerCategory)
 app.use('/api/users', routerUser)
+app.use('/api/answers', routerAnswer)
 
 module.exports = {
     app
