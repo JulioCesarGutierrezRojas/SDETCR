@@ -78,7 +78,7 @@ const disableSimulator = async (simulatorId) => {
         }
     } catch (error) {
         console.log('Error en disableSimulator:', error.message)
-        thrown error
+        throw error
     }
 }
 
