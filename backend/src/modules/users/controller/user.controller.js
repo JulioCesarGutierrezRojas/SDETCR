@@ -37,9 +37,9 @@ const enviarCodigoRecuperacionController = async (req, res) => {
 
 const createMentorController = async (req, res) => {
     try {
-        const { name, lastname, email, enrollment, password, category } = req.body;
+        const { name, lastname, email, enrollment, password } = req.body;
 
-        const result = await createMentor({ name, lastname, email, enrollment, password, category});
+        const result = await createMentor({ name, lastname, email, enrollment, password});
 
         res.status(201).json(result);
     } catch (error) {

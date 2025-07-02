@@ -112,7 +112,7 @@ const enviarCodigoRecuperacion = async (email) => {
     }
 }
 
-const createMentor = async ({ name, lastname, email, enrollment, password, category }) => {
+const createMentor = async ({ name, lastname, email, enrollment, password }) => {
     try {
 
         if (await User.findOne({ where: { email } })|| await User.findOne({ where: { enrollment } })) {
@@ -122,14 +122,15 @@ const createMentor = async ({ name, lastname, email, enrollment, password, categ
             };
         }
 
+        const encryptedPassword = await hashPassword(password);
+
         const newMentor = await User.create({
             name,
             lastname,   
             email, 
             enrollment,
             role: 'mentor', 
-            password,
-            category
+            password: encryptedPassword,
         });
 
         
