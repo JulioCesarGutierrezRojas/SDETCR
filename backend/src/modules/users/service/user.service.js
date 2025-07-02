@@ -115,10 +115,38 @@ const enviarCodigoRecuperacion = async (email) => {
 const createMentor = async ({ name, lastname, email, enrollment, password }) => {
     try {
 
+        if(!name || !lastname){
+            return {
+                success: false,
+                message: 'El nombre y/o apellido son requeridos'
+            };
+        }
+
+        if(!email){
+            return {
+                success: false,
+                message: 'El correo electrónico es obligatorio'
+            };
+        }
+
+        if(!enrollment){
+            return {
+                success: false,
+                message: 'La matrícula es obligatoria'
+            };
+        }
+
+        if(!password){
+            return {
+                success: false,
+                message: 'La contraseña es obligatoria'
+            };
+        }
+
         if (await User.findOne({ where: { email } })|| await User.findOne({ where: { enrollment } })) {
             return {
                 success: false,
-                message: 'El correo electrónico o la matrícula ya están en uso'
+                message: 'El correo electrónico o la matrícula ya se registraron'
             };
         }
 
