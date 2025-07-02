@@ -112,9 +112,42 @@ const enviarCodigoRecuperacion = async (email) => {
     }
 }
 
+const createMentor = async ({ name, lastname, email, enrollment, password, category }) => {
+    try {
+
+        if (await User.findOne({ where: { email } })|| await User.findOne({ where: { enrollment } })) {
+            return {
+                success: false,
+                message: 'El correo electrónico o la matrícula ya están en uso'
+            };
+        }
+
+        const newMentor = await User.create({
+            name,
+            lastname,   
+            email, 
+            enrollment,
+            role: 'mentor', 
+            password,
+            category
+        });
+
+        
+        return {
+            success: true,
+            data: newMentor,
+            message: 'Mentor creado exitosamente'
+        };
+    } catch (error) {
+        console.error('Error en createMentor:', error);
+        throw new Error('No se pudo crear el mentor');
+    }
+};
+
 
 module.exports = {
     login,
     restaurarPassword,
-    enviarCodigoRecuperacion
+    enviarCodigoRecuperacion,
+    createMentor,
 }
