@@ -112,9 +112,45 @@ const enviarCodigoRecuperacion = async (email) => {
     }
 }
 
+const createStudent = async ({ name, lastname, email, category, enrollment, password }) => {
+    try {
+
+        if (await User.findOne({ where: { email } })|| await User.findOne({ where: { enrollment } })) {
+            return {
+                success: false,
+                message: 'El correo electrónico o la matrícula ya están en uso'
+            };
+        }
+
+        const encryptedPassword = await hashPassword(password);
+
+        const newStudent = await User.create({
+            name,
+            lastname,   
+            email, 
+            category,
+            enrollment,
+            role: 'estudiantes', 
+            password: encryptedPassword
+        });
+
+
+        return {
+            success: true,
+            data: newStudent,
+            message: 'Estudiante creado exitosamente'
+        };
+    } catch (error) {
+        console.error('Error en createStudent:', error);
+        throw new Error('No se pudo crear al estudiante');
+    }
+};
+
+
 
 module.exports = {
     login,
     restaurarPassword,
-    enviarCodigoRecuperacion
+    enviarCodigoRecuperacion,
+    createStudent,
 }
