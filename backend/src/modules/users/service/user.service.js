@@ -115,6 +115,27 @@ const enviarCodigoRecuperacion = async (email) => {
 const createStudent = async ({ name, lastname, email, category, enrollment, password }) => {
     try {
 
+        if (!name || !lastname) {
+            return {
+                success: false,
+                message: 'El nombre y/o apellido son requeridos'
+            };
+        }
+
+        if ( !email) {
+            return {
+                success: false,
+                message: 'El correo electrónico es requerido'
+            };
+        }
+
+        if (!enrollment || !password) {
+            return {
+                success: false,
+                message: 'La matrícula y/o contraseña son requeridas'
+            };
+        }
+
         if (await User.findOne({ where: { email } })|| await User.findOne({ where: { enrollment } })) {
             return {
                 success: false,
