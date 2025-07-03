@@ -1,4 +1,4 @@
-const { createCategory, getAllCategories } = require('../service/category.service')
+const { createCategory, getAllCategories , disableCategory} = require('../service/category.service')
 const { Router } = require('express')
 const routerCategory = Router()
 
@@ -23,8 +23,20 @@ const getAllCategoriesController = async (req, res) => {
     }
 }
 
+const disableCategoryController = async (req, res) => {
+    try {
+        const { name } = req.body;
+        const result = await disableCategory(name);
+        return res.status(200).json(result);
+    } catch (error) {
+        console.log('Error en enableCategoryController:', error.message)
+        return res.status(error.statusCode || 500).json({ message: error.message })
+    }
+}
+
 routerCategory.get('/all', [], getAllCategoriesController)
 routerCategory.post('/create', createCategoryController)
+routerCategory.put('/disable', disableCategoryController)
 
 module.exports = {
     routerCategory
