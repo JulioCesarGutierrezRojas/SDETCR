@@ -1,5 +1,6 @@
 const User = require('../model/user.model')
 const { compararPassword, hashPassword } = require('../../../kernel/bcrypt')
+const { getAllCategories } = require('../../../modules/categories/service/category.service')
 const { generarToken } = require('../../../security/jwt')
 const { sendEmail } = require('../../../kernel/configEmail')
 const crypto = require('crypto')
@@ -136,10 +137,28 @@ const createStudent = async ({ name, lastname, email, category, enrollment, pass
             };
         }
 
+        if (!category){
+            return {
+                success: false,
+                message: 'La categoría es requerida'
+            };
+        }
+
         if (await User.findOne({ where: { email } })|| await User.findOne({ where: { enrollment } })) {
             return {
                 success: false,
                 message: 'El correo electrónico o la matrícula ya están en uso'
+            };
+        }
+
+        
+        const categorias = await getAllCategories();
+        const categoriaValida = categorias.find(cat => cat.name === category.name);
+
+        if (!categoriaValida) {
+            return {
+                success: false,
+                message: `La categoría "${category.name}" no existe en la base de datos`
             };
         }
 
@@ -149,7 +168,7 @@ const createStudent = async ({ name, lastname, email, category, enrollment, pass
             name,
             lastname,   
             email, 
-            category,
+            category: { name: categoriaValida.name },
             enrollment,
             role: 'estudiantes', 
             password: encryptedPassword
