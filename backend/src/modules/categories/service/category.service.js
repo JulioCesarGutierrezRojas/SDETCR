@@ -34,7 +34,31 @@ const createCategory = async (name, description) => {
     }
 }
 
+const disableCategory = async (name) => {
+    try {
+        const category = await Category.findOne({ where: { name } });
+        if (!category) {
+            const error = new Error('Categoria no encontrada')
+            error.statusCode = 404
+            throw error
+        }
+
+        category.status = false;
+        await category.save();
+        
+        return {
+            success: true,
+            message: 'Categoria deshabilitada con exito'
+        };
+        
+    } catch (error) {
+        console.log('Error al deshabilitar una categoria:', error.message)
+        throw error
+    }
+}
+
 module.exports = {
     getAllCategories,
-    createCategory
+    createCategory,
+    disableCategory,
 }
