@@ -1,4 +1,4 @@
-const { login, restaurarPassword, enviarCodigoRecuperacion, createMentor } = require('../service/user.service')
+const { login, restaurarPassword, enviarCodigoRecuperacion, createStudent, createMentor } = require('../service/user.service')
 const { Router } = require('express')
 const routerUser = Router()
 
@@ -35,6 +35,19 @@ const enviarCodigoRecuperacionController = async (req, res) => {
     }
 }
 
+const createStudentController = async (req, res) => {
+    try {
+        const { name, lastname, email, category, enrollment, password } = req.body;
+
+        const result = await createStudent({ name, lastname, email, category, enrollment, password});
+
+        res.status(201).json(result);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
 const createMentorController = async (req, res) => {
     try {
         const { name, lastname, email, enrollment, password } = req.body;
@@ -53,6 +66,7 @@ routerUser.post('/createMentor', createMentorController);
 routerUser.post('/login', loginController)
 routerUser.post('/restaurar-password', restaurarPasswordController)
 routerUser.post('/send-email', enviarCodigoRecuperacionController)
+routerUser.post('/createStudent', createStudentController)
 
 module.exports = {
     routerUser

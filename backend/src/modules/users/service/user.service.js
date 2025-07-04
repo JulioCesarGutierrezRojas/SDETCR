@@ -1,5 +1,6 @@
 const User = require('../model/user.model')
 const { compararPassword, hashPassword } = require('../../../kernel/bcrypt')
+const { getAllCategories } = require('../../../modules/categories/service/category.service')
 const { generarToken } = require('../../../security/jwt')
 const { sendEmail } = require('../../../kernel/configEmail')
 const crypto = require('crypto')
@@ -174,9 +175,85 @@ const createMentor = async ({ name, lastname, email, enrollment, password }) => 
 };
 
 
+const createStudent = async ({ name, lastname, email, category, enrollment, password }) => {
+    try {
+
+        if (!name || !lastname) {
+            return {
+                success: false,
+                message: 'El nombre y/o apellido son requeridos'
+            };
+        }
+
+        if ( !email) {
+            return {
+                success: false,
+                message: 'El correo electrónico es requerido'
+            };
+        }
+
+        if (!enrollment || !password) {
+            return {
+                success: false,
+                message: 'La matrícula y/o contraseña son requeridas'
+            };
+        }
+
+        if (!category){
+            return {
+                success: false,
+                message: 'La categoría es requerida'
+            };
+        }
+
+        if (await User.findOne({ where: { email } })|| await User.findOne({ where: { enrollment } })) {
+            return {
+                success: false,
+                message: 'El correo electrónico o la matrícula ya están en uso'
+            };
+        }
+
+        
+        const categorias = await getAllCategories();
+        const categoriaValida = categorias.find(cat => cat.name === category.name);
+
+        if (!categoriaValida) {
+            return {
+                success: false,
+                message: `La categoría "${category.name}" no existe en la base de datos`
+            };
+        }
+
+        const encryptedPassword = await hashPassword(password);
+
+        const newStudent = await User.create({
+            name,
+            lastname,   
+            email, 
+            category: { name: categoriaValida.name },
+            enrollment,
+            role: 'estudiantes', 
+            password: encryptedPassword
+        });
+
+
+        return {
+            success: true,
+            data: newStudent,
+            message: 'Estudiante creado exitosamente'
+        };
+    } catch (error) {
+        console.error('Error en createStudent:', error);
+        throw new Error('No se pudo crear al estudiante');
+    }
+};
+
+
+
 module.exports = {
     login,
     restaurarPassword,
     enviarCodigoRecuperacion,
+    createStudent,
     createMentor,
 }
