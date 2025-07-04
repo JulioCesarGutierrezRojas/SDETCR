@@ -73,10 +73,10 @@ const disableSimulator = async (simulatorId) => {
 const getAllSimulators = async () => {
     try {
         const simuladors = await Simulator.findAll()
-        return simuladors
+        return new ApiResponse(null, simuladors, TypesResponse.SUCCESS, 'Simuladores obtenidos exitosamente', 200)
     } catch (error) {
         console.log('Error al obtener todos los simuladores:', error.message)
-        throw error
+        throw new Error(error.message || 'Error al obtener los simuladores')
     }
 }
 

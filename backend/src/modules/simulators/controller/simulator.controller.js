@@ -39,10 +39,10 @@ const disableSimulatorController = async (req, res) => {
 const getAllSimulatorsController = async (req, res) => {
     try {
         const simulators = await getAllSimulators()
-        return res.status(200).json(simulators)
+        return res.status(simulators.getStatusCode()).json(simulators.getResponseBody())
     } catch (error) {
         console.log('Error en getAllSimulatorsController:', error.message)
-        return res.status(error.statusCode || 500).json({ message: error.message })
+        return res.status(500).json({ message: error.message })
     }
 }
 
