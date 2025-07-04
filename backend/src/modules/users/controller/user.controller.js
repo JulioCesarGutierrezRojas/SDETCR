@@ -41,10 +41,10 @@ const createStudentController = async (req, res) => {
 
         const result = await createStudent({ name, lastname, email, category, enrollment, password});
 
-        res.status(201).json(result);
+        res.status(result.getStatusCode()).json(result.getResponseBody());
     } catch (error) {
         console.error(error.message);
-        res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -54,10 +54,10 @@ const createMentorController = async (req, res) => {
 
         const result = await createMentor({ name, lastname, email, enrollment, password});
 
-        res.status(201).json(result);
+        res.status(result.getStatusCode()).json(result.getResponseBody());
     } catch (error) {
         console.error(error.message);
-        res.status(500).json({ success: false, message: error.message });
+        res.status(500).json({ message: error.message });
     }
 };
 

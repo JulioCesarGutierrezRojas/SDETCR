@@ -107,38 +107,23 @@ const createMentor = async ({ name, lastname, email, enrollment, password }) => 
     try {
 
         if(!name || !lastname){
-            return {
-                success: false,
-                message: 'El nombre y/o apellido son requeridos'
-            };
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El nombre y/o apellido son requeridos', 400);
         }
 
         if(!email){
-            return {
-                success: false,
-                message: 'El correo electrónico es obligatorio'
-            };
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El correo electrónico es obligatorio', 400);
         }
 
         if(!enrollment){
-            return {
-                success: false,
-                message: 'La matrícula es obligatoria'
-            };
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'La matrícula es obligatoria', 400);
         }
 
         if(!password){
-            return {
-                success: false,
-                message: 'La contraseña es obligatoria'
-            };
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'La contraseña es obligatoria', 400);
         }
 
         if (await User.findOne({ where: { email } })|| await User.findOne({ where: { enrollment } })) {
-            return {
-                success: false,
-                message: 'El correo electrónico o la matrícula ya se registraron'
-            };
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El correo electrónico o la matrícula ya se registraron', 409);
         }
 
         const encryptedPassword = await hashPassword(password);
@@ -152,15 +137,10 @@ const createMentor = async ({ name, lastname, email, enrollment, password }) => 
             password: encryptedPassword,
         });
 
-        
-        return {
-            success: true,
-            data: newMentor,
-            message: 'Mentor creado exitosamente'
-        };
+        return new ApiResponse(null, newMentor, TypesResponse.SUCCESS, 'Mentor creado exitosamente', 201);
     } catch (error) {
         console.error('Error en createMentor:', error);
-        throw new Error('No se pudo crear el mentor');
+        throw new Error(error.message || 'No se pudo crear el mentor');
     }
 };
 
@@ -169,49 +149,31 @@ const createStudent = async ({ name, lastname, email, category, enrollment, pass
     try {
 
         if (!name || !lastname) {
-            return {
-                success: false,
-                message: 'El nombre y/o apellido son requeridos'
-            };
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El nombre y/o apellido son requeridos', 400);
         }
 
         if ( !email) {
-            return {
-                success: false,
-                message: 'El correo electrónico es requerido'
-            };
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El correo electrónico es requerido', 400);
         }
 
         if (!enrollment || !password) {
-            return {
-                success: false,
-                message: 'La matrícula y/o contraseña son requeridas'
-            };
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'La matrícula y/o contraseña son requeridas', 400);
         }
 
         if (!category){
-            return {
-                success: false,
-                message: 'La categoría es requerida'
-            };
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'La categoría es requerida', 400);
         }
 
         if (await User.findOne({ where: { email } })|| await User.findOne({ where: { enrollment } })) {
-            return {
-                success: false,
-                message: 'El correo electrónico o la matrícula ya están en uso'
-            };
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El correo electrónico o la matrícula ya están en uso', 409);
         }
 
         
         const categorias = await getAllCategories();
-        const categoriaValida = categorias.find(cat => cat.name === category.name);
+        const categoriaValida = categorias.result.find(cat => cat.name === category.name);
 
         if (!categoriaValida) {
-            return {
-                success: false,
-                message: `La categoría "${category.name}" no existe en la base de datos`
-            };
+            return new ApiResponse(null, null, TypesResponse.WARNING, `La categoría "${category.name}" no existe en la base de datos`, 400);
         }
 
         const encryptedPassword = await hashPassword(password);
@@ -226,15 +188,10 @@ const createStudent = async ({ name, lastname, email, category, enrollment, pass
             password: encryptedPassword
         });
 
-
-        return {
-            success: true,
-            data: newStudent,
-            message: 'Estudiante creado exitosamente'
-        };
+        return new ApiResponse(null, newStudent, TypesResponse.SUCCESS, 'Estudiante creado exitosamente', 201);
     } catch (error) {
         console.error('Error en createStudent:', error);
-        throw new Error('No se pudo crear al estudiante');
+        throw new Error(error.message || 'No se pudo crear al estudiante');
     }
 };
 

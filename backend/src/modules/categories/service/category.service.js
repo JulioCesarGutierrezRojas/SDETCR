@@ -38,22 +38,16 @@ const disableCategory = async (name) => {
     try {
         const category = await Category.findOne({ where: { name } });
         if (!category) {
-            const error = new Error('Categoria no encontrada')
-            error.statusCode = 404
-            throw error
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'Categoria no encontrada', 404)
         }
 
         category.status = false;
         await category.save();
-        
-        return {
-            success: true,
-            message: 'Categoria deshabilitada con exito'
-        };
-        
+
+        return new ApiResponse(null, null, TypesResponse.SUCCESS, 'Categoria deshabilitada con exito', 200)
     } catch (error) {
         console.log('Error al deshabilitar una categoria:', error.message)
-        throw error
+        throw new Error(error.message || 'Error al deshabilitar la categoría')
     }
 }
 
