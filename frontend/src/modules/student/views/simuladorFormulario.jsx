@@ -116,11 +116,11 @@ const SimuladorFormulario = () => {
             <div className="mt-6 flex gap-4">
                 <button
                     onClick={handleSubmit}
-                    className="px-6 py-3 rounded-md bg-[var(--color-nude-600)] text-white font-semibold hover:bg-[var(--color-nude-700)] transition">
+                    className="px-6 py-3 rounded-md bg-[var(--color-gris-800)] text-white font-semibold hover:bg-[var(--color-nude-600)] transition">
                     Enviar respuestas
                 </button>
 
-                <Link to={`/student/simuladores/${simuladorId}`} className="px-6 py-3 rounded-md bg-[var(--color-nude-600)] text-white font-semibold hover:bg-[var(--color-nude-700)] transition text-center">
+                <Link to={`/student/simuladores/${simuladorId}`} className="px-6 py-3 rounded-md bg-[var(--color-gris-800)] text-white font-semibold hover:bg-[var(--color-nude-600)] transition text-center">
                     Atrás
                 </Link>
             </div>
