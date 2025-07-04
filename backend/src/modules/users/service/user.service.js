@@ -255,4 +255,5 @@ module.exports = {
     restaurarPassword,
     enviarCodigoRecuperacion,
     createStudent,
+    createMentor,
 }
