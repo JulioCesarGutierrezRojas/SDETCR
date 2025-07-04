@@ -82,8 +82,19 @@ const disableSimulator = async (simulatorId) => {
     }
 }
 
+const getAllSimulators = async () => {
+    try {
+        const simuladors = await Simulator.findAll()
+        return simuladors
+    } catch (error) {
+        console.log('Error al obtener todos los simuladores:', error.message)
+        throw error
+    }
+}
+
 module.exports = {
     updateSimulator,
     createSimulator,
-    disableSimulator
+    disableSimulator,
+    getAllSimulators,
 }
