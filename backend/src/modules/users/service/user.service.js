@@ -3,32 +3,28 @@ const { compararPassword, hashPassword } = require('../../../kernel/bcrypt')
 const { generarToken } = require('../../../security/jwt')
 const { sendEmail } = require('../../../kernel/configEmail')
 const crypto = require('crypto')
+const ApiResponse = require('../../../kernel/api.response')
+const TypesResponse = require('../../../kernel/types.response')
 
 const login = async (email, password) => {
     try{
         if (!email || !password){
-            const error = new Error('Email y contraseña son requeridos')
-            error.statusCode = 400
-            throw error
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'Email y contraseña son requeridos', 400)
         }
 
         const user = await User.findOne({where: { email }})
         if(!user){
-            const error = new Error('Usuario no encontrado')
-            error.statusCode = 401
-            throw error
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'Usuario no encontrado', 404)
         }
 
         const valid = await compararPassword(password, user.password)
         if(!valid){
-            const error = new Error('Contraseña incorrecta')
-            error.statusCode = 401
-            throw error
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'Credenciales invalidas', 401)
         }
 
         const token = generarToken({ user_id: user.user_id, role: user.role })
 
-        return {
+        const loginData = {
             token,
             user: {
                 id: user.user_id,
@@ -37,24 +33,22 @@ const login = async (email, password) => {
                 email: user.email
             }
         }
+
+        return new ApiResponse(null, loginData, TypesResponse.SUCCESS, 'Login exitoso', 200)
     }catch(error){
         console.log('Error en login service: ', error.message)
-        throw error
+        throw new Error(error.message || 'Error al iniciar sesión')
     }
 }
 
 const restaurarPassword = async (email, nuevaPassword, confirmarPassword) => {
     try{
         if(!email || !nuevaPassword || !confirmarPassword){
-            const error = new Error('Todos los campos son requeridos')
-            error.statusCode = 400
-            throw error
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'Todos los campos son requeridos', 400)
         }
 
         if(nuevaPassword !== confirmarPassword){
-            const error = new Error('La contraseña de confirmacion no coincide con la contraseña')
-            error.statusCode = 400
-            throw error
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'La contraseña de confirmación no coincide con la contraseña', 400)
         }
 
         const user = await User.findOne({
@@ -62,42 +56,38 @@ const restaurarPassword = async (email, nuevaPassword, confirmarPassword) => {
         })
 
         if(!user){
-            const error = new Error('Usuario no encontrado')
-            error.statusCode = 404
-            throw error
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'Usuario no encontrado', 404)
         }
 
-        const nuevaPasswordHash = await hashPassword(nuevaPassword)
-
-        user.password = nuevaPasswordHash
+        user.password =  await hashPassword(nuevaPassword)
         user.reset_token = null
         user.reset_token_expiration =null
         await user.save()
 
-        return {message: 'Contraseña actualizada correctamente'}
+        return new ApiResponse(null, null, TypesResponse.SUCCESS, 'Contraseña actualizada correctamente', 200)
     }catch(error){
         console.log('Error en restaurarPassword service: ', error.message)
-        throw error
+        throw new Error(error.message || 'Error al restaurar la contraseña')
     }
 }
 
 const enviarCodigoRecuperacion = async (email) => {
     try {
         if (!email) {
-            const error = new Error('El correo es requerido')
-            error.statusCode = 400
-            throw error
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El correo es requerido', 400)
         }
 
         const user = await User.findOne({ where: { email } })
 
         if (!user) {
-            const error = new Error('Usuario no encontrado')
-            error.statusCode = 404
-            throw error
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'Usuario no encontrado', 404)
         }
 
-        const code = crypto.randomInt(100000, 999999).toString()
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+        let code = ''
+        for (let i = 0; i < 5; i++) {
+            code += characters.charAt(Math.floor(Math.random() * characters.length))
+        }
 
         user.reset_token = code
         user.reset_token_expiration = new Date(Date.now() + 15 * 60 * 1000)
@@ -105,10 +95,10 @@ const enviarCodigoRecuperacion = async (email) => {
 
         await sendEmail(user, code)
 
-        return { message: 'Código de recuperación enviado al correo' }
+        return new ApiResponse(null, null, TypesResponse.SUCCESS, 'Código de recuperación enviado al correo', 200)
     } catch (error) {
-        console.log('Error en enviarCodigoRecuperacion service:', error.message)
-        throw error
+        console.log('Error en enviarCodigoRecuperación service:', error.message)
+        throw new Error(error.message || 'Error al enviar el código de recuperación')
     }
 }
 

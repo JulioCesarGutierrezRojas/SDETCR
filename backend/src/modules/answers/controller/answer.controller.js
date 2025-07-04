@@ -6,9 +6,10 @@ const saveAnswerController = async (req, res) => {
     try{
         const data = req.body;
         const result = await saveAnswer(data);
-        return res.json(result);
+        return res.status(result.getStatusCode()).json(result.getResponseBody());
     }catch(error){
-        return res.status(error.statusCode || 500).json({message: error.message})
+        console.log('Error en saveAnswerController:', error.message);
+        return res.status(500).json({message: error.message})
     }
 }
 

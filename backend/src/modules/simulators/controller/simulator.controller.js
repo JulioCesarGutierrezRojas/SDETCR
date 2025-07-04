@@ -1,4 +1,4 @@
-const { updateSimulator } = require('../service/simulator.service');
+const { updateSimulator, createSimulator, disableSimulator } = require('../service/simulator.service');
 const { Router } = require('express');
 const routerSimulator = Router();
 
@@ -8,9 +8,9 @@ const updateSimulatorController = async (req, res) => {
         const data = req.body
 
         const result = await updateSimulator(id, data)
-        return res.json(result)
+        return res.status(result.getStatusCode()).json(result.getResponseBody())
     }catch(error){
-        return res.status(error.statusCode || 500).json({ message: error.message})
+        return res.status(500).json({ message: error.message})
     }
 }
 
@@ -18,10 +18,10 @@ const createSimulatorController = async (req, res) => {
     try {
         const { name, category_id } = req.body
         const result = await createSimulator(name, category_id)
-        return res.status(201).json(result)
+        return res.status(result.getStatusCode()).json(result.getResponseBody())
     } catch (error) {
         console.log('Error en createSimulatorController:', error.message)
-        return res.status(error.statusCode || 500).json({ message: error.message })
+        return res.status(500).json({ message: error.message })
     }
 }
 
@@ -29,7 +29,7 @@ const disableSimulatorController = async (req, res) => {
     try {
         const { id } = req.params
         const result = await disableSimulator(id)
-        return res.status(200).json(result)
+        return res.status(result.getStatusCode()).json(result.getResponseBody())
     } catch (error) {
         console.log('Error en disableSimulatorController:', error.message)
         return res.status(error.statusCode || 500).json({ message: error.message })

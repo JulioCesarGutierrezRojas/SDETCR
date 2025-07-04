@@ -1,11 +1,11 @@
 const Question = require('../model/question.model')
+const ApiResponse = require('../../../kernel/api.response')
+const TypesResponse = require('../../../kernel/types.response')
 
 const createQuestion = async (simulator_id, question, options, correct_answer) => {
     try {
         if (!simulator_id || !question || !options || !correct_answer) {
-            const error = new Error('Todos los campos son requeridos')
-            error.statusCode = 400
-            throw error
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'Todos los campos son requeridos', 400)
         }
 
         const nuevaPregunta = await Question.create({
@@ -15,13 +15,10 @@ const createQuestion = async (simulator_id, question, options, correct_answer) =
             correct_answer
         })
 
-        return {
-            message: 'Pregunta creada exitosamente',
-            question: nuevaPregunta
-        }
+        return new ApiResponse(null, nuevaPregunta, TypesResponse.SUCCESS, 'Pregunta creada exitosamente', 201)
     } catch (error) {
         console.log('Error en createQuestion:', error.message)
-        throw error
+        throw new Error(error.message || 'Error al crear la pregunta')
     }
 }
 
