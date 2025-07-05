@@ -3,7 +3,7 @@ import Login from "../modules/auth/views/Login";
 import LayoutStudent from "../components/layout/layoutStudent";
 import LayoutAdmin from "../components/layout/layoutAdmin";
 import LayoutTeacher from "../components/layout/layoutTeacher";
-import Simuladores from '../../src/modules/student/Simuladores.jsx'
+import Simuladores from '../modules/student/views/Simuladores'
 
 const AppRouter = () => {
   return (
