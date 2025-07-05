@@ -5,10 +5,10 @@ const sidebarStudent = ({ isCollapsed, setIsCollapsed }) => {
     const location = useLocation();
 
     const links = [
-        { to: "/estudiante", label: "Inicio", icon: <FaUserGraduate /> },
-        { to: "/estudiante/simuladores", label: "Simuladores", icon: <FaClipboardList /> },
-        { to: "/estudiante/sugerenciaSimulador", label: "Sugerir simulador", icon: <FaLightbulb /> },
-        { to: "/estudiante/resultados", label: "Resultados obtenidos", icon: <FaAward /> },
+        { to: "/student", label: "Inicio", icon: <FaUserGraduate /> },
+        { to: "/student/simuladores", label: "Simuladores", icon: <FaClipboardList /> },
+        { to: "/student/sugerenciaSimulador", label: "Sugerir simulador", icon: <FaLightbulb /> },
+        { to: "/student/resultados", label: "Resultados obtenidos", icon: <FaAward /> },
     ];
 
     return (
