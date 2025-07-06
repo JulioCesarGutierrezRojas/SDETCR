@@ -6,18 +6,21 @@ import LayoutTeacher from "../components/layout/layoutTeacher";
 import Simuladores from "../modules/student/views/simulador";
 import Categorias from "../modules/student/views/categorias";
 import SimuladorFormulario from "../modules/student/views/simuladorFormulario";
+import RegisterForm from "../modules/auth/views/RegisterForm";
 
 const AppRouter = () => {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/signup" element={<RegisterForm />} />
 
         <Route path="/student" element={<LayoutStudent />}>
           <Route path="simuladores" element={<Categorias />} />
           <Route path="simuladores/:categoriaID" element={<Simuladores />} />
           <Route path="formulario/:simuladorID" element={<SimuladorFormulario />} />
         </Route>
+
         <Route path="/admin" element={<LayoutAdmin />}></Route>
         <Route path="/teacher" element={<LayoutTeacher />}></Route>
       </Routes>

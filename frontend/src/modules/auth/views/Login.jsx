@@ -1,11 +1,10 @@
-import FormLogin from "../../../components/FormLogin.jsx";
+import FormLogin from "../components/FormLogin.jsx";
 
 const Login = () => {
     return (
         <>
             <FormLogin/>
         </>
-        
     )
 }
 
