@@ -5,8 +5,8 @@ const sidebarStudent = ({ isCollapsed, setIsCollapsed }) => {
     const location = useLocation();
 
     const links = [
-        { to: "/estudiante", label: "Inicio", icon: <FaUserGraduate /> },
-        { to: "/estudiante/simuladores", label: "Simuladores", icon: <FaClipboardList /> },
+        { to: "/student", label: "Perfil", icon: <FaUserGraduate /> },
+        { to: "/student/simuladores", label: "Simuladores", icon: <FaClipboardList /> },
         { to: "/estudiante/sugerenciaSimulador", label: "Sugerir simulador", icon: <FaLightbulb /> },
         { to: "/estudiante/resultados", label: "Resultados obtenidos", icon: <FaAward /> },
     ];
