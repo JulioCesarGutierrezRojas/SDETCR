@@ -1,6 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { FaVideo, FaKeyboard } from "react-icons/fa";
+// import Feedback from "../../components/Feedback.jsx";
 
 const SimuladorFormulario = () => {
     const { simuladorId } = useParams();
@@ -38,6 +39,7 @@ const SimuladorFormulario = () => {
 
     return (
         <div className="p-6 max-w-6xl mx-auto">
+             {/* <Feedback/> Descomentar después de que la pantalla este lista para añdir la lógica*/}
             <h1 className="text-2xl font-bold text-[var(--primary)] mb-4">Simulador #{simuladorId}</h1>
 
             <div className="mb-6">
