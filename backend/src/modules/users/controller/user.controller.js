@@ -62,11 +62,35 @@ const createMentorController = async (req, res) => {
 };
 
 
-routerUser.post('/createMentor', createMentorController);
-routerUser.post('/login', loginController)
-routerUser.post('/restaurar-password', restaurarPasswordController)
-routerUser.post('/send-email', enviarCodigoRecuperacionController)
-routerUser.post('/createStudent', createStudentController)
+routerUser.post('/createMentor',
+    // #swagger.tags = ['Usuarios']
+    // #swagger.summary = 'Crear un mentor'
+    // #swagger.description = 'Endpoint para crear un nuevo usuario con rol de mentor.'
+    createMentorController);
+
+routerUser.post('/login',
+    // #swagger.tags = ['Usuarios']
+    // #swagger.summary = 'Iniciar sesión'
+    // #swagger.description = 'Endpoint para autenticar usuarios en el sistema.'
+    loginController)
+
+routerUser.post('/restaurar-password',
+    // #swagger.tags = ['Usuarios']
+    // #swagger.summary = 'Restaurar contraseña'
+    // #swagger.description = 'Endpoint para restaurar la contraseña de un usuario.'
+    restaurarPasswordController)
+
+routerUser.post('/send-email',
+    // #swagger.tags = ['Usuarios']
+    // #swagger.summary = 'Enviar código de recuperación'
+    // #swagger.description = 'Endpoint para enviar un código de recuperación de contraseña por email.'
+    enviarCodigoRecuperacionController)
+
+routerUser.post('/createStudent',
+    // #swagger.tags = ['Usuarios']
+    // #swagger.summary = 'Crear un estudiante'
+    // #swagger.description = 'Endpoint para crear un nuevo usuario con rol de estudiante.'
+    createStudentController)
 
 module.exports = {
     routerUser

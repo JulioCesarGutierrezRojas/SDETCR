@@ -8,6 +8,9 @@ import Simuladores from "../modules/student/views/simulador";
 import Categorias from "../modules/student/views/categorias";
 import SimuladorFormulario from "../modules/student/views/simuladorFormulario";
 import RegisterForm from "../modules/auth/views/RegisterForm";
+import PasswordRecoveryForm from "../modules/auth/views/PasswordRecoveryForm";
+
+
 
 
 const AppRouter = () => {
@@ -16,6 +19,7 @@ const AppRouter = () => {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<RegisterForm />} />
+        <Route path="/forgot-password" element={<PasswordRecoveryForm />} />
 
         <Route path="/student" element={<LayoutStudent />}>
           <Route path="simuladores" element={<Categorias />} />

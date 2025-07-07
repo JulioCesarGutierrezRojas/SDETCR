@@ -1,0 +1,475 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "API Documentation - Simulador de Entrevistas Laborales con Retroalimentación",
+    "description": "Esta API permite a los usuarios simular entrevistas laborales y recibir retroalimentación sobre su desempeño."
+  },
+  "host": "localhost:4000",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "Simuladores",
+      "description": "Operaciones relacionadas con los simuladores de entrevistas."
+    },
+    {
+      "name": "Categorías",
+      "description": "Operaciones relacionadas con las categorías de preguntas."
+    },
+    {
+      "name": "Usuarios",
+      "description": "Operaciones relacionadas con los usuarios del sistema."
+    },
+    {
+      "name": "Respuestas",
+      "description": "Operaciones relacionadas con las respuestas a las preguntas."
+    },
+    {
+      "name": "Preguntas",
+      "description": "Operaciones relacionadas con las preguntas de las entrevistas."
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "securityDefinitions": {
+    "bearerAuth": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "Ingrese el token JWT con el formato: Bearer {token}"
+    }
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/simulators/all": {
+      "get": {
+        "tags": [
+          "Simuladores"
+        ],
+        "summary": "Obtener todos los simuladores",
+        "description": "Endpoint para obtener todos los simuladores de entrevistas disponibles en el sistema.",
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/simulators/{id}": {
+      "put": {
+        "tags": [
+          "Simuladores"
+        ],
+        "summary": "Actualizar un simulador",
+        "description": "Endpoint para actualizar la información de un simulador específico.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID del simulador a actualizar"
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/simulators/": {
+      "post": {
+        "tags": [
+          "Simuladores"
+        ],
+        "summary": "Crear un nuevo simulador",
+        "description": "Endpoint para crear un nuevo simulador de entrevistas.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "example": "any"
+                },
+                "category_id": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Simuladores"
+        ],
+        "summary": "Deshabilitar un simulador",
+        "description": "Endpoint para deshabilitar un simulador específico.",
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/categories/all": {
+      "get": {
+        "tags": [
+          "Categorías"
+        ],
+        "summary": "Obtener todas las categorías",
+        "description": "Endpoint para obtener todas las categorías de preguntas disponibles en el sistema.",
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/categories/create": {
+      "post": {
+        "tags": [
+          "Categorías"
+        ],
+        "summary": "Crear una nueva categoría",
+        "description": "Endpoint para crear una nueva categoría de preguntas.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "example": "any"
+                },
+                "description": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/categories/disable": {
+      "put": {
+        "tags": [
+          "Categorías"
+        ],
+        "summary": "Deshabilitar una categoría",
+        "description": "Endpoint para deshabilitar una categoría específica.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/users/createMentor": {
+      "post": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Crear un mentor",
+        "description": "Endpoint para crear un nuevo usuario con rol de mentor.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "example": "any"
+                },
+                "lastname": {
+                  "example": "any"
+                },
+                "email": {
+                  "example": "any"
+                },
+                "enrollment": {
+                  "example": "any"
+                },
+                "password": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/users/login": {
+      "post": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Iniciar sesión",
+        "description": "Endpoint para autenticar usuarios en el sistema.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "example": "any"
+                },
+                "password": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/users/restaurar-password": {
+      "post": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Restaurar contraseña",
+        "description": "Endpoint para restaurar la contraseña de un usuario.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "example": "any"
+                },
+                "nuevaPassword": {
+                  "example": "any"
+                },
+                "confirmarPassword": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/users/send-email": {
+      "post": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Enviar código de recuperación",
+        "description": "Endpoint para enviar un código de recuperación de contraseña por email.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/users/createStudent": {
+      "post": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Crear un estudiante",
+        "description": "Endpoint para crear un nuevo usuario con rol de estudiante.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "example": "any"
+                },
+                "lastname": {
+                  "example": "any"
+                },
+                "email": {
+                  "example": "any"
+                },
+                "category": {
+                  "example": "any"
+                },
+                "enrollment": {
+                  "example": "any"
+                },
+                "password": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/answers/save": {
+      "post": {
+        "tags": [
+          "Respuestas"
+        ],
+        "summary": "Guardar una respuesta",
+        "description": "Endpoint para guardar la respuesta de un usuario a una pregunta del simulador.",
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/questions/create": {
+      "post": {
+        "tags": [
+          "Preguntas"
+        ],
+        "summary": "Crear una nueva pregunta",
+        "description": "Endpoint para crear una nueva pregunta para un simulador específico.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "simulator_id": {
+                  "example": "any"
+                },
+                "question": {
+                  "example": "any"
+                },
+                "options": {
+                  "example": "any"
+                },
+                "correct_answer": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ]
+}

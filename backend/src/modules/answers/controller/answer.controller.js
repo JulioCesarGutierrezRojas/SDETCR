@@ -13,7 +13,12 @@ const saveAnswerController = async (req, res) => {
     }
 }
 
-routerAnswer.post('/save', saveAnswerController);
+routerAnswer.post('/save',
+    // #swagger.tags = ['Respuestas']
+    // #swagger.summary = 'Guardar una respuesta'
+    // #swagger.description = 'Endpoint para guardar la respuesta de un usuario a una pregunta del simulador.'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    saveAnswerController);
 
 module.exports = {
     routerAnswer

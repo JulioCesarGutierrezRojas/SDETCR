@@ -1,6 +1,8 @@
 process.loadEnvFile()
 const express = require('express')
 const cors = require('cors')
+const swaggerUi = require('swagger-ui-express')
+const swaggerDocumentation = require('../../docs/swagger-output.json')
 
 const { routerSimulator } = require('../modules/simulators/controller/simulator.controller')
 const { routerCategory } = require('../modules/categories/controller/category.controller')
@@ -36,6 +38,8 @@ app.use('/api/categories', routerCategory)
 app.use('/api/users', routerUser)
 app.use('/api/answers', routerAnswer)
 app.use('/api/questions', routerQuestion)
+
+app.use('/swagger-ui', swaggerUi.serve, swaggerUi.setup(swaggerDocumentation))
 
 module.exports = {
     app
