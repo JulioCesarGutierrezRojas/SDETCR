@@ -2,24 +2,37 @@
 
 import React, { useState } from "react"
 import { Link } from "react-router-dom"
+import { validateEmail } from "../../../kernel/validations"
+
 
 
 const PasswordRecoveryForm = () => {
   const [email, setEmail] = useState("")
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState("")
+
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setIsLoading(true)
+  e.preventDefault()
 
-    // Simular llamada a API
-    setTimeout(() => {
-      console.log("Solicitud de recuperación para:", email)
-      setIsSubmitted(true)
-      setIsLoading(false)
-    }, 2000)
+  const validationMessage = validateEmail(email)
+  if (validationMessage) {
+    setError(validationMessage)
+    return
   }
+
+  setError("") // Limpiar errores si todo está bien
+  setIsLoading(true)
+
+  // Simular llamada a API
+  setTimeout(() => {
+    console.log("Solicitud de recuperación para:", email)
+    setIsSubmitted(true)
+    setIsLoading(false)
+  }, 2000)
+}
+
 
   const handleChange = (e) => {
     setEmail(e.target.value)
@@ -84,6 +97,7 @@ const PasswordRecoveryForm = () => {
               placeholder="correo@ejemplo.com"
               required
             />
+            {error && <p className="text-red-600 text-sm mt-1">{error}</p>}
           </div>
 
           <button
