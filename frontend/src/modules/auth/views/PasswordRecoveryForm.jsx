@@ -4,8 +4,6 @@ import React, { useState } from "react"
 import { Link } from "react-router-dom"
 
 
-
-
 const PasswordRecoveryForm = () => {
   const [email, setEmail] = useState("")
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -65,7 +63,7 @@ const PasswordRecoveryForm = () => {
   return (
     <div className="flex min-h-screen">
       <div className="flex-1 bg-gradient-to-br from-[var(--color-lavanda-500)] to-[var(--color-nude-500)] flex items-center justify-center p-8">
-        <h1 className="text-white text-4xl font-bold"> LOGO SDETCR</h1>
+        <h1 className="text-white text-4xl font-bold"> LOGO DE SDETCR</h1>
         
       </div>
       <div className="flex-1 flex items-center justify-center bg-[var(--white)] p-6">
