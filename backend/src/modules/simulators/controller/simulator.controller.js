@@ -1,5 +1,6 @@
 const { updateSimulator, createSimulator, disableSimulator, getAllSimulators } = require('../service/simulator.service');
 const { Router } = require('express');
+const {protectedEndpoint} = require("../../../security/auth.middleware");
 const routerSimulator = Router();
 
 const updateSimulatorController = async (req, res) => {
@@ -46,13 +47,13 @@ const getAllSimulatorsController = async (req, res) => {
     }
 }
 
-routerSimulator.get('/all', [], 
+routerSimulator.get('/all', protectedEndpoint('administrador'),
     // #swagger.tags = ['Simuladores']
     // #swagger.summary = 'Obtener todos los simuladores'
     // #swagger.description = 'Endpoint para obtener todos los simuladores de entrevistas disponibles en el sistema.'
     getAllSimulatorsController)
 
-routerSimulator.put('/:id', [],
+routerSimulator.put('/:id', protectedEndpoint('administrador'),
     // #swagger.tags = ['Simuladores']
     // #swagger.summary = 'Actualizar un simulador'
     // #swagger.description = 'Endpoint para actualizar la información de un simulador específico.'
@@ -60,14 +61,14 @@ routerSimulator.put('/:id', [],
     // #swagger.security = [{ "bearerAuth": [] }]
     updateSimulatorController)
 
-routerSimulator.post('/', [],
+routerSimulator.post('/', protectedEndpoint('administrador'),
     // #swagger.tags = ['Simuladores']
     // #swagger.summary = 'Crear un nuevo simulador'
     // #swagger.description = 'Endpoint para crear un nuevo simulador de entrevistas.'
     // #swagger.security = [{ "bearerAuth": [] }]
     createSimulatorController)
 
-routerSimulator.patch('/', [],
+routerSimulator.patch('/', protectedEndpoint('administrador'),
     // #swagger.tags = ['Simuladores']
     // #swagger.summary = 'Deshabilitar un simulador'
     // #swagger.description = 'Endpoint para deshabilitar un simulador específico.'
