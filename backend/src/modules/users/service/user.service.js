@@ -1,34 +1,31 @@
 const User = require('../model/user.model')
 const { compararPassword, hashPassword } = require('../../../kernel/bcrypt')
+const { getAllCategories } = require('../../../modules/categories/service/category.service')
 const { generarToken } = require('../../../security/jwt')
 const { sendEmail } = require('../../../kernel/configEmail')
 const crypto = require('crypto')
+const ApiResponse = require('../../../kernel/api.response')
+const TypesResponse = require('../../../kernel/types.response')
 
 const login = async (email, password) => {
     try{
         if (!email || !password){
-            const error = new Error('Email y contraseña son requeridos')
-            error.statusCode = 400
-            throw error
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'Email y contraseña son requeridos', 400)
         }
 
         const user = await User.findOne({where: { email }})
         if(!user){
-            const error = new Error('Usuario no encontrado')
-            error.statusCode = 401
-            throw error
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'Usuario no encontrado', 404)
         }
 
         const valid = await compararPassword(password, user.password)
         if(!valid){
-            const error = new Error('Contraseña incorrecta')
-            error.statusCode = 401
-            throw error
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'Credenciales invalidas', 401)
         }
 
         const token = generarToken({ user_id: user.user_id, role: user.role })
 
-        return {
+        const loginData = {
             token,
             user: {
                 id: user.user_id,
@@ -37,24 +34,22 @@ const login = async (email, password) => {
                 email: user.email
             }
         }
+
+        return new ApiResponse(null, loginData, TypesResponse.SUCCESS, 'Login exitoso', 200)
     }catch(error){
         console.log('Error en login service: ', error.message)
-        throw error
+        throw new Error(error.message || 'Error al iniciar sesión')
     }
 }
 
 const restaurarPassword = async (email, nuevaPassword, confirmarPassword) => {
     try{
         if(!email || !nuevaPassword || !confirmarPassword){
-            const error = new Error('Todos los campos son requeridos')
-            error.statusCode = 400
-            throw error
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'Todos los campos son requeridos', 400)
         }
 
         if(nuevaPassword !== confirmarPassword){
-            const error = new Error('La contraseña de confirmacion no coincide con la contraseña')
-            error.statusCode = 400
-            throw error
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'La contraseña de confirmación no coincide con la contraseña', 400)
         }
 
         const user = await User.findOne({
@@ -62,42 +57,38 @@ const restaurarPassword = async (email, nuevaPassword, confirmarPassword) => {
         })
 
         if(!user){
-            const error = new Error('Usuario no encontrado')
-            error.statusCode = 404
-            throw error
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'Usuario no encontrado', 404)
         }
 
-        const nuevaPasswordHash = await hashPassword(nuevaPassword)
-
-        user.password = nuevaPasswordHash
+        user.password =  await hashPassword(nuevaPassword)
         user.reset_token = null
         user.reset_token_expiration =null
         await user.save()
 
-        return {message: 'Contraseña actualizada correctamente'}
+        return new ApiResponse(null, null, TypesResponse.SUCCESS, 'Contraseña actualizada correctamente', 200)
     }catch(error){
         console.log('Error en restaurarPassword service: ', error.message)
-        throw error
+        throw new Error(error.message || 'Error al restaurar la contraseña')
     }
 }
 
 const enviarCodigoRecuperacion = async (email) => {
     try {
         if (!email) {
-            const error = new Error('El correo es requerido')
-            error.statusCode = 400
-            throw error
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El correo es requerido', 400)
         }
 
         const user = await User.findOne({ where: { email } })
 
         if (!user) {
-            const error = new Error('Usuario no encontrado')
-            error.statusCode = 404
-            throw error
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'Usuario no encontrado', 404)
         }
 
-        const code = crypto.randomInt(100000, 999999).toString()
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+        let code = ''
+        for (let i = 0; i < 5; i++) {
+            code += characters.charAt(Math.floor(Math.random() * characters.length))
+        }
 
         user.reset_token = code
         user.reset_token_expiration = new Date(Date.now() + 15 * 60 * 1000)
@@ -105,16 +96,111 @@ const enviarCodigoRecuperacion = async (email) => {
 
         await sendEmail(user, code)
 
-        return { message: 'Código de recuperación enviado al correo' }
+        return new ApiResponse(null, null, TypesResponse.SUCCESS, 'Código de recuperación enviado al correo', 200)
     } catch (error) {
-        console.log('Error en enviarCodigoRecuperacion service:', error.message)
-        throw error
+        console.log('Error en enviarCodigoRecuperación service:', error.message)
+        throw new Error(error.message || 'Error al enviar el código de recuperación')
     }
 }
+
+const createMentor = async ({ name, lastname, email, enrollment, password }) => {
+    try {
+
+        if(!name || !lastname){
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El nombre y/o apellido son requeridos', 400);
+        }
+
+        if(!email){
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El correo electrónico es obligatorio', 400);
+        }
+
+        if(!enrollment){
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'La matrícula es obligatoria', 400);
+        }
+
+        if(!password){
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'La contraseña es obligatoria', 400);
+        }
+
+        if (await User.findOne({ where: { email } })|| await User.findOne({ where: { enrollment } })) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El correo electrónico o la matrícula ya se registraron', 409);
+        }
+
+        const encryptedPassword = await hashPassword(password);
+
+        const newMentor = await User.create({
+            name,
+            lastname,   
+            email, 
+            enrollment,
+            role: 'mentor', 
+            password: encryptedPassword,
+        });
+
+        return new ApiResponse(null, newMentor, TypesResponse.SUCCESS, 'Mentor creado exitosamente', 201);
+    } catch (error) {
+        console.error('Error en createMentor:', error);
+        throw new Error(error.message || 'No se pudo crear el mentor');
+    }
+};
+
+
+const createStudent = async ({ name, lastname, email, category, enrollment, password }) => {
+    try {
+
+        if (!name || !lastname) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El nombre y/o apellido son requeridos', 400);
+        }
+
+        if ( !email) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El correo electrónico es requerido', 400);
+        }
+
+        if (!enrollment || !password) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'La matrícula y/o contraseña son requeridas', 400);
+        }
+
+        if (!category){
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'La categoría es requerida', 400);
+        }
+
+        if (await User.findOne({ where: { email } })|| await User.findOne({ where: { enrollment } })) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El correo electrónico o la matrícula ya están en uso', 409);
+        }
+
+        
+        const categorias = await getAllCategories();
+        const categoriaValida = categorias.result.find(cat => cat.name === category.name);
+
+        if (!categoriaValida) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, `La categoría "${category.name}" no existe en la base de datos`, 400);
+        }
+
+        const encryptedPassword = await hashPassword(password);
+
+        const newStudent = await User.create({
+            name,
+            lastname,   
+            email, 
+            category: { name: categoriaValida.name },
+            enrollment,
+            role: 'estudiantes', 
+            password: encryptedPassword
+        });
+
+        return new ApiResponse(null, newStudent, TypesResponse.SUCCESS, 'Estudiante creado exitosamente', 201);
+    } catch (error) {
+        console.error('Error en createStudent:', error);
+        throw new Error(error.message || 'No se pudo crear al estudiante');
+    }
+};
+
 
 
 module.exports = {
     login,
     restaurarPassword,
-    enviarCodigoRecuperacion
+    enviarCodigoRecuperacion,
+    createStudent,
+    createMentor,
 }

@@ -1,13 +1,13 @@
 const Answer = require('../model/answer.model');
+const ApiResponse = require('../../../kernel/api.response')
+const TypesResponse = require('../../../kernel/types.response');
 
 const saveAnswer = async (data) => {
     try{
         const { student_id, question_id, answer } = data;
 
         if(!student_id || !question_id || !answer) {
-            const error = new Error('student_id, question_id, y answer son obligaorios');
-            error.status = 400;
-            throw error;
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'Faltan datos obligatorios', 400);
         }
 
         const newAnswer = await Answer.create({
@@ -19,10 +19,10 @@ const saveAnswer = async (data) => {
             date_response: new Date()
         });
 
-        return {message: 'Respuesta guardada correctamente', answer: newAnswer };
+        return new ApiResponse(null, newAnswer, TypesResponse.SUCCESS, 'Respuesta guardada correctamente', 200);
     }catch(error){
         console.log('Error en saveAnswer:',error.message);
-        throw error;
+        throw new Error(error.message || 'Error al guardar la respuesta');
     }
 }
 
