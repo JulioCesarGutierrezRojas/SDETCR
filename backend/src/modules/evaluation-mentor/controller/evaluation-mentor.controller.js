@@ -28,8 +28,23 @@ const createEvaluationController = async (req, res) => {
 }
 
 
-routerEvaluation.get('/feedback/:id', feedbacksController)
-routerEvaluation.post('/create', createEvaluationController)
+//routerEvaluation.get('/feedback/:id', feedbacksController)
+//routerEvaluation.post('/create', createEvaluationController)
+routerEvaluation.get('/feedback/:id', 
+    // #swagger.tags = ['Evaluación Mentor']
+    // #swagger.summary = 'Obtener retroalimentaciones por ID de estudiante'
+    // #swagger.description = 'Obtiene las retroalimentaciones de un estudiante por su ID'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    feedbacksController
+);
+
+routerEvaluation.post('/create',
+    // #swagger.tags = ['Evaluación Mentor']
+    // #swagger.summary = 'Crear una nueva evaluación de mentor'
+    // #swagger.description = 'Crea una nueva evaluación de mentor para un estudiante'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    createEvaluationController
+);
 
 module.exports = {
     routerEvaluation
