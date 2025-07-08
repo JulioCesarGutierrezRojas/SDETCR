@@ -33,6 +33,14 @@ const doc = {
         {
             name: 'Preguntas',
             description: 'Operaciones relacionadas con las preguntas de las entrevistas.'
+        },
+        {
+            name: 'Evaluaciones',
+            description: 'Operaciones relacionadas con las evaluaciones de los simuladores.'
+        },
+        {
+            name: 'Evaluación Mentor',
+            description: 'Operaciones relacionadas con las evaluaciones realizadas por mentores.'
         }
     ],
     securityDefinitions: {
