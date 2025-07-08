@@ -1,5 +1,6 @@
 const { createQuestion } = require('../service/question.service')
 const { Router } = require('express')
+const {protectedEndpoint} = require("../../../security/auth.middleware");
 const routerQuestion = Router()
 
 const createQuestionController = async (req, res) => {
@@ -13,7 +14,7 @@ const createQuestionController = async (req, res) => {
     }
 }
 
-routerQuestion.post('/create',
+routerQuestion.post('/create', protectedEndpoint('administrador', 'mentor'),
     // #swagger.tags = ['Preguntas']
     // #swagger.summary = 'Crear una nueva pregunta'
     // #swagger.description = 'Endpoint para crear una nueva pregunta para un simulador específico.'

@@ -1,5 +1,6 @@
 const { saveAnswer } = require('../service/answer.service');
 const { Router } = require('express');
+const {protectedEndpoint} = require("../../../security/auth.middleware");
 const routerAnswer = Router();
 
 const saveAnswerController = async (req, res) => {
@@ -13,7 +14,7 @@ const saveAnswerController = async (req, res) => {
     }
 }
 
-routerAnswer.post('/save',
+routerAnswer.post('/save', protectedEndpoint('estudiantes'),
     // #swagger.tags = ['Respuestas']
     // #swagger.summary = 'Guardar una respuesta'
     // #swagger.description = 'Endpoint para guardar la respuesta de un usuario a una pregunta del simulador.'
