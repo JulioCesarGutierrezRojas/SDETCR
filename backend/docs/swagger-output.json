@@ -469,6 +469,76 @@
           }
         ]
       }
+    },
+    "api/evaluation/create": {
+      "post": {
+        "tags": [
+          "Evaluaciones"
+        ],
+        "summary": "Crear una evaluación",
+        "description": "Endpoint para crear una evaluación de un simulador específico.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "simulator_id": {
+                  "example": "any"
+                },
+                "user_id": {
+                  "example": "any"
+                },
+                "score": {
+                  "example": 85
+                },
+                "feedback": {
+                  "example": "Buena respuesta, pero podrías mejorar tu tono de voz."
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "api/evaluation/feedback/{id}": {
+      "get": {
+        "tags": [
+          "Evaluaciones"
+        ],
+        "summary": "Obtener retroalimentación de una evaluación",
+        "description": "Endpoint para obtener la retroalimentación de una evaluación específica.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID de la evaluación"
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
     }
   },
   "security": [
