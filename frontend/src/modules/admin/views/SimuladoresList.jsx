@@ -56,7 +56,7 @@ const SimuladoresAdmin = () => {
                                 <FaTrash className="hover:text-[var(--color-rojo-error)]" />
                             </button>
 
-                            <Link to={`/admin/simuladores/${sim.id}/preguntas`}>
+                            <Link to={`/admin/simulador/${sim.id}`}>
                                 <FaChevronRight className="hover:text-[var(--color-lavanda-900)]" />
                             </Link>
                         </div>

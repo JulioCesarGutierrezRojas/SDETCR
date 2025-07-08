@@ -135,7 +135,7 @@ const PasswordRecoveryForm = () => {
 
           <p className="text-center text-[var(--color-gris-800)] mt-4 text-sm">
             ¿No tienes cuenta?{" "}
-            <Link to="/register" className="text-[var(--primary)] font-semibold hover:text-[var(--color-lavanda-900)]">
+            <Link to="/signup" className="text-[var(--primary)] font-semibold hover:text-[var(--color-lavanda-900)]">
               Regístrate aquí
             </Link>
           </p>
