@@ -46,10 +46,33 @@ const getAllSimulatorsController = async (req, res) => {
     }
 }
 
-routerSimulator.get('/all', [], getAllSimulatorsController)
-routerSimulator.put('/:id', [] ,updateSimulatorController)
-routerSimulator.post('/', [], createSimulatorController)
-routerSimulator.patch('/', [], disableSimulatorController)
+routerSimulator.get('/all', [], 
+    // #swagger.tags = ['Simuladores']
+    // #swagger.summary = 'Obtener todos los simuladores'
+    // #swagger.description = 'Endpoint para obtener todos los simuladores de entrevistas disponibles en el sistema.'
+    getAllSimulatorsController)
+
+routerSimulator.put('/:id', [],
+    // #swagger.tags = ['Simuladores']
+    // #swagger.summary = 'Actualizar un simulador'
+    // #swagger.description = 'Endpoint para actualizar la información de un simulador específico.'
+    // #swagger.parameters['id'] = { description: 'ID del simulador a actualizar', type: 'string' }
+    // #swagger.security = [{ "bearerAuth": [] }]
+    updateSimulatorController)
+
+routerSimulator.post('/', [],
+    // #swagger.tags = ['Simuladores']
+    // #swagger.summary = 'Crear un nuevo simulador'
+    // #swagger.description = 'Endpoint para crear un nuevo simulador de entrevistas.'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    createSimulatorController)
+
+routerSimulator.patch('/', [],
+    // #swagger.tags = ['Simuladores']
+    // #swagger.summary = 'Deshabilitar un simulador'
+    // #swagger.description = 'Endpoint para deshabilitar un simulador específico.'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    disableSimulatorController)
 
 module.exports = {
     routerSimulator

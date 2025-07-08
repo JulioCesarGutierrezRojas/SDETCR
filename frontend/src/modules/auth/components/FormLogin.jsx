@@ -1,6 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router';
-import styles from '../styles/form-login.module.css';
+import { Link } from 'react-router-dom';
+import styles from '../../../styles/form-login.module.css';
 
 const LoginForm = () => {
     return (

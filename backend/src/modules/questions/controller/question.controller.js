@@ -13,7 +13,12 @@ const createQuestionController = async (req, res) => {
     }
 }
 
-routerQuestion.post('/create', createQuestionController)
+routerQuestion.post('/create',
+    // #swagger.tags = ['Preguntas']
+    // #swagger.summary = 'Crear una nueva pregunta'
+    // #swagger.description = 'Endpoint para crear una nueva pregunta para un simulador específico.'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    createQuestionController)
 
 module.exports = {
     routerQuestion
