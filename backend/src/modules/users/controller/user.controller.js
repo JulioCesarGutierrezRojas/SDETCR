@@ -24,7 +24,7 @@ const restaurarPasswordController = async (req, res) =>{
     }
 }
 
-const enviarCodigoRecuperacionController = async (req, res) => {
+const enviarCodigoRecuperacionController = async ( req, res) => {
     try {
         const { email } = req.body
         const result = await enviarCodigoRecuperacion(email)

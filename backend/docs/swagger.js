@@ -41,6 +41,10 @@ const doc = {
         {
             name: 'Evaluación Mentor',
             description: 'Operaciones relacionadas con las evaluaciones realizadas por mentores.'
+        },
+        {
+            name: 'Historial',
+            description: 'Operaciones relacionadas con el historial de entrevistas de los estudiantes.'
         }
     ],
     securityDefinitions: {
