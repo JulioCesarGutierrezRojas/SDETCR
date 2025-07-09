@@ -31,6 +31,14 @@
     {
       "name": "Evaluaciones",
       "description": "Operaciones relacionadas con las evaluaciones de los simuladores."
+    },
+    {
+      "name": "Evaluación Mentor",
+      "description": "Operaciones relacionadas con las evaluaciones realizadas por mentores."
+    },
+    {
+      "name": "Historial",
+      "description": "Operaciones relacionadas con el historial de entrevistas de los estudiantes."
     }
   ],
   "schemes": [
@@ -62,7 +70,20 @@
         ],
         "summary": "Obtener todos los simuladores",
         "description": "Endpoint para obtener todos los simuladores de entrevistas disponibles en el sistema.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -83,9 +104,20 @@
             "required": true,
             "type": "string",
             "description": "ID del simulador a actualizar"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -106,6 +138,11 @@
         "description": "Endpoint para crear un nuevo simulador de entrevistas.",
         "parameters": [
           {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
             "name": "body",
             "in": "body",
             "schema": {
@@ -122,6 +159,12 @@
           }
         ],
         "responses": {
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -138,7 +181,20 @@
         ],
         "summary": "Deshabilitar un simulador",
         "description": "Endpoint para deshabilitar un simulador específico.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -173,6 +229,11 @@
         "description": "Endpoint para crear una nueva categoría de preguntas.",
         "parameters": [
           {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
             "name": "body",
             "in": "body",
             "schema": {
@@ -189,6 +250,12 @@
           }
         ],
         "responses": {
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -201,13 +268,18 @@
       }
     },
     "/api/categories/disable": {
-      "put": {
+      "patch": {
         "tags": [
           "Categorías"
         ],
         "summary": "Deshabilitar una categoría",
         "description": "Endpoint para deshabilitar una categoría específica.",
         "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
           {
             "name": "body",
             "in": "body",
@@ -222,6 +294,12 @@
           }
         ],
         "responses": {
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -416,7 +494,20 @@
         ],
         "summary": "Guardar una respuesta",
         "description": "Endpoint para guardar la respuesta de un usuario a una pregunta del simulador.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -436,6 +527,11 @@
         "summary": "Crear una nueva pregunta",
         "description": "Endpoint para crear una nueva pregunta para un simulador específico.",
         "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
           {
             "name": "body",
             "in": "body",
@@ -459,6 +555,12 @@
           }
         ],
         "responses": {
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -470,13 +572,40 @@
         ]
       }
     },
-    "api/evaluation/create": {
+    "/api/evaluation/feedback/{id}": {
+      "get": {
+        "tags": [
+          "Evaluación Mentor"
+        ],
+        "summary": "Obtener retroalimentaciones por ID de estudiante",
+        "description": "Obtiene las retroalimentaciones de un estudiante por su ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/evaluation/create": {
       "post": {
         "tags": [
-          "Evaluaciones"
+          "Evaluación Mentor"
         ],
-        "summary": "Crear una evaluación",
-        "description": "Endpoint para crear una evaluación de un simulador específico.",
+        "summary": "Crear una nueva evaluación de mentor",
+        "description": "Crea una nueva evaluación de mentor para un estudiante",
         "parameters": [
           {
             "name": "body",
@@ -484,17 +613,20 @@
             "schema": {
               "type": "object",
               "properties": {
+                "mentor_id": {
+                  "example": "any"
+                },
+                "student_id": {
+                  "example": "any"
+                },
                 "simulator_id": {
                   "example": "any"
                 },
-                "user_id": {
+                "comment": {
                   "example": "any"
                 },
-                "score": {
-                  "example": 85
-                },
-                "feedback": {
-                  "example": "Buena respuesta, pero podrías mejorar tu tono de voz."
+                "final_score": {
+                  "example": "any"
                 }
               }
             }
@@ -512,32 +644,41 @@
         ]
       }
     },
-    "api/evaluation/feedback/{id}": {
+    "/api/history/student/{studentId}": {
       "get": {
         "tags": [
-          "Evaluaciones"
+          "Historial"
         ],
-        "summary": "Obtener retroalimentación de una evaluación",
-        "description": "Endpoint para obtener la retroalimentación de una evaluación específica.",
+        "summary": "Obtener historial por estudiante",
+        "description": "Devuelve todas las entrevistas simuladas realizadas por un estudiante específico.",
         "parameters": [
           {
-            "name": "id",
+            "name": "studentId",
             "in": "path",
             "required": true,
             "type": "string",
-            "description": "ID de la evaluación"
+            "description": "ID del estudiante"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
           "500": {
             "description": "Internal Server Error"
           }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
+        }
       }
     }
   },
