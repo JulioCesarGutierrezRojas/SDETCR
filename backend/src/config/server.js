@@ -40,6 +40,7 @@ app.use('/api/users', routerUser)
 app.use('/api/answers', routerAnswer)
 app.use('/api/questions', routerQuestion)
 app.use('/api/evaluation', routerEvaluation)
+app.use('/api/history', routerHistory)
 
 app.use('/swagger-ui', swaggerUi.serve, swaggerUi.setup(swaggerDocumentation))
 
