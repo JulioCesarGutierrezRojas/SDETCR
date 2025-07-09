@@ -1,5 +1,6 @@
 const { createCategory, getAllCategories , disableCategory} = require('../service/category.service')
 const { Router } = require('express')
+const {protectedEndpoint} = require("../../../security/auth.middleware");
 const routerCategory = Router()
 
 const createCategoryController = async (req, res) => {
@@ -34,20 +35,20 @@ const disableCategoryController = async (req, res) => {
     }
 }
 
-routerCategory.get('/all', [],
+routerCategory.get('/all',
     // #swagger.tags = ['Categorías']
     // #swagger.summary = 'Obtener todas las categorías'
     // #swagger.description = 'Endpoint para obtener todas las categorías de preguntas disponibles en el sistema.'
     getAllCategoriesController)
 
-routerCategory.post('/create',
+routerCategory.post('/create', protectedEndpoint('administrador'),
     // #swagger.tags = ['Categorías']
     // #swagger.summary = 'Crear una nueva categoría'
     // #swagger.description = 'Endpoint para crear una nueva categoría de preguntas.'
     // #swagger.security = [{ "bearerAuth": [] }]
     createCategoryController)
 
-routerCategory.put('/disable',
+routerCategory.patch('/disable', protectedEndpoint('administrador'),
     // #swagger.tags = ['Categorías']
     // #swagger.summary = 'Deshabilitar una categoría'
     // #swagger.description = 'Endpoint para deshabilitar una categoría específica.'
