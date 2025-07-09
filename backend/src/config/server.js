@@ -10,6 +10,7 @@ const { routerUser } = require('../modules/users/controller/user.controller')
 const { routerAnswer } = require('../modules/answers/controller/answer.controller')
 const { routerQuestion } = require('../modules/questions/controller/question.controller')
 const { routerEvaluation } = require('../modules/evaluation-mentor/controller/evaluation-mentor.controller')
+const { routerHistory } = require('../modules/history/controller/history.controller')
 
 const app = express()
 
@@ -40,6 +41,7 @@ app.use('/api/users', routerUser)
 app.use('/api/answers', routerAnswer)
 app.use('/api/questions', routerQuestion)
 app.use('/api/evaluation', routerEvaluation)
+app.use('/api/history', routerHistory)
 
 app.use('/swagger-ui', swaggerUi.serve, swaggerUi.setup(swaggerDocumentation))
 
