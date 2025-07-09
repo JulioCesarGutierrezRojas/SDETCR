@@ -27,6 +27,14 @@
     {
       "name": "Preguntas",
       "description": "Operaciones relacionadas con las preguntas de las entrevistas."
+    },
+    {
+      "name": "Evaluaciones",
+      "description": "Operaciones relacionadas con las evaluaciones de los simuladores."
+    },
+    {
+      "name": "Evaluación Mentor",
+      "description": "Operaciones relacionadas con las evaluaciones realizadas por mentores."
     }
   ],
   "schemes": [
@@ -448,6 +456,78 @@
                   "example": "any"
                 },
                 "correct_answer": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/evaluation/feedback/{id}": {
+      "get": {
+        "tags": [
+          "Evaluación Mentor"
+        ],
+        "summary": "Obtener retroalimentaciones por ID de estudiante",
+        "description": "Obtiene las retroalimentaciones de un estudiante por su ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/evaluation/create": {
+      "post": {
+        "tags": [
+          "Evaluación Mentor"
+        ],
+        "summary": "Crear una nueva evaluación de mentor",
+        "description": "Crea una nueva evaluación de mentor para un estudiante",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "mentor_id": {
+                  "example": "any"
+                },
+                "student_id": {
+                  "example": "any"
+                },
+                "simulator_id": {
+                  "example": "any"
+                },
+                "comment": {
+                  "example": "any"
+                },
+                "final_score": {
                   "example": "any"
                 }
               }
