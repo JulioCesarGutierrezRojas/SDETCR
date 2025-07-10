@@ -34,19 +34,6 @@ routerHistory.get('/student/:studentId', protectedEndpoint('mentor', 'administra
     // #swagger.summary = 'Obtener historial por estudiante'
     // #swagger.description = 'Devuelve todas las entrevistas simuladas realizadas por un estudiante específico.'
     // #swagger.parameters['studentId'] = { description: 'ID del estudiante', in: 'path', required: true, type: 'string' }
-    // #swagger.responses[200] = {
-    //     description: 'Historial obtenido correctamente',
-    //     schema: [
-    //       {
-    //         simulator_id: "abc123",
-    //         date: "2025-07-08",
-    //         score: 87
-    //       }
-    //     ]
-    // }
-    // #swagger.responses[500] = {
-    //     description: 'Error interno del servidor'
-    // }
     getHistoriesByStudentController)
 
 routerHistory.get('/student/:studentId/simulator/:simulatorId', 
@@ -55,7 +42,7 @@ routerHistory.get('/student/:studentId/simulator/:simulatorId',
     // #swagger.description = 'Endpoint para obtener un simulador específico del historial de un estudiante.'
     getSimulatorFromHistoryController)
 
-routerHistory.get('/byStudent',getHistoriesByStudent) // Este no se quien lo hizo jeje
+//routerHistory.get('/byStudent',getHistoriesByStudent) // Este no se quien lo hizo jeje
 
 
 module.exports = {
