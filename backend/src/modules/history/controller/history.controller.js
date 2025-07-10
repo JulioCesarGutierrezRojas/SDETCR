@@ -55,7 +55,7 @@ routerHistory.get('/student/:studentId/simulator/:simulatorId',
     // #swagger.description = 'Endpoint para obtener un simulador específico del historial de un estudiante.'
     getSimulatorFromHistoryController)
 
-routerHistory.get('/byStudent',getHistoriesByStudent)
+routerHistory.get('/byStudent',getHistoriesByStudent) // Este no se quien lo hizo jeje
 
 
 module.exports = {
