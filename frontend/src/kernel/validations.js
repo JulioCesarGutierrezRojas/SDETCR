@@ -13,3 +13,18 @@ export function validateEmail(email) {
 
   return "" // Sin errores
 }
+
+export function validatePassword(password) {
+  const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/
+
+  if (!password) {
+    return "La contraseña es obligatoria."
+  }
+
+  if (!passwordRegex.test(password)) {
+    return "La contraseña debe tener mínimo 6 caracteres en total, un número y un carácter especial."
+  }
+
+  return ""
+}
+
