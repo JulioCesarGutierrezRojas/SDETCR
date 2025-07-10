@@ -195,7 +195,25 @@ const createStudent = async ({ name, lastname, email, category, enrollment, pass
     }
 };
 
+const getStudentByMentor = async (mentorId) => {
+    try{
+        if(!mentorId){
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El ID del mentor es requerido', 400);
+        }
 
+        const students = await User.findAll({
+            where: {
+                mentor_id: mentorId,
+                role: 'estudiantes'
+            },
+            attributes: ['user_id', 'name', 'lastname', 'email', 'enrollment', 'category'],
+        });
+        return new ApiResponse(null, students, TypesResponse.SUCCESS, 'Estudiantes obtenidos exitosamente', 200);
+    }catch(error){
+        console.error('Error en getStudentByMentor:', error);
+        throw new Error(error.message || 'No se pudieron obtener los estudiantes');
+    }
+}
 
 module.exports = {
     login,
@@ -203,4 +221,5 @@ module.exports = {
     enviarCodigoRecuperacion,
     createStudent,
     createMentor,
+    getStudentByMentor,
 }

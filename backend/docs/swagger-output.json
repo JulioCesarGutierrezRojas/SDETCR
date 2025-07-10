@@ -671,6 +671,34 @@
         ]
       }
     },
+    "/api/users/get-students-by-mentor/{id}": {
+      "get": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Obtener estudiantes por mentor",
+        "description": "Endpoint para obtener los estudiantes asociados a un mentor.",
+        "parameters": [
+          {
+            "name": "mentorId",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "description": "ID del mentor para filtrar los estudiantes."
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/evaluation/create": {
       "post": {
         "tags": [
@@ -714,6 +742,8 @@
             "bearerAuth": []
           }
         ]
+      }
+    },
     "/api/history/student/{studentId}": {
       "get": {
         "tags": [
