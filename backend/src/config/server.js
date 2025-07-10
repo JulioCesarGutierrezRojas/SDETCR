@@ -16,7 +16,7 @@ const app = express()
 
 app.set('port', process.env.PORT || 3001)
 
-app.use(cors({origins: '*'}))
+app.use(cors({origin: '*'}))
 app.use(express.json({limit: '50mb'}))
 
 app.get('/', (request, response) => {

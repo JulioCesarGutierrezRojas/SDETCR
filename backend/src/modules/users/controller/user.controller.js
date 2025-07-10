@@ -1,4 +1,4 @@
-const { login, restaurarPassword, enviarCodigoRecuperacion, createStudent, createMentor } = require('../service/user.service')
+const { login, restaurarPassword, enviarCodigoRecuperacion, createStudent, createMentor, getStudentByMentor } = require('../service/user.service')
 const { Router } = require('express')
 const routerUser = Router()
 
@@ -61,6 +61,17 @@ const createMentorController = async (req, res) => {
     }
 };
 
+const getStudentByMentorController = async (req, res) => {
+    try{
+        const {mentorId} = req.params;
+        const result = await getStudentByMentor(mentorId);
+        res.status(result.getStatusCode()).json(result.getResponseBody());
+    }catch(error){
+        console.error('Error en getStudentByMentorController:', error.message);
+        res.status(500).json({ message: error.message });
+    }
+}
+
 
 routerUser.post('/createMentor',
     // #swagger.tags = ['Usuarios']
@@ -91,6 +102,13 @@ routerUser.post('/createStudent',
     // #swagger.summary = 'Crear un estudiante'
     // #swagger.description = 'Endpoint para crear un nuevo usuario con rol de estudiante.'
     createStudentController)
+
+routerUser.get('/students-by-mentor/:mentorId',
+    // #swagger.tags = ['Usuarios']
+    // #swagger.summary = 'Obtener estudiantes por mentor'
+    // #swagger.description = 'Endpoint para obtener los estudiantes asociados a un mentor.'
+    // #swagger.parameters['mentorId'] = { description: 'ID del mentor para filtrar los estudiantes.' }
+    getStudentByMentorController)
 
 module.exports = {
     routerUser

@@ -1,5 +1,6 @@
 const { getSimulatorFromHistory, getHistoriesByStudent } = require('../service/history.service');
 const { Router } = require('express')
+const {protectedEndpoint} = require("../../../security/auth.middleware");
 const routerHistory = Router()
 
 const getSimulatorFromHistoryController = async (req, res) => {
@@ -28,7 +29,7 @@ const getHistoriesByStudentController = async (req, res) => {
     }
 }
 
-routerHistory.get('/student/:studentId',
+routerHistory.get('/student/:studentId', protectedEndpoint('mentor', 'administrador'),
     // #swagger.tags = ['Historial']
     // #swagger.summary = 'Obtener historial por estudiante'
     // #swagger.description = 'Devuelve todas las entrevistas simuladas realizadas por un estudiante específico.'
@@ -53,6 +54,8 @@ routerHistory.get('/student/:studentId/simulator/:simulatorId',
     // #swagger.summary = 'Obtener simulador del historial del estudiante'
     // #swagger.description = 'Endpoint para obtener un simulador específico del historial de un estudiante.'
     getSimulatorFromHistoryController)
+
+routerHistory.get('/byStudent',getHistoriesByStudent)
 
 
 module.exports = {
