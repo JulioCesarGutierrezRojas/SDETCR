@@ -1,6 +1,7 @@
 process.loadEnvFile()
 const express = require('express')
 const cors = require('cors')
+const path = require('path')
 const swaggerUi = require('swagger-ui-express')
 const swaggerDocumentation = require('../../docs/swagger-output.json')
 
@@ -43,6 +44,7 @@ app.use('/api/questions', routerQuestion)
 app.use('/api/evaluation', routerEvaluation)
 app.use('/api/history', routerHistory)
 
+app.use('/uploads', express.static(path.join(__dirname, '../..', 'data')))
 app.use('/swagger-ui', swaggerUi.serve, swaggerUi.setup(swaggerDocumentation))
 
 module.exports = {
