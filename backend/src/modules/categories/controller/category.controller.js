@@ -1,4 +1,4 @@
-const { createCategory, getAllCategories , disableCategory} = require('../service/category.service')
+const { createCategory, getAllCategories , disableCategory, updateCategory} = require('../service/category.service')
 const { Router } = require('express')
 const {protectedEndpoint} = require("../../../security/auth.middleware");
 const routerCategory = Router()
@@ -35,6 +35,17 @@ const disableCategoryController = async (req, res) => {
     }
 }
 
+const updateCategoryController = async (req, res) => {
+    try {
+        const { id, name, description } = req.body;
+        const result = await updateCategory(id, name, description);
+        return res.status(result.getStatusCode()).json(result.getResponseBody());
+    } catch (error) {
+        console.log('Error en updateCategoryController:', error.message)
+        return res.status(500).json({ message: error.message })
+    }
+}
+
 routerCategory.get('/all',
     // #swagger.tags = ['Categorías']
     // #swagger.summary = 'Obtener todas las categorías'
@@ -54,6 +65,13 @@ routerCategory.patch('/disable', protectedEndpoint('administrador'),
     // #swagger.description = 'Endpoint para deshabilitar una categoría específica.'
     // #swagger.security = [{ "bearerAuth": [] }]
     disableCategoryController)
+
+routerCategory.put('/update', 
+    // #swagger.tags = ['Categorías']
+    // #swagger.summary = 'Actualizar una categoría'
+    // #swagger.description = 'Endpoint para actualizar una categoría existente.'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    updateCategoryController)
 
 module.exports = {
     routerCategory

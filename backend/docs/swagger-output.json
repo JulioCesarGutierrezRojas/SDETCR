@@ -311,6 +311,56 @@
         ]
       }
     },
+    "/api/categories/update": {
+      "put": {
+        "tags": [
+          "Categorías"
+        ],
+        "summary": "Actualizar una categoría",
+        "description": "Endpoint para actualizar una categoría existente.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "example": "any"
+                },
+                "name": {
+                  "example": "any"
+                },
+                "description": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/users/createMentor": {
       "post": {
         "tags": [
@@ -487,6 +537,29 @@
         }
       }
     },
+    "/api/users/students-by-mentor/{mentorId}": {
+      "get": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Obtener estudiantes por mentor",
+        "description": "Endpoint para obtener los estudiantes asociados a un mentor.",
+        "parameters": [
+          {
+            "name": "mentorId",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "ID del mentor para filtrar los estudiantes."
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/api/answers/save": {
       "post": {
         "tags": [
@@ -644,106 +717,6 @@
         ]
       }
     },
-    "/api/evaluation/feedback/{id}": {
-      "get": {
-        "tags": [
-          "Evaluación Mentor"
-        ],
-        "summary": "Obtener retroalimentaciones por ID de estudiante",
-        "description": "Obtiene las retroalimentaciones de un estudiante por su ID",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/users/get-students-by-mentor/{id}": {
-      "get": {
-        "tags": [
-          "Usuarios"
-        ],
-        "summary": "Obtener estudiantes por mentor",
-        "description": "Endpoint para obtener los estudiantes asociados a un mentor.",
-        "parameters": [
-          {
-            "name": "mentorId",
-            "in": "query",
-            "required": true,
-            "type": "string",
-            "description": "ID del mentor para filtrar los estudiantes."
-          }
-        ],
-        "responses": {
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/evaluation/create": {
-      "post": {
-        "tags": [
-          "Evaluación Mentor"
-        ],
-        "summary": "Crear una nueva evaluación de mentor",
-        "description": "Crea una nueva evaluación de mentor para un estudiante",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "mentor_id": {
-                  "example": "any"
-                },
-                "student_id": {
-                  "example": "any"
-                },
-                "simulator_id": {
-                  "example": "any"
-                },
-                "comment": {
-                  "example": "any"
-                },
-                "final_score": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
     "/api/history/student/{studentId}": {
       "get": {
         "tags": [
@@ -774,6 +747,40 @@
           },
           "403": {
             "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/history/student/{studentId}/simulator/{simulatorId}": {
+      "get": {
+        "tags": [
+          "Historial"
+        ],
+        "summary": "Obtener simulador del historial del estudiante",
+        "description": "Endpoint para obtener un simulador específico del historial de un estudiante.",
+        "parameters": [
+          {
+            "name": "studentId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "simulatorId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
           },
           "500": {
             "description": "Internal Server Error"
