@@ -1,4 +1,4 @@
-const { login, restaurarPassword, enviarCodigoRecuperacion, createStudent, createMentor, getStudentByMentor } = require('../service/user.service')
+const { login, restaurarPassword, enviarCodigoRecuperacion, createStudent, createMentor, getStudentByMentor, validarTokenRecuperacion } = require('../service/user.service')
 const { Router } = require('express')
 const routerUser = Router()
 
@@ -72,6 +72,17 @@ const getStudentByMentorController = async (req, res) => {
     }
 }
 
+const validarTokenRecuperacionController = async (req, res) => {
+    try{
+        const { email, token } = req.body;
+        const result = await validarTokenRecuperacion(email, token);
+        res.status(result.getStatusCode()).json(result.getResponseBody());
+    }catch(error){
+        console.error('Error en validarTokenRecuperacionController:', error.message);
+        res.status(500).json({ message: error.message });
+    }
+}
+
 
 routerUser.post('/createMentor',
     // #swagger.tags = ['Usuarios']
@@ -109,6 +120,12 @@ routerUser.get('/students-by-mentor/:mentorId',
     // #swagger.description = 'Endpoint para obtener los estudiantes asociados a un mentor.'
     // #swagger.parameters['mentorId'] = { description: 'ID del mentor para filtrar los estudiantes.' }
     getStudentByMentorController)
+
+routerUser.post('/validate-recovery-token',
+    // #swagger.tags = ['Usuarios']
+    // #swagger.summary = 'Validar token de recuperación'
+    // #swagger.description = 'Endpoint para validar un token de recuperación de contraseña.'
+    validarTokenRecuperacionController)
 
 module.exports = {
     routerUser

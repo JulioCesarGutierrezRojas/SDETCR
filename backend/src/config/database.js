@@ -6,6 +6,7 @@ const sequelize = new Sequelize(process.env.DBNAME, process.env.DBUSER, process.
     host: process.env.DBHOST,
     dialect: 'mysql',
     logging: false,
+    timezone: '-06:00', 
     pool: {
         max: 5,
         min: 0,
