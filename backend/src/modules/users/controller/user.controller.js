@@ -74,8 +74,8 @@ const getStudentByMentorController = async (req, res) => {
 
 const validarTokenRecuperacionController = async (req, res) => {
     try{
-        const { email, token } = req.body;
-        const result = await validarTokenRecuperacion(email, token);
+        const { token } = req.body;
+        const result = await validarTokenRecuperacion(token);
         res.status(result.getStatusCode()).json(result.getResponseBody());
     }catch(error){
         console.error('Error en validarTokenRecuperacionController:', error.message);

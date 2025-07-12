@@ -215,13 +215,13 @@ const getStudentByMentor = async (mentorId) => {
     }
 }
 
-const validarTokenRecuperacion = async(email, token) => {
+const validarTokenRecuperacion = async(token) => {
     try{
-        if(!email || !token){
-            return new ApiResponse(null, null, TypesResponse.WARNING, 'El correo y el token son requeridos', 400);
+        if(!token){
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El token es requerido', 400);
         }
         
-        const user = await User.findOne({ where: {email} });
+        const user = await User.findOne({ where: {reset_token: token} });
         if(!user){
             return new ApiResponse(null, null, TypesResponse.WARNING, 'Usuario no encontrado', 404);
         }
