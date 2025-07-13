@@ -9,7 +9,7 @@ const CategoriasAdmin = () => {
         setCategorias([
             { id: 1, nombre: "Software" },
             { id: 2, nombre: "Redes" },
-            { id: 3, nombre: "Administración" },
+            { id: 3, nombre: "Administración" }
         ]);
     }, []);
 
@@ -28,42 +28,48 @@ const CategoriasAdmin = () => {
     return (
         <div className="p-4">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold text-[var(--color-lavanda-700)]">Categorías Existentes</h1>
+                <h1 className="text-2xl font-bold text-[var(--color-lavanda-700)]">Gestión de Categorías</h1>
                 <button
                     onClick={handleAgregar}
-                    className="flex items-center gap-2 px-4 py-2 rounded bg-[var(--color-lavanda-700)] text-white hover:bg-[var(--color-lavanda-500)] transition">
+                    className="flex items-center gap-2 px-4 py-2 rounded-md bg-[var(--color-lavanda-700)] text-white hover:bg-[var(--color-lavanda-500)] transition"
+                >
                     <FaPlus />
                     Agregar categoría
                 </button>
             </div>
 
-            <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {categorias.map((cat) => (
-                    <div
-                        key={cat.id}
-                        className="flex justify-between items-center bg-[var(--color-gris-300)] p-4 rounded-lg shadow hover:shadow-lg transition border border-[var(--color-gris-500)]"
-                    >
-                        <span className="text-[var(--color-gris-950)] font-medium">{cat.nombre}</span>
+                    <div key={cat.id} className="bg-[var(--color-lavanda-100)] rounded-lg shadow p-4 relative hover:shadow-lg border border-[var(--color-lavanda-200)]">
+                        <h2 className="text-xl font-semibold text-[var(--color-lavanda-700)]">{cat.nombre}</h2>
+                        <p className="text-sm text-gray-600 mt-1">Simuladores: {cat.totalSimuladores}</p>
 
-                        <div className="flex gap-4 text-[var(--color-lavanda-700)]">
-                            <button onClick={() => handleEditar(cat.id)}>
-                                <FaEdit className="hover:text-[var(--color-lavanda-900)]" />
+                        <div className="absolute top-2 right-3 flex gap-1">
+                            <button
+                                onClick={() => handleEditar(cat.id)}
+                                title="Editar"
+                                className="p-1 rounded-md hover:bg-white hover:shadow transition"
+                            >
+                                <FaEdit className="text-[var(--color-verde-feedback)]" />
                             </button>
-
-                            <button onClick={() => handleEliminar(cat.id)}>
-                                <FaTrash className="hover:text-[var(--color-rojo-error)]" />
+                            <button
+                                onClick={() => handleEliminar(cat.id)}
+                                title="Eliminar"
+                                className="p-1 rounded-md hover:bg-white hover:shadow transition"
+                            >
+                                <FaTrash className="text-[var(--color-rojo-error)]" />
                             </button>
-
-                            <Link to={`/admin/categoria/${cat.id}`}>
-                                <FaChevronRight className="hover:text-[var(--color-lavanda-900)]" />
-                            </Link>
                         </div>
+
+                        <Link to={`/admin/categoria/${cat.id}`} className="mt-4 block text-right text-sm text-[var(--color-lavanda-700)] hover:underline">
+                            Ver simuladores
+                        </Link>
                     </div>
                 ))}
             </div>
 
         </div>
     );
-}
+};
 
 export default CategoriasAdmin;

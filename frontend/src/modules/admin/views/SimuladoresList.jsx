@@ -30,36 +30,51 @@ const SimuladoresAdmin = () => {
         <div className="p-4">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold text-[var(--color-lavanda-700)]">Simuladores</h1>
-                <button
-                    onClick={handleAgregar}
-                    className="flex items-center gap-2 px-4 py-2 rounded bg-[var(--color-lavanda-700)] text-white hover:bg-[var(--color-lavanda-500)] transition"
-                >
-                    <FaPlus />
-                    Agregar simulador
-                </button>
+                <div className="flex gap-4">
+                    <Link to={`/admin/categorias`}
+                        className="px-4 py-2 rounded-md bg-[var(--color-gris-800)] text-white font-semibold hover:bg-[var(--color-gris-600)] transition">
+                        Atrás
+                    </Link>
+                    <button
+                        onClick={handleAgregar}
+                        className="flex items-center gap-2 px-4 py-2 rounded-md bg-[var(--color-lavanda-700)] text-white hover:bg-[var(--color-lavanda-500)] transition">
+                        <FaPlus />
+                        Agregar simulador
+                    </button>
+                </div>
             </div>
 
             <div className="space-y-4">
                 {simuladores.map((sim) => (
                     <div
                         key={sim.id}
-                        className="flex justify-between items-center bg-[var(--color-gris-300)] p-4 rounded-lg shadow hover:shadow-lg transition border border-[var(--color-gris-500)]"
+                        className="flex justify-between items-center bg-[var(--color-gris-200)] p-4 rounded-lg shadow hover:shadow-md transition border border-[var(--color-gris-400)]"
                     >
                         <span className="text-[var(--color-gris-950)] font-medium">{sim.nombre}</span>
 
-                        <div className="flex gap-4 text-[var(--color-lavanda-700)]">
-                            <button onClick={() => handleEditar(sim.id)}>
-                                <FaEdit className="hover:text-[var(--color-lavanda-900)]" />
+                        <div className="flex gap-2">
+                            <button
+                                onClick={() => handleEditar(sim.id)}
+                                className="p-2 rounded-full text-[var(--color-lavanda-700)] hover:bg-[var(--color-lavanda-100)] hover:shadow-md transition"
+                                title="Editar simulador">
+                                <FaEdit />
                             </button>
 
-                            <button onClick={() => handleEliminar(sim.id)}>
-                                <FaTrash className="hover:text-[var(--color-rojo-error)]" />
+                            <button
+                                onClick={() => handleEliminar(sim.id)}
+                                className="p-2 rounded-full text-[var(--color-lavanda-700)] hover:bg-[var(--color-lavanda-100)] hover:shadow-md transition"
+                                title="Eliminar simulador">
+                                <FaTrash />
                             </button>
 
-                            <Link to={`/admin/simulador/${sim.id}`}>
-                                <FaChevronRight className="hover:text-[var(--color-lavanda-900)]" />
+                            <Link
+                                to={`/admin/simulador/${sim.id}`}
+                                className="p-2 rounded-full text-[var(--color-lavanda-700)] hover:bg-[var(--color-lavanda-100)] hover:shadow-md transition"
+                                title="Ver preguntas">
+                                <FaChevronRight />
                             </Link>
                         </div>
+
                     </div>
                 ))}
             </div>

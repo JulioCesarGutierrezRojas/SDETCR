@@ -81,10 +81,8 @@ const SimuladorFormAdmin = () => {
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-bold text-[var(--color-lavanda-700)]">Preguntas del Simulador</h1>
                 <div className="flex gap-4">
-                    <Link
-                        to={`/admin/categoria/${simuladorId}`}
-                        className="px-4 py-2 rounded-md bg-[var(--color-gris-800)] text-white font-semibold hover:bg-[var(--color-nude-600)] transition"
-                    >
+                    <Link to={`/admin/categoria/${simuladorId}`}
+                        className="px-4 py-2 rounded-md bg-[var(--color-gris-800)] text-white font-semibold hover:bg-[var(--color-gris-600)] transition">
                         Atrás
                     </Link>
                     <button
@@ -101,52 +99,56 @@ const SimuladorFormAdmin = () => {
                 </div>
             </div>
 
-            {preguntas.map((preg, index) => (
-                <div key={preg.id} className="bg-[var(--color-lavanda-300)] p-4 rounded-lg shadow space-y-3">
-                    <div className="flex justify-between items-center">
-                        <input
-                            type="text"
-                            className="w-full p-2 border rounded text-[var(--color-gris-900)] bg-[var(--white)]"
-                            value={preg.texto}
-                            onChange={(e) => handleTextoPregunta(preg.id, e.target.value)}
-                            placeholder={`Pregunta ${index + 1}`}
-                        />
-                        <button onClick={() => handleEliminarPregunta(preg.id)} className="text-[var(--color-rojo-error)] ml-4">
-                            <FaTrash />
-                        </button>
-                    </div>
+            <div className="max-h-[600px] overflow-y-auto space-y-4 pr-2 p-5 bg-[var(--color-gris-300)] rounded-lg">
+                {preguntas.map((preg, index) => (
+                    <div key={preg.id} className="bg-[var(--color-lavanda-300)] p-4 rounded-lg shadow space-y-3 border border-[var(--color-lavanda-500)]">
+                        <div className="flex justify-between items-center">
+                            <input
+                                type="text"
+                                className="w-full p-2 border border-[var(--color-lavanda-500)] rounded text-[var(--color-gris-900)] bg-[var(--white)] focus:outline-none focus:ring-1 focus:ring-[var(--color-lavanda-500)] focus:border-[var(--color-lavanda-500)]"
+                                value={preg.texto}
+                                onChange={(e) => handleTextoPregunta(preg.id, e.target.value)}
+                                placeholder={`Pregunta ${index + 1}`}
+                            />
 
-                    <div className="space-y-2">
-                        {preg.respuestas.map((resp, idx) => (
-                            <div key={idx} className="flex gap-2 items-center">
-                                <input
-                                    type="radio"
-                                    name={`correcta-${preg.id}`}
-                                    checked={preg.correcta === idx}
-                                    onChange={() => handleSeleccionarCorrecta(preg.id, idx)}
-                                />
-                                <input
-                                    type="text"
-                                    className="flex-grow p-2 border border-[var(--color-lavanda-400)] rounded bg-[var(--white)]"
-                                    value={resp}
-                                    onChange={(e) => handleEditarRespuesta(preg.id, idx, e.target.value)}
-                                    placeholder={`Respuesta ${idx + 1}`}
-                                />
-                                <button onClick={() => handleEliminarRespuesta(preg.id, idx)} className="text-[var(--color-rojo-error)]">
-                                    <FaTimes />
-                                </button>
-                            </div>
-                        ))}
+                            <button onClick={() => handleEliminarPregunta(preg.id)} className="text-[var(--color-rojo-error)] ml-2 p-2 rounded-full hover:bg-[var(--color-rojo-claro)] hover:shadow-md transition duration-200">
+                                <FaTrash />
+                            </button>
+                        </div>
 
-                        <button
-                            onClick={() => handleAgregarRespuesta(preg.id)}
-                            className="text-sm text-[var(--color-lavanda-700)] hover:text-[var(--color-lavanda-900)]"
-                        >
-                            <FaPlus className="inline mr-1" /> Agregar respuesta
-                        </button>
+                        <div className="space-y-2">
+                            {preg.respuestas.map((resp, idx) => (
+                                <div key={idx} className="flex gap-2 items-center">
+                                    <input
+                                        type="radio"
+                                        name={`correcta-${preg.id}`}
+                                        checked={preg.correcta === idx}
+                                        onChange={() => handleSeleccionarCorrecta(preg.id, idx)}
+                                    />
+                                    <input
+                                        type="text"
+                                        className="flex-grow p-2 border border-[var(--color-lavanda-500)] rounded bg-[var(--white)] focus:outline-none focus:ring-1 focus:ring-[var(--color-lavanda-500)] focus:border-[var(--color-lavanda-500)]"
+                                        value={resp}
+                                        onChange={(e) => handleEditarRespuesta(preg.id, idx, e.target.value)}
+                                        placeholder={`Respuesta ${idx + 1}`}
+                                    />
+
+                                    <button onClick={() => handleEliminarRespuesta(preg.id, idx)} className="text-[var(--color-gris-900)] p-2 rounded-full hover:bg-[var(--color-gris-300)] hover:shadow-md transition duration-200">
+                                        <FaTimes />
+                                    </button>
+                                </div>
+                            ))}
+
+                            <button
+                                onClick={() => handleAgregarRespuesta(preg.id)}
+                                className="text-sm text-[var(--color-lavanda-700)] hover:text-[var(--color-lavanda-900)]"
+                            >
+                                <FaPlus className="inline mr-1" /> Agregar respuesta
+                            </button>
+                        </div>
                     </div>
-                </div>
-            ))}
+                ))}
+            </div>
         </div>
     );
 };
