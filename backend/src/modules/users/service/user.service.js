@@ -215,6 +215,33 @@ const getStudentByMentor = async (mentorId) => {
     }
 }
 
+const validarTokenRecuperacion = async(token) => {
+    try{
+        if(!token){
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El token es requerido', 400);
+        }
+        
+        const user = await User.findOne({ where: {reset_token: token} });
+        if(!user){
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'Usuario no encontrado', 404);
+        }
+
+        if(user.reset_token !== token){
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'Token de recuperación inválido', 400);
+        }
+
+        if(user.reset_token_expiration < new Date()){
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El token de recuperación ha expirado', 400);
+        }
+
+        return new ApiResponse(null, {user:{email: user.email}}, TypesResponse.SUCCESS, 'Token de recuperación válido', 200);
+
+    }catch(error){
+        console.error('Error en validarTokenRecuperacion:', error.message);
+        throw new Error(error.message || 'Error al validar el token de recuperación');
+    }
+}
+
 module.exports = {
     login,
     restaurarPassword,
@@ -222,4 +249,5 @@ module.exports = {
     createStudent,
     createMentor,
     getStudentByMentor,
+    validarTokenRecuperacion,
 }
