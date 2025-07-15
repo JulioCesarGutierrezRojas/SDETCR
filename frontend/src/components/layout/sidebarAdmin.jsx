@@ -6,8 +6,7 @@ const sidebarAdmin = ({ isCollapsed, setIsCollapsed }) => {
 
     const links = [
         { to: "/admin", label: "Usuarios", icon: <FaUserGraduate /> },
-        { to: "/admin/simuladores", label: "Gestión de simuladores", icon: <FaClipboardList /> },
-        { to: "/estudiante/categorias", label: "Categorias", icon: <FaBriefcase /> },
+        { to: "/admin/categorias", label: "Gestión de Categorias", icon: <FaBriefcase /> },
         { to: "/admin/sugerenciaSimulador", label: "Revisión de sugerencias", icon: <FaLightbulb /> },
         { to: "/admin/historial", label: "Historial de simuladores", icon: <FaHistory /> },
     ];
