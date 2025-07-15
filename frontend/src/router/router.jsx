@@ -9,8 +9,9 @@ import Categorias from "../modules/student/views/categorias";
 import SimuladorFormulario from "../modules/student/views/simuladorFormulario";
 import RegisterForm from "../modules/auth/views/RegisterForm";
 import PasswordRecoveryForm from "../modules/auth/views/PasswordRecoveryForm";
-
-
+import CategoriasAdmin from "../modules/admin/views/CategoriasList";
+import SimuladoresAdmin from "../modules/admin/views/SimuladoresList";
+import SimuladorFormAdmin from "../modules/admin/views/SimuladorForm";
 
 
 const AppRouter = () => {
@@ -27,10 +28,14 @@ const AppRouter = () => {
           <Route path="formulario/:simuladorID" element={<SimuladorFormulario />} />
         </Route>
 
-        <Route path="/admin" element={<LayoutAdmin />}></Route>
+        <Route path="/admin" element={<LayoutAdmin />}>
+          <Route path="categorias" element={<CategoriasAdmin />} />
+          <Route path="categoria/:simuladorID" element={<SimuladoresAdmin />} />
+          <Route path="simulador/:formularioID" element={<SimuladorFormAdmin />} />
+        </Route>
+
         <Route path="/teacher" element={<LayoutTeacher />}>
-         <Route path="videos" element={<Videos />} />
-        
+          <Route path="videos" element={<Videos />} />
         </Route>
   
       </Routes>

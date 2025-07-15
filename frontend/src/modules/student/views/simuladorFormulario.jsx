@@ -39,7 +39,7 @@ const SimuladorFormulario = () => {
 
     return (
         <div className="p-6 max-w-6xl mx-auto">
-             {/* <Feedback/> Descomentar después de que la pantalla este lista para añdir la lógica*/}
+            {/* <Feedback/> Descomentar después de que la pantalla este lista para añdir la lógica*/}
             <h1 className="text-2xl font-bold text-[var(--primary)] mb-4">Simulador #{simuladorId}</h1>
 
             <div className="mb-6">
@@ -108,9 +108,16 @@ const SimuladorFormulario = () => {
                             type="file"
                             accept="video/*"
                             onChange={(e) => setVideo(e.target.files[0])}
-                            className="hidden" 
+                            className="hidden"
                         />
                     </label>
+                    
+                    <button
+                        onClick={() => alert("Funcionalidad de grabación próximamente")}
+                        className="mt-5 w-full py-3 px-4 bg-[var(--color-lavanda-600)] hover:bg-[var(--color-lavanda-700)] text-white rounded-md font-semibold transition text-center"
+                    >
+                        Grabar video desde aquí
+                    </button>
                 </div>
 
             )}
@@ -118,11 +125,11 @@ const SimuladorFormulario = () => {
             <div className="mt-6 flex gap-4">
                 <button
                     onClick={handleSubmit}
-                    className="px-6 py-3 rounded-md bg-[var(--color-gris-800)] text-white font-semibold hover:bg-[var(--color-nude-600)] transition">
+                    className="px-6 py-3 rounded-md bg-[var(--color-gris-800)] text-white font-semibold hover:bg-[var(--color-gris-600)] transition">
                     Enviar respuestas
                 </button>
 
-                <Link to={`/student/simuladores/${simuladorId}`} className="px-6 py-3 rounded-md bg-[var(--color-gris-800)] text-white font-semibold hover:bg-[var(--color-nude-600)] transition text-center">
+                <Link to={`/student/simuladores/${simuladorId}`} className="px-6 py-3 rounded-md bg-[var(--color-gris-800)] text-white font-semibold hover:bg-[var(--color-gris-600)] transition text-center">
                     Atrás
                 </Link>
             </div>

@@ -737,6 +737,42 @@
           }
         }
       }
+    },
+    "/api/users/validate-recovery-token": {
+      "post": {
+        "tags": [
+          "Usuarios"
+        ],
+        "summary": "Validar token de recuperación",
+        "description": "Endpoint para validar un token de recuperación de contraseña.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "example": "any"
+                },
+                "token": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
     }
   },
   "security": [
