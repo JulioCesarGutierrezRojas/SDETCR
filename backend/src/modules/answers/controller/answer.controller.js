@@ -8,8 +8,7 @@ const saveAnswerController = async (req, res) => {
     try {
         const { student_id, answers } = req.body;
         const files = req.files
-        console.log('BODY:', req.body);
-        console.log('FILES:', req.files);
+    
 
 
         let answerArray;
