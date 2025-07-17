@@ -25,7 +25,8 @@ const saveAnswers = async (student_id, answerList, files = []) => {
                 if (!files[indexVideo]) {
                     return new ApiResponse(null, null, TypesResponse.WARNING, 'Falta el archivo de video para la respuesta', 400);
                 }
-                url_video = `data/${files[indexVideo].filename}`;
+
+                url_video = files[indexVideo].filename;
                 indexVideo++;
             } else if (type_response === 'texto') {
                 textAnswer = answer;

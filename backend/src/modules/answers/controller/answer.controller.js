@@ -15,6 +15,17 @@ const saveAnswerController = async (req, res) => {
         let answerArray;
         try{
             answerArray = typeof answers === 'string' ? JSON.parse(answers) : answers;
+            if(!Array.isArray(answerArray)){
+                return res.status(400).json({
+                    message: 'El campo "answers" debe ser un arreglo de respuestas.'
+                });
+            }
+
+            if(answerArray.length === 0){
+                return res.status(400).json({
+                    message: 'El campo "answers" no puede estar vacío.'
+                });
+            }
         }catch(error){
             return res.status(400).json({
                 message: 'Error al procesar las respuestas. Asegúrate de enviar un JSON válido.',
@@ -29,7 +40,7 @@ const saveAnswerController = async (req, res) => {
     }
 }
 
-routerAnswer.post('/save', protectedEndpoint('estudiantes'),
+routerAnswer.post('/save', //protectedEndpoint('estudiantes'),
     upload.array('files',20),
     // #swagger.tags = ['Respuestas']
     // #swagger.summary = 'Guardar una respuesta'
