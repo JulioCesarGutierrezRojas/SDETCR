@@ -98,7 +98,7 @@ const RegisterForm = () => {
                         Registrarse
                     </button>
 
-                    <p className="text-center text-[var(--color-gris-800)] mt-4">
+                    <p className="text-center text-[var(--color-gris-800)] mt-4 text-sm">
                         ¿Ya tienes cuenta?{' '}
                         <Link to="/" className="text-[var(--primary)] font-semibold hover:text-[var(--color-lavanda-900)]">
                             Inicia sesión

@@ -61,3 +61,13 @@
   --tomato: var(--color-lavanda-500);         /* Lavanda tono medio */
   --blue: var(--color-gris-400);              /* Gris claro para bordes */
 }
+
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-lavanda-600);
+  border-radius: 4px;
+}
