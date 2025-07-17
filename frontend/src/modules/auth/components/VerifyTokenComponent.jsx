@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import styles from '../../../styles/form-login.module.css';
 import { validateRecoveryToken } from '../adapters/auth.controller';
+import {showErrorToast, showSuccessToast} from "../../../kernel/alerts.js";
+import Loader from "../../../components/Loader.jsx";
 
 const VerifyTokenComponent = ({ email, token, setToken, setStep, setUser }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -22,8 +24,10 @@ const VerifyTokenComponent = ({ email, token, setToken, setStep, setUser }) => {
       if (response.type !== 'SUCCESS') throw new Error(response.text);
       
       setUser(response.result);
+      showSuccessToast({title: 'Token verificado', text: response.text, timer: 3000});
       setStep(3);
     } catch (e) {
+      showErrorToast({title: 'Error al verificar el token', text: e.message, timer: 3000});
       setError(e.message);
     } finally {
       setIsLoading(false);
@@ -32,6 +36,7 @@ const VerifyTokenComponent = ({ email, token, setToken, setStep, setUser }) => {
 
   return (
     <>
+      <Loader isLoading={isLoading} />
       <form onSubmit={handleSubmit}>
         <div className="mb-3 text-center">
           <p className="text-muted">

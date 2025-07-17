@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styles from '../../../styles/form-login.module.css';
 import { validateEmail } from '../../../kernel/validations';
 import { sendPasswordRecoveryEmail } from '../adapters/auth.controller';
+import {showErrorToast, showSuccessToast} from "../../../kernel/alerts.js";
 
 const RequestEmailComponent = ({ email, setEmail, setStep }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -22,8 +23,10 @@ const RequestEmailComponent = ({ email, setEmail, setStep }) => {
     try {
       const response = await sendPasswordRecoveryEmail(email);
       if (response.type !== 'SUCCESS') throw new Error(response.text);
+      showSuccessToast({title: 'Envío exitoso', text: response.text, timer: 3000});
       setStep(2);
     } catch (e) {
+      showErrorToast({title: 'Error al enviar el correo', text: e.message, timer: 3000});
       setError(e.message);
     } finally {
       setIsLoading(false);

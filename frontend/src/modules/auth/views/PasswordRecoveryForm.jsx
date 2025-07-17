@@ -26,7 +26,7 @@ const PasswordRecoveryForm = () => {
             marginBottom: '1rem',
             color: 'var(--secondary)'
           }}>SDETCR</h1>
-          <p style={{fontSize: '1.2rem'}}>Sistema de Evaluación Docente</p>
+          <p style={{fontSize: '1.2rem'}}>Simulador de Entrevistas Laborales con Retroalimentación</p>
         </div>
       </div>
 
