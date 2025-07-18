@@ -2,6 +2,53 @@ const Simulator = require('../model/simulator.model');
 const Category = require('../../categories/model/category.model');
 const ApiResponse = require('../../../kernel/api.response')
 const TypesResponse = require('../../../kernel/types.response');
+const sequelize = require('../../../config/database');
+const Answer = require('../../answers/model/answer.model');
+const History = require('../../history/model/history.model');
+const User = require('../../users/model/user.model');
+
+const saveSimulatorResult = async ({ student_id, simulator_id, final_score, answers }) => {
+    const transaction = await sequelize.transaction();
+    try {
+        const history = await History.create({
+            student_id,
+            simulator_id,
+            final_score,
+            date_realized: new Date()
+        }, { transaction });
+
+        const answerRecords = [];
+        for (const ans of answers) {
+            const { question_id, type_response, answer, url_video } = ans;
+            if (!question_id || !type_response) {
+                await transaction.rollback();
+                return new ApiResponse(null, null, TypesResponse.WARNING, 'Faltan datos en una respuesta', 400);
+            }
+
+            const newAnswer = await Answer.create({
+                student_id,
+                question_id,
+                type_response,
+                answer: type_response === 'texto' ? answer : null,
+                url_video: type_response === 'video' ? url_video : null,
+                date_response: new Date()
+            }, { transaction });
+
+            answerRecords.push(newAnswer);
+        }
+
+        await transaction.commit();
+        return new ApiResponse({
+            history_id: history.history_id,
+            answers_saved: answerRecords.length
+        }, null, TypesResponse.SUCCESS, 'Historial y respuestas guardados con éxito', 201);
+    } catch (error) {
+        await transaction.rollback();
+        console.error('Error en saveSimulatorResult service:', error);
+        return new ApiResponse(null, null, TypesResponse.ERROR, 'Error interno del servidor', 500);
+    }
+}
+
 
 const updateSimulator = async (id, data) => {
     try{
@@ -85,4 +132,5 @@ module.exports = {
     createSimulator,
     disableSimulator,
     getAllSimulators,
+    saveSimulatorResult
 }
