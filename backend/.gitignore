@@ -3,3 +3,9 @@
 .env
 uploads/
 /docs/swagger-output.json
+*.mp4
+*.mkv
+*.avi
+*.mov
+*.wmv
+*.flv
