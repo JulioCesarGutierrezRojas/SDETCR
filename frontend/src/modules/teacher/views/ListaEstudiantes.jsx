@@ -106,12 +106,12 @@ const ListaEstudiantes = () => {
                     <table className="min-w-full divide-y divide-[var(--blue)]">
                         <thead className="bg-[var(--color-lavanda-200)]">
                             <tr>
-                                <th className="px-4 py-3 text-left text-sm font-medium text-[var(--color-lavanda-950)]">Nombre</th>
+                                <th className="px-4 py-3 text-left text-sm font-medium text-[var(--color-lavanda-950)] rounded-tl-lg">Nombre</th>
                                 <th className="px-4 py-3 text-left text-sm font-medium text-[var(--color-lavanda-950)]">Correo</th>
                                 <th className="px-4 py-3 text-center text-sm font-medium text-[var(--color-lavanda-950)]">Matrícula</th>
                                 <th className="px-4 py-3 text-center text-sm font-medium text-[var(--color-lavanda-950)]">Categorías</th>
                                 <th className="px-4 py-3 text-center text-sm font-medium text-[var(--color-lavanda-950)]">Simuladores</th>
-                                <th className="px-4 py-3 text-center text-sm font-medium text-[var(--color-lavanda-950)]">Acciones</th>
+                                <th className="px-4 py-3 text-center text-sm font-medium text-[var(--color-lavanda-950)] rounded-tr-lg">Acciones</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-[var(--color-gris-300)] bg-[var(--white)]">
