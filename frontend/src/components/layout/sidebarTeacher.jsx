@@ -5,8 +5,8 @@ const sidebarTeacher = ({ isCollapsed, setIsCollapsed }) => {
     const location = useLocation();
 
     const links = [
-        { to: "/mentor", label: "Estudiantes asignados", icon: <FaUserGraduate /> },
-        { to: "/mentor/simuladores", label: "Entrevistas por evaluar", icon: <FaClipboardList /> },
+        { to: "/teacher/estudiantesSeleccionados", label: "Estudiantes seleccionados", icon: <FaUserGraduate /> },
+        { to: "/teacher", label: "Entrevistas por evaluar", icon: <FaClipboardList /> },
         { to: "/mentor/comentarios", label: "Comentarios enviados", icon: <FaComments /> },
         { to: "/teacher/videos", label: "Entrevistas por visualizar", icon: <FaVideo /> },
     ];

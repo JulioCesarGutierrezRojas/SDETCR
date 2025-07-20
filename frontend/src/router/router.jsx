@@ -12,6 +12,7 @@ import PasswordRecoveryForm from "../modules/auth/views/PasswordRecoveryForm";
 import CategoriasAdmin from "../modules/admin/views/CategoriasList";
 import SimuladoresAdmin from "../modules/admin/views/SimuladoresList";
 import SimuladorFormAdmin from "../modules/admin/views/SimuladorForm";
+import ListaEstudiantes from "../modules/teacher/views/ListaEstudiantes";
 
 
 const AppRouter = () => {
@@ -35,6 +36,7 @@ const AppRouter = () => {
         </Route>
 
         <Route path="/teacher" element={<LayoutTeacher />}>
+          <Route path="estudiantesSeleccionados" element={<ListaEstudiantes />} />
           <Route path="videos" element={<Videos />} />
         </Route>
   
