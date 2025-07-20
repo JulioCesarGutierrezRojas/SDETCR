@@ -40,7 +40,7 @@ const CategoriasAdmin = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {categorias.map((cat) => (
-                    <div key={cat.id} className="bg-[var(--color-lavanda-100)] rounded-lg shadow p-4 relative hover:shadow-lg border border-[var(--color-lavanda-200)]">
+                    <div key={cat.id} className="bg-[var(--color-lavanda-200)] rounded-lg shadow p-4 relative hover:shadow-lg border border-[var(--color-lavanda-300)]">
                         <h2 className="text-xl font-semibold text-[var(--color-lavanda-700)]">{cat.nombre}</h2>
                         <p className="text-sm text-gray-600 mt-1">Simuladores: {cat.totalSimuladores}</p>
 
