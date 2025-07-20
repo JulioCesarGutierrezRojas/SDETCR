@@ -1,11 +1,11 @@
 import { Link, useLocation } from "react-router-dom";
-import { FaUserGraduate, FaClipboardList, FaLightbulb, FaChevronLeft, FaChevronRight, FaBriefcase, FaHistory } from "react-icons/fa";
+import { FaUsers, FaLightbulb, FaChevronLeft, FaChevronRight, FaBriefcase, FaHistory } from "react-icons/fa";
 
 const sidebarAdmin = ({ isCollapsed, setIsCollapsed }) => {
     const location = useLocation();
 
     const links = [
-        { to: "/admin", label: "Usuarios", icon: <FaUserGraduate /> },
+        { to: "/admin/usuarios", label: "Usuarios", icon: <FaUsers /> },
         { to: "/admin/categorias", label: "Gestión de Categorias", icon: <FaBriefcase /> },
         { to: "/admin/sugerenciaSimulador", label: "Revisión de sugerencias", icon: <FaLightbulb /> },
         { to: "/admin/historial", label: "Historial de simuladores", icon: <FaHistory /> },
