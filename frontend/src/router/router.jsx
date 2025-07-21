@@ -14,6 +14,7 @@ import SimuladoresAdmin from "../modules/admin/views/SimuladoresList";
 import SimuladorFormAdmin from "../modules/admin/views/SimuladorForm";
 import ListaEstudiantes from "../modules/teacher/views/ListaEstudiantes";
 import UsuariosList from "../modules/admin/views/UsuariosList";
+import EvaluarEstudiante from "../modules/teacher/views/EvaluarEstudiante";
 
 
 const AppRouter = () => {
@@ -39,6 +40,7 @@ const AppRouter = () => {
 
         <Route path="/teacher" element={<LayoutTeacher />}>
           <Route path="estudiantesSeleccionados" element={<ListaEstudiantes />} />
+          <Route path="evaluarEstudiante" element={<EvaluarEstudiante />} />
           <Route path="videos" element={<Videos />} />
         </Route>
   
