@@ -6,9 +6,9 @@ const Categorias = () => {
 
     useEffect(() => {
         setCategorias([
-            { id: 1, nombre: "Desarrollo de Software" },
-            { id: 2, nombre: "Manejo de Redes" },
-            { id: 3, nombre: "Administración de Empresas" }
+            { id: 1, nombre: "Desarrollo de Software", descripcion: "Entrevistas sobre desarrollo junior", estatus: "activo" },
+            { id: 2, nombre: "Manejo de Redes", descripcion: "Entrevistas sobre configuración y redes", estatus: "inactivo" },
+            { id: 3, nombre: "Administración de Empresas", descripcion: "Entrevistas sobre gestión empresarial", estatus: "activo" }
         ]);
     }, []);
 
@@ -19,10 +19,18 @@ const Categorias = () => {
                 {categorias.map((cat) => (
                     <Link
                         key={cat.id}
-                        to={`/student/simuladores/${cat.id}`}
-                        className="bg-[var(--color-lavanda-200)] hover:bg-[var(--color-lavanda-300)] text-[var(--color-lavanda-900)] font-medium py-6 px-4 rounded-xl shadow-md transition text-center"
+                        to={cat.estatus === "activo" ? `/student/simuladores/${cat.id}` : "#"}
+                        className={`text-center rounded-xl shadow-md transition px-4 py-6
+                        ${cat.estatus === "activo"
+                                ? "bg-[var(--color-lavanda-200)] hover:bg-[var(--color-lavanda-300)] text-[var(--color-lavanda-900)] cursor-pointer"
+                                : "bg-[var(--color-gris-200)] text-[var(--color-gris-700)] cursor-not-allowed"}`}
                     >
-                        {cat.nombre}
+                        <p className="text-lg font-semibold mb-1">{cat.nombre}</p>
+                        <p className="text-sm mb-2">{cat.descripcion}</p>
+                        <span className={`inline-block text-xs font-semibold px-4 py-1 rounded-full border border-[var(--color-gris-500)]
+                        ${cat.estatus === "activo" ? "bg-green-100 text-green-700" : "bg-gray-300 text-gray-700"}`}>
+                            {cat.estatus === "activo" ? "Activa" : "Inactiva"}
+                        </span>
                     </Link>
                 ))}
             </div>
