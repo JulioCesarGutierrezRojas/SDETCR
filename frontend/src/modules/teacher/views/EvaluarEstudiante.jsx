@@ -97,7 +97,7 @@ const EvaluarEstudiante = () => {
                     </div>
 
                     {expandedCategory === cat.id && (
-                        <div className="border-t border-[var(--color-gris-200)] divide-y divide-[var(--color-gris-300)] mt-3">
+                        <div className="border-t border-[var(--color-gris-200)] divide-y divide-[var(--color-gris-300)] bg-[var(--color-verde-claro)] mt-3">
                             {cat.simuladores.map((sim) => (
                                 <div key={sim.id} className="flex items-center justify-between px-4 py-3">
                                     <div>
@@ -105,7 +105,8 @@ const EvaluarEstudiante = () => {
                                         <p className="text-sm text-[var(--color-gris-700)]">{sim.fecha}</p>
                                         <p className="text-sm mt-2 font-semibold text-[var(--color-lavanda-800)]">Calificación: {sim.calificacion}</p>
                                     </div>
-                                    <button className="bg-[var(--color-lavanda-600)] hover:bg-[var(--color-lavanda-700)] text-white text-sm font-semibold px-4 py-2 rounded-xl">
+                                    <button className="bg-[var(--color-lavanda-600)] hover:bg-[var(--color-lavanda-700)] text-white text-sm font-semibold px-4 py-2 rounded-xl"
+                                    onClick={() => navigate(`/teacher/evaluarSimulador`)}>
                                         Retroalimentar
                                     </button>
                                 </div>
