@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { FaEdit, FaTrash, FaPlus, FaAngleLeft, FaAngleRight } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const UsuariosList = () => {
+    const navigate = useNavigate();
     const [usuarios, setUsuarios] = useState([
         {
             user_id: 1,
@@ -85,16 +87,24 @@ const UsuariosList = () => {
                                     <td className="py-2 px-4">{usuario.enrollment}</td>
                                     <td className="py-2 px-4 flex justify-center gap-2">
                                         <button
-                                            className="p-2 rounded-full transition duration-200 text-[var(--color-lavanda-700)] hover:text-white hover:bg-[var(--color-lavanda-600)] shadow hover:shadow-md"
+                                            className="p-2.5 border border-[var(--color-gris-300)] rounded-full transition duration-200 text-[var(--color-lavanda-700)] hover:text-white hover:bg-[var(--color-lavanda-600)] shadow hover:shadow-md"
+                                            title="Editar usuario"
                                             onClick={() => handleEditar(usuario)}
                                         >
                                             <FaEdit />
                                         </button>
                                         <button
-                                            className="p-2 rounded-full transition duration-200 text-[var(--color-lavanda-700)] hover:text-white hover:bg-[var(--color-lavanda-600)] shadow hover:shadow-md"
+                                            className="p-2.5 border border-[var(--color-gris-300)] rounded-full transition duration-200 text-[var(--color-lavanda-700)] hover:text-white hover:bg-[var(--color-lavanda-600)] shadow hover:shadow-md"
+                                            title="Eliminar usuario"
                                             onClick={() => handleEliminar(usuario.user_id)}
                                         >
                                             <FaTrash />
+                                        </button>
+                                        <button
+                                            className="p-2 border border-[var(--color-gris-300)] rounded-full transition duration-200 text-[var(--color-lavanda-800)] hover:text-white hover:bg-[var(--color-lavanda-600)] shadow hover:shadow-md"
+                                            onClick={() => navigate(`/admin/`)}
+                                        >
+                                            Ver historial
                                         </button>
                                     </td>
                                 </tr>
