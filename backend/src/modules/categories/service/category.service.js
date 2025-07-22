@@ -51,8 +51,30 @@ const disableCategory = async (name) => {
     }
 }
 
+const updateCategory = async (id, name, description) => {
+    try {
+        const category = await Category.findOne({
+            where: { category_id: id }
+        });
+
+        if (!category) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'Categoria no encontrada', 404)
+        }
+
+        category.name = name;
+        category.description = description;
+        await category.save();
+
+        return new ApiResponse(null, null, TypesResponse.SUCCESS, 'Categoria actualizada con exito', 200)
+    } catch (error) {
+        console.log('Error al actualizar una categoria:', error.message)
+        throw new Error(error.message || 'Error al actualizar la categoría')
+    }
+}
+
 module.exports = {
     getAllCategories,
     createCategory,
     disableCategory,
+    updateCategory
 }

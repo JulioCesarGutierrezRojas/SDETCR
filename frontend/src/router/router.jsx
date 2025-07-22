@@ -12,6 +12,8 @@ import PasswordRecoveryForm from "../modules/auth/views/PasswordRecoveryForm";
 import CategoriasAdmin from "../modules/admin/views/CategoriasList";
 import SimuladoresAdmin from "../modules/admin/views/SimuladoresList";
 import SimuladorFormAdmin from "../modules/admin/views/SimuladorForm";
+import ListaEstudiantes from "../modules/teacher/views/ListaEstudiantes";
+import UsuariosList from "../modules/admin/views/UsuariosList";
 
 
 const AppRouter = () => {
@@ -29,12 +31,14 @@ const AppRouter = () => {
         </Route>
 
         <Route path="/admin" element={<LayoutAdmin />}>
+          <Route path="usuarios" element={<UsuariosList />} />
           <Route path="categorias" element={<CategoriasAdmin />} />
           <Route path="categoria/:simuladorID" element={<SimuladoresAdmin />} />
           <Route path="simulador/:formularioID" element={<SimuladorFormAdmin />} />
         </Route>
 
         <Route path="/teacher" element={<LayoutTeacher />}>
+          <Route path="estudiantesSeleccionados" element={<ListaEstudiantes />} />
           <Route path="videos" element={<Videos />} />
         </Route>
   

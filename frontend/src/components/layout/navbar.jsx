@@ -2,7 +2,7 @@ import { IoMdNotifications } from "react-icons/io";
 
 const Navbar = () => {
     return (
-        <header className="h-14 bg-[var(--white)] border-b border-[var(--blue)] flex items-center justify-between px-6 shadow-sm">
+        <header className="h-14 bg-[var(--color-blanco)] border-b border-[var(--blue)] flex items-center justify-between px-6 shadow-sm">
             <h2 className="text-[var(--primary)] font-semibold text-lg">
                 Simulador de Entrevistas con Retroalimentación
             </h2>
