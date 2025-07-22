@@ -23,13 +23,13 @@ const EvaluarEstudiante = () => {
                     id: 1,
                     titulo: 'Entrevista para Desarrollador React',
                     fecha: '14/07/2024',
-                    calificacion: '8.5/10',
+                    calificacion: '8',
                 },
                 {
                     id: 2,
                     titulo: 'Entrevista HTML/CSS',
                     fecha: '12/07/2024',
-                    calificacion: '9/10',
+                    calificacion: '9',
                 },
             ],
         },
@@ -42,13 +42,13 @@ const EvaluarEstudiante = () => {
                     id: 3,
                     titulo: 'Entrevista de Comportamiento 1',
                     fecha: '10/07/2024',
-                    calificacion: '8.8/10',
+                    calificacion: '7',
                 },
                 {
                     id: 4,
                     titulo: 'Entrevista de Contabilidad',
                     fecha: '10/07/2024',
-                    calificacion: '8.8/10',
+                    calificacion: '8',
                 },
             ],
         },
@@ -99,14 +99,20 @@ const EvaluarEstudiante = () => {
                     {expandedCategory === cat.id && (
                         <div className="border-t border-[var(--color-gris-200)] divide-y divide-[var(--color-gris-300)] bg-[var(--color-verde-claro)] mt-3">
                             {cat.simuladores.map((sim) => (
-                                <div key={sim.id} className="flex items-center justify-between px-4 py-3">
+                                <div key={sim.id}
+                                    className={`flex items-center justify-between px-4 py-3
+                                        ${sim.calificacion > 7
+                                            ? 'bg-[var(--color-verde-claro)]'
+                                            : 'bg-[var(--color-rojo-claro)]'}`}
+                                    >
+
                                     <div>
                                         <p className="font-medium text-[var(--color-gris-900)]">Simulador {sim.titulo}</p>
                                         <p className="text-sm text-[var(--color-gris-700)]">{sim.fecha}</p>
-                                        <p className="text-sm mt-2 font-semibold text-[var(--color-lavanda-800)]">Calificación: {sim.calificacion}</p>
+                                        <p className="text-sm mt-2 font-semibold text-[var(--color-lavanda-800)]">Calificación: {sim.calificacion}/10</p>
                                     </div>
                                     <button className="bg-[var(--color-lavanda-600)] hover:bg-[var(--color-lavanda-700)] text-white text-sm font-semibold px-4 py-2 rounded-xl"
-                                    onClick={() => navigate(`/teacher/evaluarSimulador`)}>
+                                        onClick={() => navigate(`/teacher/evaluarSimulador`)}>
                                         Retroalimentar
                                     </button>
                                 </div>
