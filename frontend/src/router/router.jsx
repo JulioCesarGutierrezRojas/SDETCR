@@ -18,6 +18,8 @@ import EvaluarEstudiante from "../modules/teacher/views/EvaluarEstudiante";
 import EvaluarSimulador from "../modules/teacher/views/EvaluarSimulador";
 import ResultadosEstudiante from "../modules/student/views/resultados";
 import ComentariosEstudiante from "../modules/student/views/comentariosList";
+import StudentSimulators from "../modules/admin/views/simulatorHistory/StudentSimulators";
+import SimulatorDetail from "../modules/admin/views/simulatorHistory/SimulatorDetail";
 
 
 const AppRouter = () => {
@@ -41,6 +43,8 @@ const AppRouter = () => {
           <Route path="categorias" element={<CategoriasAdmin />} />
           <Route path="categoria/:simuladorID" element={<SimuladoresAdmin />} />
           <Route path="simulador/:formularioID" element={<SimuladorFormAdmin />} />
+          <Route path="historial/:estudianteID" element={<StudentSimulators />} />
+          <Route path="historial/:estudianteID/:simuladorID" element={<SimulatorDetail />} />
         </Route>
 
         <Route path="/teacher" element={<LayoutTeacher />}>
