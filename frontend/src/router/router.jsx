@@ -14,6 +14,8 @@ import SimuladoresAdmin from "../modules/admin/views/SimuladoresList";
 import SimuladorFormAdmin from "../modules/admin/views/SimuladorForm";
 import ListaEstudiantes from "../modules/teacher/views/ListaEstudiantes";
 import UsuariosList from "../modules/admin/views/UsuariosList";
+import StudentSimulators from "../modules/admin/views/simulatorHistory/StudentSimulators";
+import SimulatorDetail from "../modules/admin/views/simulatorHistory/SimulatorDetail";
 
 
 const AppRouter = () => {
@@ -35,6 +37,8 @@ const AppRouter = () => {
           <Route path="categorias" element={<CategoriasAdmin />} />
           <Route path="categoria/:simuladorID" element={<SimuladoresAdmin />} />
           <Route path="simulador/:formularioID" element={<SimuladorFormAdmin />} />
+          <Route path="historial/:estudianteID" element={<StudentSimulators />} />
+          <Route path="historial/:estudianteID/:simuladorID" element={<SimulatorDetail />} />
         </Route>
 
         <Route path="/teacher" element={<LayoutTeacher />}>

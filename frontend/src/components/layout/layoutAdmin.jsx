@@ -2,6 +2,9 @@ import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Navbar from "./navbar";
 import SidebarAdmin from "./sidebarAdmin";
+import StudentSimulators from "../../modules/admin/views/simulatorHistory/StudentSimulators";
+import SimulatorDetail from "../../modules/admin/views/simulatorHistory/SimulatorDetail";
+
 
 const LayoutAdmin = () => {
     const [isCollapsed, setIsCollapsed] = useState(false);
