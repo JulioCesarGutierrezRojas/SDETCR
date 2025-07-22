@@ -11,8 +11,8 @@ const ListaEstudiantes = () => {
             nombre: "Juan Perwez",
             correo: "juan.perez@universidad.edu.mx",
             matricula: "20230001",
-            categorias: "20230001",
-            simuladores: "20230001",
+            categorias: "2",
+            simuladores: "4",
         }
     ]);
 
@@ -106,7 +106,7 @@ const ListaEstudiantes = () => {
                                     <td className="px-4 py-3 text-center">
                                         <button
                                             className="bg-[var(--color-lavanda-700)] text-white text-sm font-semibold px-4 py-1 rounded-full hover:bg-[var(--color-lavanda-900)] transition duration-300 shadow"
-                                            onClick={() => navigate(`/evaluar/${estudiante.matricula}`)}
+                                            onClick={() => navigate(`/teacher/evaluarEstudiante`)}
                                         >
                                             Evaluar
                                         </button>
