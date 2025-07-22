@@ -105,7 +105,7 @@ const ResultadosEstudiante = () => {
                                         <p className="text-sm mt-2 font-semibold text-[var(--color-lavanda-800)]">Calificación: {sim.calificacion}/10</p>
                                     </div>
                                     <button className="bg-[var(--color-lavanda-600)] hover:bg-[var(--color-lavanda-800)] text-white text-sm font-semibold px-4 py-2 rounded-xl"
-                                        onClick={() => navigate(`/student/`)}>
+                                        onClick={() => navigate(`/student/comentariosObtenidos`)}>
                                         Ver comentarios
                                     </button>
                                 </div>
