@@ -1,16 +1,19 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import { CSSTransition } from 'react-transition-group';
 import '../styles/loader.css';
 
 const Loader = ({ isLoading }) => {
+  const nodeRef = useRef(null);
+
   return (
     <CSSTransition
       in={isLoading}
       timeout={400}
       classNames="fade"
       unmountOnExit
+      nodeRef={nodeRef}
     >
-      <div className="loader-overlay">
+      <div className="loader-overlay" ref={nodeRef}>
         <div className="loader-container">
           <div role="status">
             <svg
