@@ -1,4 +1,6 @@
 // MOCK DATA (puedes moverlo a otro archivo luego)
+import { useParams, useLocation, Link } from "react-router-dom";
+
 const mockSimuladores = [
   {
     id: "sim1",
@@ -17,15 +19,18 @@ const mockSimuladores = [
 ];
 
 //1. Lista de simuladores del estudiante
-import { useParams, Link } from "react-router-dom";
+
 
 export const StudentSimulators = () => {
   const { estudianteID } = useParams();
+  //para mostrar el nombre
+  const location = useLocation();
+  const { nombre, apellido } = location.state || {};
 
   return (
     <div>
       <h1 className="text-2xl font-semibold mb-4 text-[var(--primary)]">
-        Historial de Simuladores del Estudiante #{estudianteID}
+        Historial de Simuladores de {nombre ? `${nombre} ${apellido}` : `Estudiante #${estudianteID}`}
       </h1>
       <div className="grid gap-4">
         {mockSimuladores.map((sim) => (

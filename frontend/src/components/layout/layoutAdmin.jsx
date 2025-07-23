@@ -14,7 +14,7 @@ const LayoutAdmin = () => {
             <SidebarAdmin isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
             <div className="flex-1 flex flex-col">
                 <Navbar />
-                <main className="p-4 overflow-y-auto">
+                <main className="flex-1 overflow-y-auto p-4">
                     <Outlet />
                 </main>
             </div>
