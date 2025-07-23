@@ -5,10 +5,10 @@ const sidebarStudent = ({ isCollapsed, setIsCollapsed }) => {
     const location = useLocation();
 
     const links = [
-        { to: "/student", label: "Perfil", icon: <FaUserGraduate /> },
-        { to: "/student/simuladores", label: "Simuladores", icon: <FaClipboardList /> },
-        { to: "/", label: "Sugerir simulador", icon: <FaLightbulb /> },
+        { to: "/student/simuladores", label: "Categorias", icon: <FaClipboardList /> },
+        { to: "/student/sugerencia", label: "Sugerir simulador", icon: <FaLightbulb /> },
         { to: "/student/resultadosObtenidos", label: "Resultados obtenidos", icon: <FaAward /> },
+        { to: "/student", label: "Perfil", icon: <FaUserGraduate /> },
     ];
 
     return (
@@ -26,7 +26,9 @@ const sidebarStudent = ({ isCollapsed, setIsCollapsed }) => {
                     <Link
                         key={to}
                         to={to}
-                        className={`flex items-center gap-2 p-2 rounded-md transition bg-[var(--color-lavanda-600)] hover:bg-[var(--color-lavanda-500)] ${location.pathname === to ? "bg-[var(--color-lavanda-600)]" : ""}`}>
+                        className={
+                            `flex items-center gap-2 p-2 rounded-md transition bg-[var(--color-lavanda-600)] hover:bg-[var(--color-lavanda-500)]
+                            ${location.pathname === to ? "bg-[var(--color-lavanda-600)] border-l-4 border-white font-semibold" : ""}`}>
                         {icon}
                         {!isCollapsed && <span>{label}</span>}
                     </Link>

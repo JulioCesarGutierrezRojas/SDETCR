@@ -26,7 +26,10 @@ const sidebarAdmin = ({ isCollapsed, setIsCollapsed }) => {
                     <Link
                         key={to}
                         to={to}
-                        className={`flex items-center gap-2 p-2 rounded-md transition bg-[var(--color-lavanda-600)] hover:bg-[var(--color-lavanda-500)] ${location.pathname === to ? "bg-[var(--color-lavanda-600)]" : ""}`}>
+                        className={
+                            `flex items-center gap-2 p-2 rounded-md transition bg-[var(--color-lavanda-600)] hover:bg-[var(--color-lavanda-500)] 
+                            ${location.pathname === to ? "bg-[var(--color-lavanda-600)] border-l-4 border-white font-semibold" : ""}`
+                        }>
                         {icon}
                         {!isCollapsed && <span>{label}</span>}
                     </Link>

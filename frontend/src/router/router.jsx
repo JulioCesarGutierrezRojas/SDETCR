@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router";
+import { Navigate } from "react-router";
 import Login from "../modules/auth/views/Login";
 import LayoutStudent from "../components/layout/layoutStudent";
 import LayoutAdmin from "../components/layout/layoutAdmin";
@@ -31,6 +32,7 @@ const AppRouter = () => {
         <Route path="/forgot-password" element={<PasswordRecoveryForm />} />
 
         <Route path="/student" element={<LayoutStudent />}>
+          <Route index element={<Navigate to="simuladores" replace />} />
           <Route path="simuladores" element={<Categorias />} />
           <Route path="simuladores/:categoriaID" element={<Simuladores />} />
           <Route path="formulario/:simuladorID" element={<SimuladorFormulario />} />
@@ -39,6 +41,7 @@ const AppRouter = () => {
         </Route>
 
         <Route path="/admin" element={<LayoutAdmin />}>
+          <Route index element={<Navigate to="usuarios" replace />} />
           <Route path="usuarios" element={<UsuariosList />} />
           <Route path="categorias" element={<CategoriasAdmin />} />
           <Route path="categoria/:simuladorID" element={<SimuladoresAdmin />} />

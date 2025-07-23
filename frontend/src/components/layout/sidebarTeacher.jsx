@@ -6,10 +6,10 @@ const sidebarTeacher = ({ isCollapsed, setIsCollapsed }) => {
 
     const links = [
         { to: "/teacher", label: "Seleccionar estudiantes", icon: <FaUserPlus /> },
-        { to: "/teacher/estudiantesSeleccionados", label: "Estudiantes seleccionados", icon: <FaUserGraduate /> },
-        { to: "/teacher", label: "Entrevistas por evaluar", icon: <FaClipboardList /> },
+        { to: "/teacher/estudiantesSeleccionados", label: "Estudiantes asignados", icon: <FaUserGraduate /> },
+        { to: "/teacher/entrevistas", label: "Entrevistas por evaluar", icon: <FaClipboardList /> },
         { to: "/teacher/videos", label: "Entrevistas por visualizar", icon: <FaVideo /> },
-        { to: "/teacher", label: "Comentarios enviados", icon: <FaComments /> },
+        { to: "/teacher/comentarios", label: "Comentarios enviados", icon: <FaComments /> },
     ];
 
     return (
@@ -27,7 +27,9 @@ const sidebarTeacher = ({ isCollapsed, setIsCollapsed }) => {
                     <Link
                         key={to}
                         to={to}
-                        className={`flex items-center gap-2 p-2 rounded-md transition bg-[var(--color-lavanda-600)] hover:bg-[var(--color-lavanda-500)] ${location.pathname === to ? "bg-[var(--color-lavanda-600)]" : ""}`}>
+                        className={
+                            `flex items-center gap-2 p-2 rounded-md transition bg-[var(--color-lavanda-600)] hover:bg-[var(--color-lavanda-500)] 
+                            ${location.pathname === to ? "bg-[var(--color-lavanda-600)] border-l-4 border-white font-semibold" : ""}`}>
                         {icon}
                         {!isCollapsed && <span>{label}</span>}
                     </Link>
