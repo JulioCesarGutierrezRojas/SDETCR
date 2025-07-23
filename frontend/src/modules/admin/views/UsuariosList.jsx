@@ -102,7 +102,10 @@ const UsuariosList = () => {
                                         </button>
                                         <button
                                             className="p-2 border border-[var(--color-gris-300)] rounded-full transition duration-200 text-[var(--color-lavanda-800)] hover:text-white hover:bg-[var(--color-lavanda-600)] shadow hover:shadow-md"
-                                            onClick={() => navigate(`/admin/`)}
+                                            onClick={() => navigate(`/admin/historial/${usuario.user_id}`, {
+                                                state: { nombre: usuario.name, apellido: usuario.lastname }, //para que se muestre el nombre del estudiante
+                                            })
+                                        }
                                         >
                                             Ver historial
                                         </button>

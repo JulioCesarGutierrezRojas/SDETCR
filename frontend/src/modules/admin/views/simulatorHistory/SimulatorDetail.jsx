@@ -33,7 +33,7 @@ export const SimulatorDetail = () => {
   const { estudianteID, simuladorID } = useParams();
 
   return (
-    <div>
+    <div className="w-full max-w-5xl mx-auto">
       <h1 className="text-2xl font-semibold text-[var(--primary)] mb-6">
         Detalle del Simulador #{simuladorID}
       </h1>
@@ -43,7 +43,6 @@ export const SimulatorDetail = () => {
           <div key={pregunta.id} className="bg-gray-100 p-4 rounded-lg shadow-sm">
             <p className="font-semibold mb-4">{index + 1}. {pregunta.texto}</p>
 
-            {/* Opción múltiple */}
             {pregunta.tipo === "opcion_multiple" && (
               <div className="space-y-2">
                 {pregunta.opciones.map((opcion, idx) => (
@@ -60,7 +59,6 @@ export const SimulatorDetail = () => {
               </div>
             )}
 
-            {/* Video */}
             {pregunta.tipo === "video" && (
               <video
                 src={pregunta.respuesta}
@@ -78,5 +76,6 @@ export const SimulatorDetail = () => {
     </div>
   );
 };
+
 
 export default SimulatorDetail;
