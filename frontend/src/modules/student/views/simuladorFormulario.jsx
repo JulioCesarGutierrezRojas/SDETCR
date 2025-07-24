@@ -38,7 +38,7 @@ const SimuladorFormulario = () => {
     };
 
     return (
-        <div className="p-6 max-w-6xl mx-auto">
+        <div className="p-4 max-w-6xl mx-auto">
             {/* <Feedback/> Descomentar después de que la pantalla este lista para añdir la lógica*/}
             <h1 className="text-2xl font-bold text-[var(--primary)] mb-4">Simulador #{simuladorId}</h1>
 
@@ -71,29 +71,42 @@ const SimuladorFormulario = () => {
             </div>
 
             {modo === "texto" ? (
-                <div className="space-y-6">
-                    {preguntas.map((preg) => (
-                        <div key={preg.id} className="bg-[var(--color-gris-100)] p-4 rounded shadow">
-                            <p className="font-semibold text-[var(--color-gris-950)]">{preg.texto}</p>
-                            <div className="mt-2 space-y-1">
-                                {preg.opciones.map((op, i) => (
-                                    <label key={i} className="block">
-                                        <input
-                                            type="radio"
-                                            name={`pregunta-${preg.id}`}
-                                            value={op}
-                                            onChange={() => handleRespuesta(preg.id, op)}
-                                            className="mr-2"
-                                        />
-                                        {op}
-                                    </label>
-                                ))}
+                <>
+                    <div className="space-y-6 max-h-[500px] overflow-y-auto pr-2">
+                        {preguntas.map((preg, index) => (
+                            <div
+                                key={preg.id}
+                                className="bg-white border border-[var(--color-lavanda-500)] rounded-lg shadow-md p-5 space-y-4"
+                            >
+                                <h2 className="font-semibold text-[var(--color-lavanda-800)]">
+                                    Pregunta {index + 1}
+                                </h2>
+
+                                <p className="text-[var(--color-gris-900)] border border-[var(--color-lavanda-400)] rounded-md p-1">
+                                    {preg.texto}
+                                </p>
+
+                                <div className="space-y-3">
+                                    {preg.opciones.map((op, i) => (
+                                        <label key={i} className="flex items-center gap-3">
+                                            <input
+                                                type="radio"
+                                                name={`pregunta-${preg.id}`}
+                                                value={op}
+                                                checked={respuestas[preg.id] === op}
+                                                onChange={() => handleRespuesta(preg.id, op)}
+                                                className="w-5 h-5 accent-green-600"
+                                            />
+                                            <span className="text-[var(--color-gris-900)]">{op}</span>
+                                        </label>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
+                </>
             ) : (
-                <div className="bg-[var(--color-gris-100)] p-4 rounded-md shadow">
+                <div className="bg-[var(--color-blanco)] border border-[var(--color-gris-500)] p-4 rounded-md shadow-md">
                     <label className="block mb-2 font-medium text-[var(--color-gris-900)] text-center">
                         Sube tu video de respuesta
                     </label>
@@ -111,7 +124,7 @@ const SimuladorFormulario = () => {
                             className="hidden"
                         />
                     </label>
-                    
+
                     <button
                         onClick={() => alert("Funcionalidad de grabación próximamente")}
                         className="mt-5 w-full py-3 px-4 bg-[var(--color-lavanda-600)] hover:bg-[var(--color-lavanda-700)] text-white rounded-md font-semibold transition text-center"
@@ -125,11 +138,11 @@ const SimuladorFormulario = () => {
             <div className="mt-6 flex gap-4">
                 <button
                     onClick={handleSubmit}
-                    className="px-6 py-3 rounded-md bg-[var(--color-gris-800)] text-white font-semibold hover:bg-[var(--color-gris-600)] transition">
+                    className="px-6 py-3 rounded-md bg-[var(--color-gris-700)] text-white font-semibold hover:bg-[var(--color-gris-900)] transition">
                     Enviar respuestas
                 </button>
 
-                <Link to={`/student/simuladores/${simuladorId}`} className="px-6 py-3 rounded-md bg-[var(--color-gris-800)] text-white font-semibold hover:bg-[var(--color-gris-600)] transition text-center">
+                <Link to={`/student/simuladores/${simuladorId}`} className="px-6 py-3 rounded-md bg-[var(--color-gris-700)] text-white font-semibold hover:bg-[var(--color-gris-900)] transition text-center">
                     Atrás
                 </Link>
             </div>
