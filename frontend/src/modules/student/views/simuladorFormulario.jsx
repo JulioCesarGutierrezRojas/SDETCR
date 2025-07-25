@@ -24,7 +24,6 @@ const SimuladorFormulario = () => {
         ];
 
         setPreguntas(preguntasMock);
-
         // Inicializar con texto por defecto
         const modosIniciales = {};
         preguntasMock.forEach(p => modosIniciales[p.id] = "texto");
@@ -49,18 +48,18 @@ const SimuladorFormulario = () => {
 
     return (
         <div className="p-4 max-w-6xl mx-auto">
-            <h1 className="text-2xl font-bold text-[var(--primary)] mb-6">Simulador #{simuladorId}</h1>
+            <h1 className="text-2xl font-bold text-[var(--color-lavanda-700)] mb-6">Simulador #{simuladorId}</h1>
 
-            <div className="space-y-6 max-h-[500px] overflow-y-auto pr-2">
+            <div className="space-y-8 max-h-[560px] overflow-y-auto pr-2">
                 {preguntas.map((preg, index) => (
-                    <div key={preg.id} className="bg-white border border-[var(--color-lavanda-500)] rounded-lg shadow-md p-5 space-y-4">
+                    <div key={preg.id} className="bg-white border border-2 border-[var(--color-lavanda-500)] rounded-lg shadow-md p-5 space-y-4">
                         <h2 className="font-semibold text-[var(--color-lavanda-800)]">Pregunta {index + 1}</h2>
-                        <p className="text-[var(--color-gris-900)]">{preg.texto}</p>
+                        <p className="text-[var(--color-gris-900)] border border-[var(--color-lavanda-600)] rounded-md py-2 pl-2">{preg.texto}</p>
 
-                        <div className="flex gap-4">
+                        <div className="flex gap-3">
                             <button
                                 onClick={() => handleModoPregunta(preg.id, "texto")}
-                                className={`px-4 py-2 rounded-md font-semibold 
+                                className={`px-4 py-1 rounded-md font-semibold 
                                 ${modosPorPregunta[preg.id] === "texto"
                                         ? "bg-[var(--color-lavanda-600)] text-white"
                                         : "bg-[var(--color-gris-200)] text-[var(--color-gris-900)]"
@@ -69,7 +68,7 @@ const SimuladorFormulario = () => {
                             </button>
                             <button
                                 onClick={() => handleModoPregunta(preg.id, "video")}
-                                className={`px-4 py-2 rounded-md font-semibold 
+                                className={`px-4 py-1 rounded-md font-semibold 
                                 ${modosPorPregunta[preg.id] === "video"
                                         ? "bg-[var(--color-lavanda-600)] text-white"
                                         : "bg-[var(--color-gris-200)] text-[var(--color-gris-900)]"
@@ -98,7 +97,7 @@ const SimuladorFormulario = () => {
                             <div className="mt-3 space-y-3">
                                 <label className="flex flex-col items-center justify-center py-6 border-2 border-dashed rounded-md cursor-pointer hover:border-[var(--color-lavanda-600)] border-[var(--color-gris-500)]">
                                     <FaVideo className="text-[var(--color-lavanda-600)] text-3xl mb-2" />
-                                    <span className="text-[var(--color-gris-700)] text-sm">Haz clic para subir video</span>
+                                    <span className="text-[var(--color-gris-700)] text-sm">Haz clic para subir video o arrastralo aquí</span>
                                     <input
                                         type="file"
                                         accept="video/*"
@@ -119,15 +118,15 @@ const SimuladorFormulario = () => {
                 ))}
             </div>
 
-            <div className="mt-6 flex gap-4">
+            <div className="mt-10 flex gap-4">
                 <button
                     onClick={handleSubmit}
-                    className="px-6 py-3 rounded-md bg-[var(--color-gris-700)] text-white font-semibold hover:bg-[var(--color-gris-900)] transition"
+                    className="px-4 py-2 rounded-md bg-[var(--color-lavanda-700)] text-white font-semibold hover:bg-[var(--color-verde-feedback)] transition"
                 >
                     Enviar respuestas
                 </button>
 
-                <Link to={`/student/simuladores/${simuladorId}`} className="px-6 py-3 rounded-md bg-[var(--color-gris-700)] text-white font-semibold hover:bg-[var(--color-gris-900)] transition text-center">
+                <Link to={`/student/simuladores/${simuladorId}`} className="px-5 py-2 rounded-md bg-[var(--color-gris-700)] text-white font-semibold hover:bg-[var(--color-gris-900)] transition text-center">
                     Atrás
                 </Link>
             </div>
