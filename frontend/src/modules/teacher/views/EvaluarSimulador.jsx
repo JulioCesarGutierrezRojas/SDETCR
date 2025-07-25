@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 const EvaluarSimulador = () => {
     const navigate = useNavigate();
     const [comentario, setComentario] = useState("");
+    const [calificacion, setCalificacion] = useState('');
 
     const preguntas = [
         {
@@ -60,7 +61,7 @@ const EvaluarSimulador = () => {
             <div className="bg-white border border-[var(--color-gris-300)] rounded-xl shadow-md p-5 mb-6">
                 <h3 className="text-xl font-semibold text-[var(--color-gris-900)] mb-4">Respuestas del simulador</h3>
 
-                <div className="space-y-5 max-h-70 overflow-y-auto pr-2">
+                <div className="space-y-5 max-h-60 overflow-y-auto pr-2">
                     {preguntas.map((pregunta, index) => (
                         <div key={index} className="border border-[var(--color-gris-500)] rounded-md">
                             {pregunta.tipo === "texto" ? (
@@ -116,15 +117,32 @@ const EvaluarSimulador = () => {
             {/* Comentario del docente */}
             <div className="bg-white border border-[var(--color-gris-400)] rounded-xl shadow-md p-5">
                 <h4 className="text-lg font-semibold text-[var(--color-gris-900)] mb-2">Comentario del Docente</h4>
+
                 <textarea
                     value={comentario}
                     onChange={(e) => setComentario(e.target.value)}
                     rows={4}
-                    className="w-full max-h-24 border border-[var(--color-gris-300)] rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-[var(--color-lavanda-500)] resize-none"
+                    className="w-full max-h-15 border border-[var(--color-gris-300)] rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-[var(--color-lavanda-500)] resize-none"
                     placeholder="Escribe aquí tu observación..."
                 ></textarea>
 
-                <p className="text-sm text-[var(--color-gris-600)] mt-2 mb-4">
+                <div className="mt-2">
+                    <label className="block text-sm font-medium text-[var(--color-gris-800)] mb-1">
+                        Puntiación final (1 a 10):
+                    </label>
+                    <input
+                        type="number"
+                        min="1"
+                        max="10"
+                        step="1"
+                        value={calificacion}
+                        onChange={(e) => setCalificacion(e.target.value)}
+                        className="w-40 border border-[var(--color-gris-300)] rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-lavanda-500)]"
+                        placeholder="Ej. 8"
+                    />
+                </div>
+
+                <p className="text-sm text-[var(--color-gris-700)] mt-4 mb-4">
                     Fecha de evaluación: {fechaActual}
                 </p>
 
@@ -141,6 +159,7 @@ const EvaluarSimulador = () => {
                     </button>
                 </div>
             </div>
+
         </div>
     );
 };
