@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { FaUserGraduate, FaClipboardList, FaLightbulb, FaChevronLeft, FaChevronRight, FaAward } from "react-icons/fa";
+import { FaClipboardList, FaLightbulb, FaChevronLeft, FaChevronRight, FaAward } from "react-icons/fa";
 
 const sidebarStudent = ({ isCollapsed, setIsCollapsed }) => {
     const location = useLocation();
@@ -8,7 +8,6 @@ const sidebarStudent = ({ isCollapsed, setIsCollapsed }) => {
         { to: "/student/simuladores", label: "Categorias", icon: <FaClipboardList /> },
         { to: "/student/sugerirSimulador", label: "Sugerir simulador", icon: <FaLightbulb /> },
         { to: "/student/resultadosObtenidos", label: "Resultados obtenidos", icon: <FaAward /> },
-        { to: "/student", label: "Perfil", icon: <FaUserGraduate /> },
     ];
 
     return (

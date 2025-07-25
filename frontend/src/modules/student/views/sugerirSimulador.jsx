@@ -59,7 +59,7 @@ const SugerirSimulador = () => {
                         name="categoria"
                         value={formData.categoria}
                         onChange={handleChange}
-                        className="w-full border border-[var(--color-gris-500)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-lavanda-400)]"
+                        className="w-full border border-[var(--color-gris-500)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-lavanda-500)]"
                         placeholder="Ej. Redes, Seguridad, Programación"
                         required
                     />
@@ -74,7 +74,7 @@ const SugerirSimulador = () => {
                         name="simulador"
                         value={formData.simulador}
                         onChange={handleChange}
-                        className="w-full border border-[var(--color-gris-500)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-lavanda-400)]"
+                        className="w-full border border-[var(--color-gris-500)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-lavanda-500)]"
                         placeholder="Ej. Simulador de IPs, Firewall básico"
                         required
                     />
@@ -89,7 +89,7 @@ const SugerirSimulador = () => {
                         value={formData.descripcion}
                         onChange={handleChange}
                         rows={4}
-                        className="w-full border border-[var(--color-gris-500)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-lavanda-400)]"
+                        className="w-full border border-[var(--color-gris-500)] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-lavanda-500)]"
                         placeholder="Describe el tipo de preguntas, temas o dinámicas que debería tener el simulador..."
                         required
                     />
@@ -104,7 +104,7 @@ const SugerirSimulador = () => {
                         name="fecha"
                         value={formData.fecha}
                         readOnly
-                        className="w-full bg-gray-100 border border-[var(--color-gris-500)] rounded-lg px-3 py-2 text-sm text-[var(--color-gris-800)] focus:outline-none focus:ring-2 focus:ring-[var(--color-lavanda-400)]"
+                        className="w-full bg-gray-100 border border-[var(--color-gris-500)] rounded-lg px-3 py-2 text-sm text-[var(--color-gris-800)] focus:outline-none focus:ring-2 focus:ring-[var(--color-lavanda-500)]"
                     />
                 </div>
 
