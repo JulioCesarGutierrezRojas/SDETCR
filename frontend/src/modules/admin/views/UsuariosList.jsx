@@ -12,6 +12,14 @@ const UsuariosList = () => {
             email: "juan.perez@universidad.edu.mx",
             role: "estudiante",
             enrollment: "20230001"
+        },
+        {
+            user_id: 2,
+            name: "Omar",
+            lastname: "Pérez",
+            email: "omar.perez@universidad.edu.mx",
+            role: "docente",
+            enrollment: "20230001"
         }
     ]);
     const [paginaActual, setPaginaActual] = useState(1);
@@ -84,28 +92,44 @@ const UsuariosList = () => {
                                     <td className="py-2 px-4">{usuario.name} {usuario.lastname}</td>
                                     <td className="py-2 px-4">{usuario.email}</td>
                                     <td className="py-2 px-4 capitalize">{usuario.role}</td>
-                                    <td className="py-2 px-4">{usuario.enrollment}</td>
-                                    <td className="py-2 px-4 flex justify-center gap-2">
+                                    <td className="py-2 px-4">
+                                        {usuario.role === "estudiante" ? (
+                                            <span className="bg-[var(--color-lavanda-300)] text-[var(--color-lavanda-950)] font-semibold py-1 px-5 rounded-full text-xs">
+                                                {usuario.enrollment}
+                                            </span>
+                                        ) : (
+                                            <span className="bg-gray-200 text-gray-600 font-semibold py-1 px-3 rounded-full text-xs">
+                                                Sin matrícula
+                                            </span>
+                                        )}
+                                    </td>
+                                    <td className="py-2 px-4 flex justify-center gap-2 flex-wrap">
                                         <button
                                             className="p-2.5 border border-[var(--color-gris-300)] rounded-full transition duration-200 text-[var(--color-lavanda-700)] hover:text-white hover:bg-[var(--color-lavanda-600)] shadow hover:shadow-md"
                                             title="Editar usuario"
-                                            onClick={() => handleEditar(usuario)}
-                                        >
+                                            onClick={() => handleEditar(usuario)}>
                                             <FaEdit />
                                         </button>
+
                                         <button
                                             className="p-2.5 border border-[var(--color-gris-300)] rounded-full transition duration-200 text-[var(--color-lavanda-700)] hover:text-white hover:bg-[var(--color-lavanda-600)] shadow hover:shadow-md"
                                             title="Eliminar usuario"
-                                            onClick={() => handleEliminar(usuario.user_id)}
-                                        >
+                                            onClick={() => handleEliminar(usuario.user_id)}>
                                             <FaTrash />
                                         </button>
+
                                         <button
-                                            className="p-2 border border-[var(--color-gris-300)] rounded-full transition duration-200 text-[var(--color-lavanda-800)] hover:text-white hover:bg-[var(--color-lavanda-600)] shadow hover:shadow-md"
-                                            onClick={() => navigate(`/admin/historial/${usuario.user_id}`, {
-                                                state: { nombre: usuario.name, apellido: usuario.lastname }, //para que se muestre el nombre del estudiante
-                                            })
-                                        }
+                                            className={`p-1 px-4 rounded-full text-sm font-medium shadow border ${usuario.role === "estudiante"
+                                                    ? "text-[var(--color-lavanda-800)] border-[var(--color-gris-300)] hover:bg-[var(--color-lavanda-600)] hover:text-white"
+                                                    : "bg-gray-200 text-gray-400 border-gray-300 cursor-not-allowed"
+                                                }`}
+                                            disabled={usuario.role !== "estudiante"}
+                                            onClick={() =>
+                                                usuario.role === "estudiante" &&
+                                                navigate(`/admin/historial/${usuario.user_id}`, {
+                                                    state: { nombre: usuario.name, apellido: usuario.lastname },
+                                                })
+                                            }
                                         >
                                             Ver historial
                                         </button>

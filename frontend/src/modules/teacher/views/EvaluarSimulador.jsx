@@ -5,25 +5,27 @@ import { useNavigate } from "react-router-dom";
 const EvaluarSimulador = () => {
     const navigate = useNavigate();
     const [comentario, setComentario] = useState("");
+    const [calificacion, setCalificacion] = useState('');
 
     const preguntas = [
         {
             texto: '¿Qué es React?',
+            tipo: 'texto',
             opciones: ['Un lenguaje', 'Un framework', 'Una librería de JS', 'Un servidor'],
             respuesta: 'Una librería de JS',
             correcta: true,
         },
         {
-            texto: '¿Qué es JSX?',
-            opciones: ['Java XML', 'Una extensión de HTML', 'Una API', 'Una función'],
-            respuesta: 'Una extensión de HTML',
-            correcta: false,
+            texto: 'Explica cómo aplicarías React en un proyecto real.',
+            tipo: 'video',
+            videoURL: '/videos/respuesta1.mp4',
         },
         {
             texto: '¿Qué hook se usa para estado?',
+            tipo: 'texto',
             opciones: ['useEffect', 'useRef', 'useState', 'useCallback'],
             respuesta: 'useState',
-            correcta: true,
+            correcta: false,
         },
     ];
 
@@ -56,38 +58,56 @@ const EvaluarSimulador = () => {
             </div>
 
             {/* Preguntas del simulador */}
-            <div className="bg-white border border-[var(--color-gris-200)] rounded-xl shadow-md p-6 mb-6">
+            <div className="bg-white border border-[var(--color-gris-300)] rounded-xl shadow-md p-5 mb-6">
                 <h3 className="text-xl font-semibold text-[var(--color-gris-900)] mb-4">Respuestas del simulador</h3>
 
-                <div className="space-y-4 max-h-60 overflow-y-auto pr-2">
+                <div className="space-y-5 max-h-60 overflow-y-auto pr-2">
                     {preguntas.map((pregunta, index) => (
-                        <div className="border border-[var(--color-gris-400)] rounded-md">
-                            <div key={index} className={`p-4 rounded-md border-l-4 ${pregunta.correcta ? "border-green-500 bg-green-50" : "border-red-500 bg-red-50"}`}>
+                        <div key={index} className="border border-[var(--color-gris-500)] rounded-md">
+                            {pregunta.tipo === "texto" ? (
+                                <div className={`border-l-4 rounded-md p-4 ${pregunta.correcta ? "border-green-500 bg-green-50" : "border-red-500 bg-red-50"}`}>
+                                    <p className="text-sm font-medium text-[var(--color-gris-900)] mb-2">
+                                        Pregunta {index + 1}: {pregunta.texto}
+                                    </p>
+                                    <ul className="space-y-1">
+                                        {pregunta.opciones.map((opcion, i) => {
+                                            const esSeleccionada = opcion === pregunta.respuesta;
+                                            const color =
+                                                esSeleccionada && pregunta.correcta
+                                                    ? "bg-green-100 border-green-500 text-green-700"
+                                                    : esSeleccionada && !pregunta.correcta
+                                                        ? "bg-red-100 border-red-500 text-red-700"
+                                                        : "bg-[var(--color-blanco)] border-[var(--color-gris-400)] text-[var(--color-gris-900)]";
+                                            return (
+                                                <li
+                                                    key={i}
+                                                    className={`px-3 py-2 rounded-md border ${color} text-sm`}
+                                                >
+                                                    {opcion}
+                                                </li>
+                                            );
+                                        })}
+                                    </ul>
+                                </div>
+                            ) : (
+                                <div className="border-l-4 border-[var(--color-lavanda-600)] bg-[var(--color-lavanda-100)] rounded-md p-4">
+                                    <p className="text-sm font-medium text-[var(--color-gris-900)] mb-2">
+                                        Pregunta {index + 1}: {pregunta.texto}
+                                    </p>
 
-                                <p className="text-sm font-medium text-[var(--color-gris-900)] mb-2">
-                                    Pregunta {index + 1}: {pregunta.texto}
-                                </p>
-                                <ul className="space-y-1 ">
-                                    {pregunta.opciones.map((opcion, i) => {
-                                        const esSeleccionada = opcion === pregunta.respuesta;
-                                        const color =
-                                            esSeleccionada && pregunta.correcta
-                                                ? "bg-green-100 border-green-500 text-green-700"
-                                                : esSeleccionada && !pregunta.correcta
-                                                    ? "bg-red-100 border-red-500 text-red-700"
-                                                    : "bg-[var(--color-blanco)] border-[var(--color-gris-500)] text-[var(--color-gris-900)]";
+                                    <div className="text-sm text-[var(--color-gris-800)] mb-2">
+                                        Respuesta enviada en video; evaluación a cargo del docente
+                                    </div>
 
-                                        return (
-                                            <li
-                                                key={i}
-                                                className={`px-3 py-2 rounded-md border ${color} text-sm`}
-                                            >
-                                                {opcion}
-                                            </li>
-                                        );
-                                    })}
-                                </ul>
-                            </div>
+                                    <video
+                                        src={pregunta.videoURL}
+                                        controls
+                                        className="max-w-xs w-full aspect-video rounded-md border border-[var(--color-gris-400)]"
+                                    >
+                                        Tu navegador no soporta la reproducción de video.
+                                    </video>
+                                </div>
+                            )}
                         </div>
                     ))}
                 </div>
@@ -95,17 +115,34 @@ const EvaluarSimulador = () => {
 
 
             {/* Comentario del docente */}
-            <div className="bg-white border border-[var(--color-gris-300)] rounded-xl shadow-md p-5">
+            <div className="bg-white border border-[var(--color-gris-400)] rounded-xl shadow-md p-5">
                 <h4 className="text-lg font-semibold text-[var(--color-gris-900)] mb-2">Comentario del Docente</h4>
+
                 <textarea
                     value={comentario}
                     onChange={(e) => setComentario(e.target.value)}
                     rows={4}
-                    className="w-full max-h-24 border border-[var(--color-gris-300)] rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-[var(--color-lavanda-500)] resize-none"
+                    className="w-full max-h-15 border border-[var(--color-gris-300)] rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-[var(--color-lavanda-500)] resize-none"
                     placeholder="Escribe aquí tu observación..."
                 ></textarea>
 
-                <p className="text-sm text-[var(--color-gris-600)] mt-2 mb-4">
+                <div className="mt-2">
+                    <label className="block text-sm font-medium text-[var(--color-gris-800)] mb-1">
+                        Puntiación final (1 a 10):
+                    </label>
+                    <input
+                        type="number"
+                        min="1"
+                        max="10"
+                        step="1"
+                        value={calificacion}
+                        onChange={(e) => setCalificacion(e.target.value)}
+                        className="w-40 border border-[var(--color-gris-300)] rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-lavanda-500)]"
+                        placeholder="Ej. 8"
+                    />
+                </div>
+
+                <p className="text-sm text-[var(--color-gris-700)] mt-4 mb-4">
                     Fecha de evaluación: {fechaActual}
                 </p>
 
@@ -122,6 +159,7 @@ const EvaluarSimulador = () => {
                     </button>
                 </div>
             </div>
+
         </div>
     );
 };

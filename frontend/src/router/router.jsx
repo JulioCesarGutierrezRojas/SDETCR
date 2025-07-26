@@ -21,6 +21,7 @@ import ResultadosEstudiante from "../modules/student/views/resultados";
 import ComentariosEstudiante from "../modules/student/views/comentariosList";
 import StudentSimulators from "../modules/admin/views/simulatorHistory/StudentSimulators";
 import SimulatorDetail from "../modules/admin/views/simulatorHistory/SimulatorDetail";
+import SugerirSimulador from "../modules/student/views/sugerirSimulador";
 
 
 const AppRouter = () => {
@@ -38,6 +39,7 @@ const AppRouter = () => {
           <Route path="formulario/:simuladorID" element={<SimuladorFormulario />} />
           <Route path="resultadosObtenidos" element={<ResultadosEstudiante />} />
           <Route path="comentariosObtenidos" element={<ComentariosEstudiante />} />
+          <Route path="sugerirSimulador" element={<SugerirSimulador/>} />
         </Route>
 
         <Route path="/admin" element={<LayoutAdmin />}>

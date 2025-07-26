@@ -112,7 +112,7 @@ const SimuladorFormAdmin = () => {
                 {preguntas.map((preg, index) => (
                     <div
                         key={preg.id}
-                        className="bg-white border border-[var(--color-lavanda-400)] rounded-lg shadow p-5 space-y-4"
+                        className="bg-white border border-2 border-[var(--color-lavanda-400)] rounded-lg shadow p-5 space-y-4"
                     >
                         <div className="flex justify-between items-center">
                             <h2 className="font-semibold text-[var(--color-lavanda-800)]">Pregunta {index + 1}</h2>
@@ -174,11 +174,8 @@ const SimuladorFormAdmin = () => {
                 ))}
             </div>
 
-            {/* Guardar y previsualizar */}
+            {/* Guardar simulador */}
             <div className="flex justify-end gap-4 pt-4">
-                <button className="px-5 py-2 bg-[var(--color-lavanda-200)] text-[var(--color-lavanda-900)] rounded-md hover:bg-[var(--color-lavanda-300)] border border-[var(--color-lavanda-300)]">
-                    Previsualizar
-                </button>
                 <button className="px-5 py-2 bg-[var(--color-lavanda-700)] text-white rounded-md hover:bg-[var(--color-lavanda-800)]">
                     Guardar cambios
                 </button>
