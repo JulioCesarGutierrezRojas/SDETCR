@@ -22,6 +22,7 @@ import ComentariosEstudiante from "../modules/student/views/comentariosList";
 import StudentSimulators from "../modules/admin/views/simulatorHistory/StudentSimulators";
 import SimulatorDetail from "../modules/admin/views/simulatorHistory/SimulatorDetail";
 import SugerirSimulador from "../modules/student/views/sugerirSimulador";
+import SeleccionarEstudiante from "../modules/teacher/views/SeleccionarEstudiante";
 
 
 const AppRouter = () => {
@@ -53,6 +54,8 @@ const AppRouter = () => {
         </Route>
 
         <Route path="/teacher" element={<LayoutTeacher />}>
+          <Route index element={<Navigate to="seleccionarEstudiante" replace />} />
+          <Route path="seleccionarEstudiante" element={<SeleccionarEstudiante />} />
           <Route path="estudiantesSeleccionados" element={<ListaEstudiantes />} />
           <Route path="evaluarEstudiante" element={<EvaluarEstudiante />} />
           <Route path="evaluarSimulador" element={<EvaluarSimulador />} />
