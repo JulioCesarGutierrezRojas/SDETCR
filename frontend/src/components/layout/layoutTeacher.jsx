@@ -7,7 +7,7 @@ const LayoutTeacher = () => {
     const [isCollapsed, setIsCollapsed] = useState(false);
 
     return (
-        <div className="flex h-screen bg-[var(--white)]">
+        <div className="flex h-screen bg-[var(--color-blanco)]">
             <SidebarTeacher isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
             <div className="flex-1 flex flex-col">
                 <Navbar />

@@ -1,11 +1,11 @@
 import { Link, useLocation } from "react-router-dom";
-import { FaUserGraduate, FaClipboardList, FaLightbulb, FaChevronLeft, FaChevronRight, FaBriefcase, FaHistory } from "react-icons/fa";
+import { FaUsers, FaLightbulb, FaChevronLeft, FaChevronRight, FaBriefcase, FaHistory } from "react-icons/fa";
 
 const sidebarAdmin = ({ isCollapsed, setIsCollapsed }) => {
     const location = useLocation();
 
     const links = [
-        { to: "/admin", label: "Usuarios", icon: <FaUserGraduate /> },
+        { to: "/admin/usuarios", label: "Usuarios", icon: <FaUsers /> },
         { to: "/admin/categorias", label: "Gestión de Categorias", icon: <FaBriefcase /> },
         { to: "/admin/sugerenciaSimulador", label: "Revisión de sugerencias", icon: <FaLightbulb /> },
         { to: "/admin/historial", label: "Historial de simuladores", icon: <FaHistory /> },
@@ -26,7 +26,10 @@ const sidebarAdmin = ({ isCollapsed, setIsCollapsed }) => {
                     <Link
                         key={to}
                         to={to}
-                        className={`flex items-center gap-2 p-2 rounded-md transition bg-[var(--color-lavanda-600)] hover:bg-[var(--color-lavanda-500)] ${location.pathname === to ? "bg-[var(--color-lavanda-600)]" : ""}`}>
+                        className={
+                            `flex items-center gap-2 p-2 rounded-md transition bg-[var(--color-lavanda-600)] hover:bg-[var(--color-lavanda-500)] 
+                            ${location.pathname === to ? "bg-[var(--color-lavanda-600)] border-l-4 border-white font-semibold" : ""}`
+                        }>
                         {icon}
                         {!isCollapsed && <span>{label}</span>}
                     </Link>

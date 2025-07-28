@@ -1,14 +1,14 @@
 import { Link, useLocation } from "react-router-dom";
-import { FaUserGraduate, FaClipboardList, FaComments, FaChevronLeft, FaChevronRight, FaVideo } from "react-icons/fa";
+import { FaUserGraduate, FaComments, FaChevronLeft, FaChevronRight, FaVideo, FaUserPlus } from "react-icons/fa";
 
 const sidebarTeacher = ({ isCollapsed, setIsCollapsed }) => {
     const location = useLocation();
 
     const links = [
-        { to: "/mentor", label: "Estudiantes asignados", icon: <FaUserGraduate /> },
-        { to: "/mentor/simuladores", label: "Entrevistas por evaluar", icon: <FaClipboardList /> },
-        { to: "/mentor/comentarios", label: "Comentarios enviados", icon: <FaComments /> },
+        { to: "/teacher", label: "Seleccionar estudiantes", icon: <FaUserPlus /> },
+        { to: "/teacher/estudiantesSeleccionados", label: "Estudiantes asignados", icon: <FaUserGraduate /> },
         { to: "/teacher/videos", label: "Entrevistas por visualizar", icon: <FaVideo /> },
+        { to: "/teacher/comentarios", label: "Comentarios enviados", icon: <FaComments /> },
     ];
 
     return (
@@ -26,7 +26,9 @@ const sidebarTeacher = ({ isCollapsed, setIsCollapsed }) => {
                     <Link
                         key={to}
                         to={to}
-                        className={`flex items-center gap-2 p-2 rounded-md transition bg-[var(--color-lavanda-600)] hover:bg-[var(--color-lavanda-500)] ${location.pathname === to ? "bg-[var(--color-lavanda-600)]" : ""}`}>
+                        className={
+                            `flex items-center gap-2 p-2 rounded-md transition bg-[var(--color-lavanda-600)] hover:bg-[var(--color-lavanda-500)] 
+                            ${location.pathname === to ? "bg-[var(--color-lavanda-600)] border-l-4 border-white font-semibold" : ""}`}>
                         {icon}
                         {!isCollapsed && <span>{label}</span>}
                     </Link>

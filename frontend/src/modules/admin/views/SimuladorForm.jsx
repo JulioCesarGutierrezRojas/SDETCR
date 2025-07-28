@@ -40,7 +40,7 @@ const SimuladorFormAdmin = () => {
     const handleAgregarRespuesta = (pregId) => {
         setPreguntas(
             preguntas.map((preg) =>
-                preg.id === pregId
+                preg.id === pregId && preg.respuestas.length < 4
                     ? { ...preg, respuestas: [...preg.respuestas, ""] }
                     : preg
             )
@@ -77,77 +77,108 @@ const SimuladorFormAdmin = () => {
     };
 
     return (
-        <div className="p-4 space-y-6">
-            <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-bold text-[var(--color-lavanda-700)]">Preguntas del Simulador</h1>
-                <div className="flex gap-4">
-                    <Link to={`/admin/categoria/${simuladorId}`}
-                        className="px-4 py-2 rounded-md bg-[var(--color-gris-800)] text-white font-semibold hover:bg-[var(--color-gris-600)] transition">
-                        Atrás
-                    </Link>
-                    <button
-                        onClick={handleAgregarPregunta}
-                        disabled={preguntas.length >= 10}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-md text-white transition ${preguntas.length >= 10
-                            ? "bg-[var(--color-gris-400)] cursor-not-allowed"
-                            : "bg-[var(--color-lavanda-700)] hover:bg-[var(--color-lavanda-500)]"
-                            }`}
-                    >
-                        <FaPlus />
-                        Agregar pregunta
-                    </button>
+        <div className="p-4 space-y-6 max-w-5xl mx-auto">
+            <div className="bg-white p-4 rounded-lg shadow-md space-y-4 border border-[var(--color-gris-300)]">
+                <div className="flex justify-between items-center">
+                    <h1 className="text-2xl font-bold text-[var(--color-lavanda-700)]">Preguntas del Simulador</h1>
+                    <div className="flex gap-4">
+                        <Link to={`/admin/categoria/${simuladorId}`} className="px-4 py-2 rounded-md bg-[var(--color-gris-700)] text-white hover:bg-[var(--color-gris-800)] transition">
+                            Atrás
+                        </Link>
+                        <button
+                            onClick={handleAgregarPregunta}
+                            disabled={preguntas.length >= 10}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-md text-white transition ${preguntas.length >= 10
+                                ? "bg-[var(--color-gris-700)] cursor-not-allowed"
+                                : "bg-[var(--color-lavanda-700)] hover:bg-[var(--color-lavanda-800)]"
+                                }`}
+                        >
+                            <FaPlus /> Agregar pregunta
+                        </button>
+                    </div>
                 </div>
+
+                {/* Barra de progreso */}
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="bg-[var(--color-lavanda-600)] h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${(preguntas.length / 10) * 100}%` }}
+                    ></div>
+                </div>
+                <p className="text-sm text-right text-[var(--color-gris-900)]">{preguntas.length}/10</p>
             </div>
 
-            <div className="max-h-[600px] overflow-y-auto space-y-4 pr-2 p-5 bg-[var(--color-gris-300)] rounded-lg">
+            {/* Preguntas */}
+            <div className="space-y-5 max-h-[500px] overflow-y-auto pr-2">
                 {preguntas.map((preg, index) => (
-                    <div key={preg.id} className="bg-[var(--color-lavanda-300)] p-4 rounded-lg shadow space-y-3 border border-[var(--color-lavanda-500)]">
+                    <div
+                        key={preg.id}
+                        className="bg-white border border-2 border-[var(--color-lavanda-400)] rounded-lg shadow p-5 space-y-4"
+                    >
                         <div className="flex justify-between items-center">
-                            <input
-                                type="text"
-                                className="w-full p-2 border border-[var(--color-lavanda-500)] rounded text-[var(--color-gris-900)] bg-[var(--white)] focus:outline-none focus:ring-1 focus:ring-[var(--color-lavanda-500)] focus:border-[var(--color-lavanda-500)]"
-                                value={preg.texto}
-                                onChange={(e) => handleTextoPregunta(preg.id, e.target.value)}
-                                placeholder={`Pregunta ${index + 1}`}
-                            />
-
-                            <button onClick={() => handleEliminarPregunta(preg.id)} className="text-[var(--color-rojo-error)] ml-2 p-2 rounded-full hover:bg-[var(--color-rojo-claro)] hover:shadow-md transition duration-200">
+                            <h2 className="font-semibold text-[var(--color-lavanda-800)]">Pregunta {index + 1}</h2>
+                            <button
+                                onClick={() => handleEliminarPregunta(preg.id)}
+                                className="text-red-500 hover:text-red-700"
+                            >
                                 <FaTrash />
                             </button>
                         </div>
 
-                        <div className="space-y-2">
+                        <input
+                            type="text"
+                            className="w-full text-[var(--color-gris-900)] border border-[var(--color-lavanda-400)] rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-lavanda-400)]"
+                            value={preg.texto}
+                            onChange={(e) => handleTextoPregunta(preg.id, e.target.value)}
+                            placeholder="Escribe la pregunta aquí"
+                        />
+
+                        {/* Respuestas */}
+                        <div className="space-y-3">
                             {preg.respuestas.map((resp, idx) => (
-                                <div key={idx} className="flex gap-2 items-center">
+                                <div key={idx} className="flex items-center gap-3">
                                     <input
                                         type="radio"
                                         name={`correcta-${preg.id}`}
                                         checked={preg.correcta === idx}
                                         onChange={() => handleSeleccionarCorrecta(preg.id, idx)}
-                                    />
-                                    <input
-                                        type="text"
-                                        className="flex-grow p-2 border border-[var(--color-lavanda-500)] rounded bg-[var(--white)] focus:outline-none focus:ring-1 focus:ring-[var(--color-lavanda-500)] focus:border-[var(--color-lavanda-500)]"
-                                        value={resp}
-                                        onChange={(e) => handleEditarRespuesta(preg.id, idx, e.target.value)}
-                                        placeholder={`Respuesta ${idx + 1}`}
+                                        className="w-5 h-5 accent-green-600"
                                     />
 
-                                    <button onClick={() => handleEliminarRespuesta(preg.id, idx)} className="text-[var(--color-gris-900)] p-2 rounded-full hover:bg-[var(--color-gris-300)] hover:shadow-md transition duration-200">
+                                    <input
+                                        type="text"
+                                        className="flex-grow text-[var(--color-gris-900)] border border-[var(--color-lavanda-400)] rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-lavanda-400)]"
+                                        value={resp}
+                                        onChange={(e) =>
+                                            handleEditarRespuesta(preg.id, idx, e.target.value)
+                                        }
+                                        placeholder={`Respuesta ${idx + 1}`}
+                                    />
+                                    <button
+                                        onClick={() => handleEliminarRespuesta(preg.id, idx)}
+                                        className="text-gray-500 hover:text-gray-700"
+                                    >
                                         <FaTimes />
                                     </button>
                                 </div>
                             ))}
 
-                            <button
-                                onClick={() => handleAgregarRespuesta(preg.id)}
-                                className="text-sm text-[var(--color-lavanda-700)] hover:text-[var(--color-lavanda-900)]"
-                            >
-                                <FaPlus className="inline mr-1" /> Agregar respuesta
-                            </button>
+                            {preg.respuestas.length < 4 && (
+                                <button onClick={() => handleAgregarRespuesta(preg.id)}
+                                    className="text-sm text-purple-700 hover:text-purple-900 flex items-center gap-1">
+                                    <FaPlus /> Agregar opción
+                                </button>
+                            )}
+
                         </div>
                     </div>
                 ))}
+            </div>
+
+            {/* Guardar simulador */}
+            <div className="flex justify-end gap-4 pt-4">
+                <button className="px-5 py-2 bg-[var(--color-lavanda-700)] text-white rounded-md hover:bg-[var(--color-lavanda-800)]">
+                    Guardar cambios
+                </button>
             </div>
         </div>
     );

@@ -14,7 +14,7 @@ const Simuladores = () => {
     },[categoriaId]);
 
     return (
-        <div className="p-6">
+        <div className="p-4">
             <h1 className="text-2xl font-bold text-[var(--primary)] mb-6">Simuladores Disponibles</h1>
             <div className="space-y-4">
                 {simuladores.map((simulador) => (
