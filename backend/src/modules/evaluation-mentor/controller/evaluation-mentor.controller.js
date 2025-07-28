@@ -1,4 +1,4 @@
-const { getFeedbackByStudentId } = require('../service/evaluation-mentor.service');
+const { getFeedbackByStudentId, assignStudentToMentor } = require('../service/evaluation-mentor.service');
 const { createEvaluation } = require('../service/evaluation-mentor.service');
 const { Router } = require('express');
 const routerEvaluation = Router();
@@ -27,6 +27,17 @@ const createEvaluationController = async (req, res) => {
     }
 }
 
+const assignStudentController = async (req, res) => {
+    try {
+        const { mentor_id, student_ids } = req.body;
+        const result = await assignStudentToMentor({ mentor_id, student_ids });
+        return res.status(result.getStatusCode()).json(result.getResponseBody());
+    } catch (error) {
+        console.error('Error en assignStudentController:', error.message);
+        return res.status(500).json({ message: error.message });
+    }
+}
+
 
 //routerEvaluation.get('/feedback/:id', feedbacksController)
 //routerEvaluation.post('/create', createEvaluationController)
@@ -46,6 +57,14 @@ routerEvaluation.post('/create',
     createEvaluationController
 );
 
+routerEvaluation.post('/mentor/assign',
+    // #swagger.tags = ['Evaluación Mentor']
+    // #swagger.summary = 'Asignar estudiante al mentor'
+    // #swagger.description = 'Permite que el mentor asigne un estudiante a un simulador, aunque aún no lo haya evaluado'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    assignStudentController
+);
+
 module.exports = {
-    routerEvaluation
+    routerEvaluation,
 }
