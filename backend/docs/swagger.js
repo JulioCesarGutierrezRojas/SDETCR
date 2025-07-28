@@ -1,5 +1,5 @@
+process.loadEnvFile()
 const swaggerAutogen = require('swagger-autogen')()
-const { app } = require('../src/config/server.js')
 
 const outputFile = './swagger-output.json'
 const endpointsFiles = ['../src/config/server.js']
@@ -10,7 +10,7 @@ const doc = {
         title: 'API Documentation - Simulador de Entrevistas Laborales con Retroalimentación',
         description: 'Esta API permite a los usuarios simular entrevistas laborales y recibir retroalimentación sobre su desempeño.',
     },
-    host: `localhost:${app.get('port')}`,
+    host: `localhost:${process.env.PORT}`,
     basePath: '/',
     schemes: ['http'],
     tags: [
