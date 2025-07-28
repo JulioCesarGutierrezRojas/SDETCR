@@ -9,6 +9,7 @@ const updateSuggestionStatusController = async (req, res) => {
 
         const result = await updateSuggestionStatus(suggestion_id, status)
         return res.status(result.getStatusCode()).json(result.getResponseBody())
+
     } catch (error) {
         console.log('Error en updateSuggestionStatusController:', error.message)
         return res.status(500).json({ message: error.message })
