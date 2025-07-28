@@ -1,4 +1,4 @@
-const SuggestionSimulator = require('../model/suggestionSimulator.model')
+const SuggestionSimulator = require('../model/suggestion-simulator.model')
 const ApiResponse = require('../../../kernel/api.response')
 const TypesResponse = require('../../../kernel/types.response')
 

@@ -1,4 +1,4 @@
-const { updateSuggestionStatus } = require('../service/suggestion.service')
+const { updateSuggestionStatus } = require('../service/suggestion-simulator.service')
 const { Router } = require('express')
 const routerSuggestion = Router()
 
