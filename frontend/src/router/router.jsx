@@ -23,6 +23,7 @@ import StudentSimulators from "../modules/admin/views/simulatorHistory/StudentSi
 import SimulatorDetail from "../modules/admin/views/simulatorHistory/SimulatorDetail";
 import SugerirSimulador from "../modules/student/views/sugerirSimulador";
 import SeleccionarEstudiante from "../modules/teacher/views/SeleccionarEstudiante";
+import AprobarSugerencias from "../modules/admin/views/AprobarSugerencias"; 
 
 
 const AppRouter = () => {
@@ -51,6 +52,7 @@ const AppRouter = () => {
           <Route path="simulador/:formularioID" element={<SimuladorFormAdmin />} />
           <Route path="historial/:estudianteID" element={<StudentSimulators />} />
           <Route path="historial/:estudianteID/:simuladorID" element={<SimulatorDetail />} />
+          <Route path="sugerenciaSimulador" element={<AprobarSugerencias />} />
         </Route>
 
         <Route path="/teacher" element={<LayoutTeacher />}>

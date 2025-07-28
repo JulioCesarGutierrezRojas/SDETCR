@@ -7,14 +7,12 @@ const mockSimuladores = [
     titulo: "Simulador: Desarrollo de Software",
     categoria: "Tecnología",
     fecha: "2025-07-01",
-    estado: "Completado",
   },
   {
     id: "sim2",
     titulo: "Simulador: Atención al Cliente",
     categoria: "Servicios",
     fecha: "2025-06-25",
-    estado: "En progreso",
   },
 ];
 
@@ -70,18 +68,7 @@ export const StudentSimulators = () => {
             </h2>
             <p>Categoría: {sim.categoria}</p>
             <p>Fecha: {sim.fecha}</p>
-            <p className="font-medium text-sm mt-1">
-              Estado:{" "}
-              <span
-                className={`${
-                  sim.estado === "Completado"
-                    ? "text-green-600"
-                    : "text-yellow-600"
-                }`}
-              >
-                {sim.estado}
-              </span>
-            </p>
+            
             <Link
               to={`/admin/historial/${estudianteID}/${sim.id}`}
               className="inline-block mt-3 px-4 py-2 bg-[var(--color-lavanda-700)] text-white rounded hover:bg-[var(--color-lavanda-500)]"

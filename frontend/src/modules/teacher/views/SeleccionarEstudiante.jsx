@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaSearch, FaUser } from "react-icons/fa";
+import Paginacion from "../../../components/Paginacion"; // Ajusta el path si es necesario
 
 const estudiantesMock = [
   {
@@ -40,6 +41,8 @@ const estudiantesMock = [
 
 const SeleccionarEstudiante = () => {
   const [busqueda, setBusqueda] = useState("");
+  const [paginaActual, setPaginaActual] = useState(1);
+  const estudiantesPorPagina = 6;
 
   const estudiantesFiltrados = estudiantesMock.filter((e) =>
     e.categorias.some((cat) =>
@@ -47,9 +50,18 @@ const SeleccionarEstudiante = () => {
     )
   );
 
+  const totalPaginas = Math.ceil(estudiantesFiltrados.length / estudiantesPorPagina);
+  const indexInicio = (paginaActual - 1) * estudiantesPorPagina;
+  const indexFin = indexInicio + estudiantesPorPagina;
+  const estudiantesPaginados = estudiantesFiltrados.slice(indexInicio, indexFin);
+
+  useEffect(() => {
+    setPaginaActual(1); // Reiniciar a la primera página al hacer nueva búsqueda
+  }, [busqueda]);
+
   return (
     <div className="max-w-6xl mx-auto">
-      {/* 🔍 Buscador por categoría */}
+      {/*  Buscador */}
       <div className="flex items-center gap-3 mb-6">
         <FaSearch className="text-[var(--color-gris-700)]" />
         <input
@@ -61,13 +73,24 @@ const SeleccionarEstudiante = () => {
         />
       </div>
 
-      {/* 📋 Lista de estudiantes */}
+      {/*  Tarjetas de estudiantes */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {estudiantesFiltrados.map((estudiante) => (
+        {estudiantesPaginados.map((estudiante) => (
           <div
             key={estudiante.id}
-            className="bg-white shadow-md border border-[var(--color-gris-200)] rounded-xl p-4 flex flex-col gap-3"
+            className="relative bg-white shadow-md border border-[var(--color-gris-200)] rounded-xl p-4 flex flex-col gap-3"
           >
+            {/*  Contador circular con título */}
+            <div className="absolute top-3 right-3 flex flex-col items-center text-center">
+              <span className="bg-[var(--color-lavanda-600)] text-white text-sm font-bold w-8 h-8 rounded-full flex items-center justify-center shadow">
+                {estudiante.simuladores.length}
+              </span>
+              <span className="text-[10px] text-[var(--color-gris-600)] mt-1 leading-tight">
+                Simuladores<br />contestados
+              </span>
+            </div>
+
+            {/*  Info principal */}
             <div className="flex items-center gap-3">
               <div className="bg-[var(--color-lavanda-200)] p-3 rounded-full">
                 <FaUser className="text-[var(--color-lavanda-700)] text-xl" />
@@ -82,6 +105,7 @@ const SeleccionarEstudiante = () => {
               </div>
             </div>
 
+            {/*  Categorías */}
             <div>
               <p className="text-sm text-[var(--color-gris-700)] font-medium">Categorías:</p>
               <div className="flex flex-wrap gap-2 mt-1">
@@ -96,21 +120,20 @@ const SeleccionarEstudiante = () => {
               </div>
             </div>
 
-            <div>
-              <p className="text-sm text-[var(--color-gris-700)] font-medium">Simuladores:</p>
-              <ul className="list-disc pl-5 text-sm text-[var(--color-gris-800)] space-y-1">
-                {estudiante.simuladores.map((sim, i) => (
-                  <li key={i}>{sim}</li>
-                ))}
-              </ul>
-            </div>
-
+            {/*  Botón */}
             <button className="mt-auto bg-[var(--color-lavanda-700)] text-white font-medium py-2 px-4 rounded-lg hover:bg-[var(--color-lavanda-600)] transition">
               Aceptar estudiante
             </button>
           </div>
         ))}
       </div>
+
+      {/*  Paginación */}
+      <Paginacion
+        paginaActual={paginaActual}
+        totalPaginas={totalPaginas}
+        onPageChange={(nuevaPagina) => setPaginaActual(nuevaPagina)}
+      />
     </div>
   );
 };
