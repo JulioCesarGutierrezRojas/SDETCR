@@ -12,6 +12,7 @@ const { routerAnswer } = require('../modules/answers/controller/answer.controlle
 const { routerQuestion } = require('../modules/questions/controller/question.controller')
 const { routerEvaluation } = require('../modules/evaluation-mentor/controller/evaluation-mentor.controller')
 const { routerHistory } = require('../modules/history/controller/history.controller')
+const { routerSuggestion } = require('../modules/suggestions-simulators/controller/suggestion-simulator.controller')
 
 const app = express()
 
@@ -43,6 +44,7 @@ app.use('/api/answers', routerAnswer)
 app.use('/api/questions', routerQuestion)
 app.use('/api/evaluation', routerEvaluation)
 app.use('/api/history', routerHistory)
+app.use('api/suggestions', routerSuggestion)
 
 app.use('/uploads', express.static(path.join(__dirname, '../..', 'data')))
 app.use('/swagger-ui', swaggerUi.serve, swaggerUi.setup(swaggerDocumentation))
