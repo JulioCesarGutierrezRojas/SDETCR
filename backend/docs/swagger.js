@@ -45,6 +45,10 @@ const doc = {
         {
             name: 'Historial',
             description: 'Operaciones relacionadas con el historial de entrevistas de los estudiantes.'
+        },
+        {
+            name: 'Sugerencias',
+            description: 'Operaciones relacionadas con las sugerencias de los simuladores.'
         }
     ],
     securityDefinitions: {

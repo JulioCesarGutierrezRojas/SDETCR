@@ -12,6 +12,14 @@ const SuggestionSimulator = sequelize.define('SuggestionSimulator', {
 		type: DataTypes.STRING,
 		allowNull: false
 	},
+	suggested_name:{
+		type: DataTypes.STRING,
+		allowNull:false
+	},
+	suggested_descrption:{
+		type: DataTypes.STRING,
+		allowNull:false
+	},
 	date_suggestion: {
 		type: DataTypes.DATE,
 		allowNull: false,
