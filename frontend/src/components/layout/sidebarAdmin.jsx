@@ -8,7 +8,6 @@ const sidebarAdmin = ({ isCollapsed, setIsCollapsed }) => {
         { to: "/admin/usuarios", label: "Usuarios", icon: <FaUsers /> },
         { to: "/admin/categorias", label: "Gestión de Categorias", icon: <FaBriefcase /> },
         { to: "/admin/sugerenciaSimulador", label: "Revisión de sugerencias", icon: <FaLightbulb /> },
-        { to: "/admin/historial", label: "Historial de simuladores", icon: <FaHistory /> },
     ];
 
     return (

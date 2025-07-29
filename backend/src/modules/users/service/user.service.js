@@ -160,20 +160,43 @@ const createStudent = async ({ name, lastname, email, category, enrollment, pass
             return new ApiResponse(null, null, TypesResponse.WARNING, 'La matrícula y/o contraseña son requeridas', 400);
         }
 
-        if (!category){
-            return new ApiResponse(null, null, TypesResponse.WARNING, 'La categoría es requerida', 400);
+        if (!category || (Array.isArray(category) && category.length === 0)){
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'Al menos una categoría es requerida', 400);
         }
 
         if (await User.findOne({ where: { email } })|| await User.findOne({ where: { enrollment } })) {
             return new ApiResponse(null, null, TypesResponse.WARNING, 'El correo electrónico o la matrícula ya están en uso', 409);
         }
-
         
         const categorias = await getAllCategories();
-        const categoriaValida = categorias.result.find(cat => cat.name === category.name);
-
-        if (!categoriaValida) {
-            return new ApiResponse(null, null, TypesResponse.WARNING, `La categoría "${category.name}" no existe en la base de datos`, 400);
+        
+        // Normalizar category para que siempre sea un arreglo
+        const categoriasSeleccionadas = Array.isArray(category) ? category : [category];
+        
+        // Validar que todas las categorías existan
+        const categoriasValidas = [];
+        const categoriasInvalidas = [];
+        
+        for (const catName of categoriasSeleccionadas) {
+            const categoriaEncontrada = categorias.result.find(cat => cat.name === catName);
+            if (categoriaEncontrada) {
+                categoriasValidas.push({
+                    id: categoriaEncontrada.category_id,
+                    name: categoriaEncontrada.name
+                });
+            } else {
+                categoriasInvalidas.push(catName);
+            }
+        }
+        
+        if (categoriasInvalidas.length > 0) {
+            return new ApiResponse(
+                null, 
+                null, 
+                TypesResponse.WARNING, 
+                `Las siguientes categorías no existen: ${categoriasInvalidas.join(', ')}`, 
+                400
+            );
         }
 
         const encryptedPassword = await hashPassword(password);
@@ -182,7 +205,7 @@ const createStudent = async ({ name, lastname, email, category, enrollment, pass
             name,
             lastname,   
             email, 
-            category: { name: categoriaValida.name },
+            category: categoriasValidas,
             enrollment,
             role: 'estudiantes', 
             password: encryptedPassword

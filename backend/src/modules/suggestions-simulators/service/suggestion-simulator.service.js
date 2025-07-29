@@ -2,6 +2,26 @@ const SuggestionSimulator = require('../model/suggestion-simulator.model')
 const ApiResponse = require('../../../kernel/api.response')
 const TypesResponse = require('../../../kernel/types.response')
 
+const saveSuggestion= async(category,suggestionName, description)=>{
+    try {
+        if (!category || !suggestionName || !description) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'Faltan datos obligatorios', 400)
+        }
+
+       await SuggestionSimulator.create({
+            suggested_category: category,
+            suggested_name: suggestionName,
+            suggested_descrption: description,
+            status: 'pendiente'
+        })
+
+        return new ApiResponse(null, null, TypesResponse.SUCCESS, 'Sugerencia guardada exitosamente', 201)
+    } catch (error) {
+        console.log('Error en saveSuggestion:', error.message)
+        throw new Error('Error al guardar la sugerencia')
+    }
+}
+
 const updateSuggestionStatus = async (suggestion_id, status) => {
     try {
         if (!suggestion_id || !status) {
@@ -30,5 +50,6 @@ const updateSuggestionStatus = async (suggestion_id, status) => {
 }
 
 module.exports = {
-    updateSuggestionStatus
+    updateSuggestionStatus,
+    saveSuggestion
 }
