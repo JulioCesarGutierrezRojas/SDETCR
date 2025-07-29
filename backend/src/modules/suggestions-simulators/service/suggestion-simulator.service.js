@@ -41,7 +41,8 @@ const updateSuggestionStatus = async (suggestion_id, status) => {
         suggestion.status = status
         await suggestion.save()
 
-        return new ApiResponse(null, suggestion, TypesResponse.SUCCESS, `Sugerencia ${status} exitosamente`, 200)
+        return new ApiResponse(null, null, TypesResponse.SUCCESS, `Sugerencia ${status} exitosamente`, 200);
+
     } catch (error) {
         console.log('Error en updateSuggestionStatus:', error.message)
         throw new Error('Error al actualizar el status de la sugerencia')
