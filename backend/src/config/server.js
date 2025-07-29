@@ -44,7 +44,7 @@ app.use('/api/answers', routerAnswer)
 app.use('/api/questions', routerQuestion)
 app.use('/api/evaluation', routerEvaluation)
 app.use('/api/history', routerHistory)
-app.use('api/suggestions', routerSuggestion)
+app.use('/api/suggestions', routerSuggestion)
 
 app.use('/uploads', express.static(path.join(__dirname, '../..', 'data')))
 app.use('/swagger-ui', swaggerUi.serve, swaggerUi.setup(swaggerDocumentation))
