@@ -1,4 +1,4 @@
-const { updateSimulator, createSimulator, disableSimulator, getAllSimulators } = require('../service/simulator.service');
+const { updateSimulator, createSimulator, disableSimulator, getAllSimulators, saveSimulatorResult } = require('../service/simulator.service');
 const { Router } = require('express');
 const {protectedEndpoint} = require("../../../security/auth.middleware");
 const routerSimulator = Router();
@@ -47,6 +47,18 @@ const getAllSimulatorsController = async (req, res) => {
     }
 }
 
+const saveSimulatorResultController = async (req, res) => {
+    const { student_id, simulator_id, final_score, answers } = req.body;
+
+    if (!student_id || !simulator_id || final_score == undefined || !Array.isArray(answers) || answers.length === 0) {
+        return res.status(400).json({ message: 'Faltan datos obligatorios o respuestas.' });
+    }
+
+    const result = await saveSimulatorResult({ student_id, simulator_id, final_score, answers });
+
+    return res.status(result.getStatusCode()).json(result.getResponseBody());
+};
+
 routerSimulator.get('/all', protectedEndpoint('administrador'),
     // #swagger.tags = ['Simuladores']
     // #swagger.summary = 'Obtener todos los simuladores'
@@ -74,6 +86,14 @@ routerSimulator.patch('/', protectedEndpoint('administrador'),
     // #swagger.description = 'Endpoint para deshabilitar un simulador específico.'
     // #swagger.security = [{ "bearerAuth": [] }]
     disableSimulatorController)
+
+routerSimulator.post('/saveSimulatorResult',
+    // #swagger.tags = ['Simuladores']
+    // #swagger.summary = 'Guardar resultado del simulador'
+    // #swagger.description = 'Endpoint para guardar el resultado de un simulador realizado por un estudiante.'
+    //protectedEndpoint('estudiante'),
+    saveSimulatorResultController)
+
 
 module.exports = {
     routerSimulator
