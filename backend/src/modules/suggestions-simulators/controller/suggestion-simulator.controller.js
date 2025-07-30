@@ -1,6 +1,18 @@
-const { updateSuggestionStatus } = require('../service/suggestion.service')
+const { updateSuggestionStatus, saveSuggestion } = require('../service/suggestion-simulator.service')
 const { Router } = require('express')
 const routerSuggestion = Router()
+const { protectedEndpoint } = require('../../../security/auth.middleware')
+
+const saveSuggestionController = async (req, res) => {
+    try {
+        const { category, suggestionName, description } = req.body
+        const result = await saveSuggestion(category, suggestionName, description)
+        return res.status(result.getStatusCode()).json(result.getResponseBody())
+    } catch (error) {
+        console.log('Error en saveSuggestionController:', error.message)
+        return res.status(500).json({ message: error.message })
+    }
+}
 
 const updateSuggestionStatusController = async (req, res) => {
     try {
@@ -9,12 +21,20 @@ const updateSuggestionStatusController = async (req, res) => {
 
         const result = await updateSuggestionStatus(suggestion_id, status)
         return res.status(result.getStatusCode()).json(result.getResponseBody())
+
     } catch (error) {
         console.log('Error en updateSuggestionStatusController:', error.message)
         return res.status(500).json({ message: error.message })
     }
 }
 
+// POST para guardar una nueva sugerencia
+routerSuggestion.post('/', protectedEndpoint('estudiantes'),
+    // #swagger.tags = ['Sugerencias']
+    // #swagger.summary = 'Guardar una nueva sugerencia'
+    // #swagger.description = 'Permite guardar una sugerencia para un simulador.'
+    saveSuggestionController
+)
 
 // PATCH para actualizar solo el status
 routerSuggestion.patch('/:suggestion_id/status',

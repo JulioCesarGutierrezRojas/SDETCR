@@ -8,7 +8,7 @@ const sidebarTeacher = ({ isCollapsed, setIsCollapsed }) => {
         { to: "/teacher", label: "Seleccionar estudiantes", icon: <FaUserPlus /> },
         { to: "/teacher/estudiantesSeleccionados", label: "Estudiantes asignados", icon: <FaUserGraduate /> },
         { to: "/teacher/videos", label: "Entrevistas por visualizar", icon: <FaVideo /> },
-        { to: "/teacher/comentarios", label: "Comentarios enviados", icon: <FaComments /> },
+        
     ];
 
     return (
