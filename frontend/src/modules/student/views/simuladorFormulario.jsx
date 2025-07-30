@@ -1,6 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { FaVideo, FaKeyboard } from "react-icons/fa";
+import VideoRecorderModal from "../components/VideoRecorderModal.jsx";
 // import Feedback from "../../components/Feedback.jsx";
 
 const SimuladorFormulario = () => {
@@ -8,6 +9,8 @@ const SimuladorFormulario = () => {
     const [preguntas, setPreguntas] = useState([]);
     const [respuestas, setRespuestas] = useState({});
     const [modosPorPregunta, setModosPorPregunta] = useState({});
+    const [modalAbierto, setModalAbierto] = useState(false);
+    const [preguntaActualModal, setPreguntaActualModal] = useState(null);
 
     useEffect(() => {
         const preguntasMock = [
@@ -42,6 +45,22 @@ const SimuladorFormulario = () => {
         setRespuestas({ ...respuestas, [idPregunta]: { tipo: "video", valor: archivo } });
     };
 
+    const handleIniciarGrabacion = (idPregunta) => {
+        setPreguntaActualModal(idPregunta);
+        setModalAbierto(true);
+    };
+
+    const handleVideoGrabado = (archivo) => {
+        if (preguntaActualModal) {
+            setRespuestas({ ...respuestas, [preguntaActualModal]: { tipo: "video", valor: archivo } });
+        }
+    };
+
+    const handleCerrarModal = () => {
+        setModalAbierto(false);
+        setPreguntaActualModal(null);
+    };
+
     const handleSubmit = () => {
         console.log("Respuestas enviadas:", respuestas);
     };
@@ -50,7 +69,7 @@ const SimuladorFormulario = () => {
         <div className="p-4 max-w-6xl mx-auto">
             <h1 className="text-2xl font-bold text-[var(--color-lavanda-700)] mb-6">Simulador #{simuladorId}</h1>
 
-            <div className="space-y-8 max-h-[560px] overflow-y-auto pr-2">
+            <div className="space-y-8">
                 {preguntas.map((preg, index) => (
                     <div key={preg.id} className="bg-white border border-2 border-[var(--color-lavanda-500)] rounded-lg shadow-md p-5 space-y-4">
                         <h2 className="font-semibold text-[var(--color-lavanda-800)]">Pregunta {index + 1}</h2>
@@ -95,23 +114,42 @@ const SimuladorFormulario = () => {
                             </div>
                         ) : (
                             <div className="mt-3 space-y-3">
-                                <label className="flex flex-col items-center justify-center py-6 border-2 border-dashed rounded-md cursor-pointer hover:border-[var(--color-lavanda-600)] border-[var(--color-gris-500)]">
-                                    <FaVideo className="text-[var(--color-lavanda-600)] text-3xl mb-2" />
-                                    <span className="text-[var(--color-gris-700)] text-sm">Haz clic para subir video o arrastralo aquí</span>
-                                    <input
-                                        type="file"
-                                        accept="video/*"
-                                        onChange={(e) => handleRespuestaVideo(preg.id, e.target.files[0])}
-                                        className="hidden"
-                                    />
-                                </label>
+                                {respuestas[preg.id]?.valor ? (
+                                    <div className="border-2 border-dashed border-[var(--color-lavanda-400)] rounded-md p-3 bg-lavanda-50 flex items-center justify-between">
+                                        <div className="flex items-center min-w-0">
+                                            <FaVideo className="text-[var(--color-lavanda-600)] text-xl mr-3 flex-shrink-0" />
+                                            <span className="text-[var(--color-gris-800)] font-medium truncate" title={respuestas[preg.id].valor.name || 'Video grabado'}>
+                                                {respuestas[preg.id].valor.name || 'Video grabado'}
+                                            </span>
+                                        </div>
+                                        <button
+                                            onClick={() => setRespuestas({ ...respuestas, [preg.id]: null })}
+                                            className="ml-4 flex-shrink-0 py-1 px-3 bg-red-500 text-white text-xs font-semibold rounded-md hover:bg-red-600 transition"
+                                        >
+                                            Eliminar
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <label className="flex flex-col items-center justify-center py-6 border-2 border-dashed rounded-md cursor-pointer hover:border-[var(--color-lavanda-600)] border-[var(--color-gris-500)]">
+                                            <FaVideo className="text-[var(--color-lavanda-600)] text-3xl mb-2" />
+                                            <span className="text-[var(--color-gris-700)] text-sm">Haz clic para subir video o arrastralo aquí</span>
+                                            <input
+                                                type="file"
+                                                accept="video/*"
+                                                onChange={(e) => handleRespuestaVideo(preg.id, e.target.files[0])}
+                                                className="hidden"
+                                            />
+                                        </label>
 
-                                <button
-                                    onClick={() => alert("Funcionalidad de grabación próximamente")}
-                                    className="w-full py-2 bg-[var(--color-lavanda-600)] text-white font-semibold rounded-md hover:bg-[var(--color-lavanda-700)] transition"
-                                >
-                                    Grabar video desde aquí
-                                </button>
+                                        <button
+                                            onClick={() => handleIniciarGrabacion(preg.id)}
+                                            className="w-full py-2 bg-[var(--color-lavanda-600)] text-white font-semibold rounded-md hover:bg-[var(--color-lavanda-700)] transition"
+                                        >
+                                            Grabar video desde aquí
+                                        </button>
+                                    </>
+                                )}
                             </div>
                         )}
                     </div>
@@ -130,6 +168,13 @@ const SimuladorFormulario = () => {
                     Atrás
                 </Link>
             </div>
+
+            {/* Modal de grabación de video */}
+            <VideoRecorderModal
+                isOpen={modalAbierto}
+                onClose={handleCerrarModal}
+                onVideoRecorded={handleVideoGrabado}
+            />
         </div>
     );
 };
