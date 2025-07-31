@@ -1,4 +1,4 @@
-const { updateSimulator, createSimulator, disableSimulator, getAllSimulators, saveSimulatorResult } = require('../service/simulator.service');
+const { updateSimulator, createSimulator, disableSimulator, getAllSimulators, saveSimulatorResult, getSimulatorsByCategory } = require('../service/simulator.service');
 const { Router } = require('express');
 const {protectedEndpoint} = require("../../../security/auth.middleware");
 const routerSimulator = Router();
@@ -59,6 +59,19 @@ const saveSimulatorResultController = async (req, res) => {
     return res.status(result.getStatusCode()).json(result.getResponseBody());
 };
 
+const getSimulatorsByCategoryController = async (req, res) => {
+    try {
+        const { category_id } = req.params;
+        
+        const result = await getSimulatorsByCategory(category_id);
+        return res.status(result.getStatusCode()).json(result.getResponseBody());
+
+    } catch (error) {
+        console.error('Error en getSimulatorsByCategoryController:', error.message);
+        return res.status(500).json({ message: error.message });
+    }
+}
+
 routerSimulator.get('/all', protectedEndpoint('administrador'),
     // #swagger.tags = ['Simuladores']
     // #swagger.summary = 'Obtener todos los simuladores'
@@ -93,6 +106,13 @@ routerSimulator.post('/saveSimulatorResult',
     // #swagger.description = 'Endpoint para guardar el resultado de un simulador realizado por un estudiante.'
     //protectedEndpoint('estudiante'),
     saveSimulatorResultController)
+
+routerSimulator.get('/category/:category_id',
+    // #swagger.tags = ['Simuladores']
+    // #swagger.summary = 'Obtener simuladores de una categoría'
+    // #swagger.description = 'Obtiene todos los simuladores activos de una categoría específica.'
+    // #swagger.parameters['category_id'] = { description: 'ID de la categoría', in: 'path', required: true, type: 'integer' }
+    getSimulatorsByCategoryController)
 
 
 module.exports = {

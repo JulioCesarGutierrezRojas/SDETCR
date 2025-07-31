@@ -6,6 +6,11 @@ const { sendEmail } = require('../../../kernel/configEmail')
 const crypto = require('crypto')
 const ApiResponse = require('../../../kernel/api.response')
 const TypesResponse = require('../../../kernel/types.response')
+const Category = require('../../categories/model/category.model')
+const Simulator = require('../../simulators/model/simulator.model')
+const Answer = require('../../answers/model/answer.model')
+const Question = require('../../questions/model/question.model')
+const sequelize = require('../../../config/database')
 
 const login = async (email, password) => {
     try{
@@ -265,6 +270,119 @@ const validarTokenRecuperacion = async(token) => {
     }
 }
 
+const getStudentCategories = async (student_id) => {
+    try {
+        if (!student_id) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El ID del estudiante es requerido', 400);
+        }
+
+        // Obtener el estudiante y sus categorías
+        const student = await User.findOne({
+            where: {
+                user_id: student_id,
+                role: 'estudiantes'
+            },
+            attributes: ['user_id', 'name', 'lastname', 'category']
+        });
+
+        if (!student) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'Estudiante no encontrado', 404);
+        }
+
+        if (!student.category || !Array.isArray(student.category) || student.category.length === 0) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El estudiante no tiene categorías asignadas', 404);
+        }
+
+        // Obtener los IDs de las categorías del estudiante
+        const categoryIds = student.category.map(cat => cat.id);
+
+        // Obtener las categorías completas
+        const categories = await Category.findAll({
+            where: {
+                category_id: categoryIds,
+                status: true
+            },
+            attributes: ['category_id', 'name', 'description']
+        });
+
+        if (!categories || categories.length === 0) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'No se encontraron categorías activas para este estudiante', 404);
+        }
+
+        // Formatear la respuesta
+        const formattedCategories = categories.map(category => ({
+            category_id: category.category_id,
+            category_name: category.name,
+            category_description: category.description
+        }));
+
+        const result = {
+            student: {
+                user_id: student.user_id,
+                name: student.name,
+                lastname: student.lastname
+            },
+            categories: formattedCategories
+        };
+
+        return new ApiResponse(null, result, TypesResponse.SUCCESS, 'Categorías del estudiante obtenidas exitosamente', 200);
+
+    } catch (error) {
+        console.error('Error en getStudentCategories:', error);
+        return new ApiResponse(null, null, TypesResponse.ERROR, 'Error interno al obtener las categorías del estudiante', 500);
+    }
+};
+
+const getAllStudentsWithSimulatorCount = async () => {
+    try {
+        // Usar consulta SQL optimizada para obtener todos los estudiantes con el conteo de simuladores respondidos
+        const studentsWithCount = await sequelize.query(`
+            SELECT 
+                u.user_id,
+                u.name,
+                u.lastname,
+                u.email,
+                u.enrollment,
+                u.category,
+                COALESCE(COUNT(DISTINCT q.simulator_id), 0) as simulators_answered
+            FROM users u
+            LEFT JOIN answers a ON u.user_id = a.student_id
+            LEFT JOIN questions q ON a.question_id = q.question_id
+            WHERE u.role = 'estudiantes'
+            GROUP BY u.user_id, u.name, u.lastname, u.email, u.enrollment, u.category
+            ORDER BY u.name ASC, u.lastname ASC
+        `, {
+            type: sequelize.QueryTypes.SELECT
+        });
+
+        if (!studentsWithCount || studentsWithCount.length === 0) {
+            return new ApiResponse(null, [], TypesResponse.SUCCESS, 'No se encontraron estudiantes', 200);
+        }
+
+        // Formatear la respuesta
+        const formattedStudents = studentsWithCount.map(student => ({
+            student_id: student.user_id,
+            name: student.name,
+            lastname: student.lastname,
+            email: student.email,
+            enrollment: student.enrollment,
+            categories: student.category || [],
+            simulators_answered_count: parseInt(student.simulators_answered) || 0
+        }));
+
+        const result = {
+            students: formattedStudents,
+            total_students: formattedStudents.length
+        };
+
+        return new ApiResponse(null, result, TypesResponse.SUCCESS, 'Estudiantes con conteo de simuladores obtenidos exitosamente', 200);
+
+    } catch (error) {
+        console.error('Error en getAllStudentsWithSimulatorCount:', error);
+        return new ApiResponse(null, null, TypesResponse.ERROR, 'Error interno al obtener los estudiantes con conteo de simuladores', 500);
+    }
+};
+
 module.exports = {
     login,
     restaurarPassword,
@@ -273,4 +391,6 @@ module.exports = {
     createMentor,
     getStudentByMentor,
     validarTokenRecuperacion,
+    getStudentCategories,
+    getAllStudentsWithSimulatorCount
 }
