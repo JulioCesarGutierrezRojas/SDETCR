@@ -1,4 +1,4 @@
-const { getSimulatorFromHistory, getHistoriesByStudent } = require('../service/history.service');
+const { getSimulatorFromHistory, getHistoriesByStudent, getStudentCategoriesAndSimulators } = require('../service/history.service');
 const { Router } = require('express')
 const {protectedEndpoint} = require("../../../security/auth.middleware");
 const routerHistory = Router()
@@ -29,6 +29,23 @@ const getHistoriesByStudentController = async (req, res) => {
     }
 }
 
+const getStudentCategoriesAndSimulatorsController = async (req, res) => {
+    try {
+        const { studentId } = req.params;
+        
+        if (!studentId) {
+            return res.status(400).json({ message: 'El ID del estudiante es requerido' });
+        }
+
+        const result = await getStudentCategoriesAndSimulators(studentId);
+        return res.status(result.getStatusCode()).json(result.getResponseBody());
+
+    } catch (error) {
+        console.error('Error en getStudentCategoriesAndSimulatorsController:', error.message);
+        return res.status(500).json({ message: error.message });
+    }
+}
+
 routerHistory.get('/student/:studentId', protectedEndpoint('mentor', 'administrador'),
     // #swagger.tags = ['Historial']
     // #swagger.summary = 'Obtener historial por estudiante'
@@ -41,6 +58,13 @@ routerHistory.get('/student/:studentId/simulator/:simulatorId',
     // #swagger.summary = 'Obtener simulador del historial del estudiante'
     // #swagger.description = 'Endpoint para obtener un simulador específico del historial de un estudiante.'
     getSimulatorFromHistoryController)
+
+routerHistory.get('/student/:studentId/categories', 
+    // #swagger.tags = ['Historial']
+    // #swagger.summary = 'Obtener categorías y simuladores respondidos por estudiante'
+    // #swagger.description = 'Obtiene las categorías en las que ha respondido un estudiante junto con el nombre de los simuladores, la calificación automática y el comentario del mentor.'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    getStudentCategoriesAndSimulatorsController)
 
 //routerHistory.get('/byStudent',getHistoriesByStudent) // Este no se quien lo hizo jeje
 
