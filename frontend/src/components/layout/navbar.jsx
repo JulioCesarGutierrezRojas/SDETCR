@@ -33,7 +33,7 @@ const Navbar = () => {
     return (
         <header className="h-14 bg-[var(--color-blanco)] border-b border-[var(--blue)] flex items-center justify-between px-6 shadow-sm relative z-50">
             <h2 className="text-[var(--primary)] font-semibold text-lg">
-                Simulador de Entrevistas con Retroalimentación
+                Simulador de Entrevistas de Trabajo con Retroalimentación
             </h2>
 
             <div className="flex items-center gap-4 relative">

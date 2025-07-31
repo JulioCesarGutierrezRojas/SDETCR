@@ -76,6 +76,15 @@ const SimuladorFormAdmin = () => {
         );
     };
 
+    const handleGuardar = () => {
+        if (preguntas.length !== 10) {
+            alert("Debes agregar exactamente 10 preguntas antes de guardar.");
+            return;
+        }
+        console.log("Preguntas guardadas:", preguntas);
+    };
+    
+
     return (
         <div className="p-4 space-y-6 max-w-5xl mx-auto">
             <div className="bg-white p-4 rounded-lg shadow-md space-y-4 border border-[var(--color-gris-300)]">
@@ -176,8 +185,10 @@ const SimuladorFormAdmin = () => {
 
             {/* Guardar simulador */}
             <div className="flex justify-end gap-4 pt-4">
-                <button className="px-5 py-2 bg-[var(--color-lavanda-700)] text-white rounded-md hover:bg-[var(--color-lavanda-800)]">
-                    Guardar cambios
+                <button 
+                    onClick={handleGuardar}
+                    className="px-5 py-2 bg-[var(--color-lavanda-700)] text-white rounded-md hover:bg-[var(--color-lavanda-800)]">
+                    Guardar preguntas
                 </button>
             </div>
         </div>

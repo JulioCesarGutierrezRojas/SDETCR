@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FaEdit, FaTrash, FaPlus, FaAngleLeft, FaAngleRight } from "react-icons/fa";
+import { FaEdit, FaTrash, FaSearch, FaAngleLeft, FaAngleRight } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const UsuariosList = () => {
@@ -22,6 +22,8 @@ const UsuariosList = () => {
             enrollment: "20230001"
         }
     ]);
+
+    const [busquedaCorreo, setBusquedaCorreo] = useState("");
     const [paginaActual, setPaginaActual] = useState(1);
     const usuariosPorPagina = 6;
 
@@ -41,19 +43,19 @@ const UsuariosList = () => {
         console.log("Eliminar usuario", usuarioId);
     };
 
-    const handleCrear = () => {
-        setModoEdicion(false);
-        setUsuarioSeleccionado(null);
-        setMostrarModal(true);
-    };
 
     const cerrarModal = () => {
         setMostrarModal(false);
     };
 
-    const totalPaginas = Math.ceil(usuarios.length / usuariosPorPagina);
+
+    const filtrados = usuarios.filter((e) =>
+        e.email.toLowerCase().includes(busquedaCorreo.toLowerCase())
+    );
+
+    const totalPaginas = Math.ceil(filtrados.length / usuariosPorPagina);
     const indiceInicio = (paginaActual - 1) * usuariosPorPagina;
-    const usuariosPagina = usuarios.slice(indiceInicio, indiceInicio + usuariosPorPagina);
+    const usuariosPagina = filtrados.slice(indiceInicio, indiceInicio + usuariosPorPagina);
 
     const cambiarPagina = (nuevaPagina) => {
         if (nuevaPagina >= 1 && nuevaPagina <= totalPaginas) {
@@ -65,11 +67,21 @@ const UsuariosList = () => {
         <div className="p-4">
             <div className="flex justify-between items-center mb-4 pb-2">
                 <h1 className="text-2xl font-bold text-[var(--color-lavanda-700)]">Gestión de Usuarios</h1>
-                <button
-                    className="bg-[var(--color-lavanda-600)] text-white px-3 py-1.5 rounded-md flex items-center gap-2 hover:bg-[var(--color-lavanda-700)]"
-                    onClick={handleCrear}>
-                    <FaPlus /> Crear Usuario
-                </button>
+                <div className="relative w-full max-w-xs">
+                    <span className="absolute inset-y-0 right-4 flex items-center text-gray-400">
+                        <FaSearch />
+                    </span>
+                    <input
+                        type="text"
+                        placeholder="Buscar por correo..."
+                        className="pl-5 pr-4 py-2 w-full border border-[var(--blue)] rounded-full text-sm bg-[var(--color-blanco)] focus:outline-none focus:ring focus:ring-[var(--color-lavanda-300)]"
+                        value={busquedaCorreo}
+                        onChange={(e) => {
+                            setBusquedaCorreo(e.target.value);
+                            setPaginaActual(1);
+                        }}
+                    />
+                </div>
             </div>
 
             <div className="overflow-x-auto rounded-lg shadow-md border border-gray-200">
@@ -120,8 +132,8 @@ const UsuariosList = () => {
 
                                         <button
                                             className={`p-1 px-4 rounded-full text-sm font-medium shadow border ${usuario.role === "estudiante"
-                                                    ? "text-[var(--color-lavanda-800)] border-[var(--color-gris-300)] hover:bg-[var(--color-lavanda-600)] hover:text-white"
-                                                    : "bg-gray-200 text-gray-400 border-gray-300 cursor-not-allowed"
+                                                ? "text-[var(--color-lavanda-800)] border-[var(--color-gris-300)] hover:bg-[var(--color-lavanda-600)] hover:text-white"
+                                                : "bg-gray-200 text-gray-400 border-gray-300 cursor-not-allowed"
                                                 }`}
                                             disabled={usuario.role !== "estudiante"}
                                             onClick={() =>
