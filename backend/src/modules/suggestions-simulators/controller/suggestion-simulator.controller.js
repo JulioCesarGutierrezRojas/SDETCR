@@ -1,4 +1,4 @@
-const { updateSuggestionStatus, saveSuggestion } = require('../service/suggestion-simulator.service')
+const { updateSuggestionStatus, saveSuggestion, getSuggestionsApprovedAndPending } = require('../service/suggestion-simulator.service')
 const { Router } = require('express')
 const routerSuggestion = Router()
 const { protectedEndpoint } = require('../../../security/auth.middleware')
@@ -28,6 +28,17 @@ const updateSuggestionStatusController = async (req, res) => {
     }
 }
 
+const getSuggestionsApprovedAndPendingController = async (req, res) => {
+    try {
+        const result = await getSuggestionsApprovedAndPending();
+        return res.status(result.getStatusCode()).json(result.getResponseBody());
+
+    } catch (error) {
+        console.error('Error en getSuggestionsApprovedAndPendingController:', error.message);
+        return res.status(500).json({ message: error.message });
+    }
+}
+
 // POST para guardar una nueva sugerencia
 routerSuggestion.post('/', protectedEndpoint('estudiantes'),
     // #swagger.tags = ['Sugerencias']
@@ -42,6 +53,14 @@ routerSuggestion.patch('/:suggestion_id/status',
     // #swagger.summary = 'Actualizar status de una sugerencia'
     // #swagger.description = 'Permite cambiar el estado de una sugerencia a aprobado o rechazado.'
     updateSuggestionStatusController
+)
+
+// GET para obtener sugerencias aprobadas y pendientes
+routerSuggestion.get('/approved-pending', protectedEndpoint('administrador', 'mentor'),
+    // #swagger.tags = ['Sugerencias']
+    // #swagger.summary = 'Obtener sugerencias aprobadas y pendientes'
+    // #swagger.description = 'Obtiene todas las sugerencias con el estado aprobado y pendiente.'
+    getSuggestionsApprovedAndPendingController
 )
 
 module.exports = {
