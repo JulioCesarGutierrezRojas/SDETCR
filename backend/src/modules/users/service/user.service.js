@@ -236,7 +236,18 @@ const getStudentByMentor = async (mentorId) => {
             },
             attributes: ['user_id', 'name', 'lastname', 'email', 'enrollment', 'category'],
         });
-        return new ApiResponse(null, students, TypesResponse.SUCCESS, 'Estudiantes obtenidos exitosamente', 200);
+
+        const mentor = await User.findOne({
+            where: {
+                user_id: mentorId,
+                role: 'mentor'
+            },
+            attributes: ['user_id', 'name', 'lastname', 'email', 'enrollment']
+        })
+
+        const totalStudents = Array.isArray(students) ? students.length : 0;
+
+        return new ApiResponse(null, { mentor, students, totalStudents }, TypesResponse.SUCCESS, 'Estudiantes obtenidos exitosamente', 200);
     }catch(error){
         console.error('Error en getStudentByMentor:', error);
         throw new Error(error.message || 'No se pudieron obtener los estudiantes');

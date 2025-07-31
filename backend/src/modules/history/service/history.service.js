@@ -28,10 +28,7 @@ const getSimulatorFromHistory = async (studentId, simulatorId) => {
         });
 
         if (!historyRecord) {
-            return {
-                success: false,
-                message: 'No se encontró el simulador en el historial del estudiante.'
-            };
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'No se encontró el simulador en el historial del estudiante.', 404);
         }
 
         const plainData = historyRecord.get({ plain: true });
@@ -48,22 +45,17 @@ const getSimulatorFromHistory = async (studentId, simulatorId) => {
 
         plainData.date_realized = formattedDateTime;
 
-        return {
-            success: true,
-            data: plainData
-        };
+        return new ApiResponse(null, plainData, TypesResponse.SUCCESS, 'Simulador obtenido correctamente del historial', 200);
     } catch (error) {
         console.error('Error en getSimulatorFromHistory:', error);
-        throw error;
+        throw new Error(error.message || 'Error al obtener el simulador del historial');
     }
 };
 
 const getHistoriesByStudent = async (studentId) => {
     try {
         if (!studentId) {
-            const error = new Error('El ID del estudiante es obligatorii')
-            error.statusCode = 400
-            throw error
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El ID del estudiante es obligatorio', 400);
         }
 
         const histories = await History.findAll({
@@ -72,22 +64,39 @@ const getHistoriesByStudent = async (studentId) => {
                 {
                     model: Simulator,
                     as: 'Simulator',
-                    attributes: ['simulator_id', 'name', 'status']
+                    attributes: ['simulator_id', 'name', 'status', 'category_id'],
+                    include: [
+                        {
+                            model: Category,
+                            as: 'Category',
+                            attributes: ['category_id', 'name', 'description']
+                        }
+                    ]
                 }
             ],
             order: [['date_realized', 'DESC']]
         })
 
         if (!histories.length) {
-            const error = new Error('No se encontraron historiales para este estudiante')
-            error.statusCode = 404
-            throw error
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'No se encontraron historiales para este estudiante', 404)
         }
 
-        return histories
+        // Calcular contadores
+        const totalSimulators = histories.length;
+        
+        // Obtener categorías únicas
+        const uniqueCategories = new Set();
+        histories.forEach(history => {
+            if (history.Simulator && history.Simulator.Category) {
+                uniqueCategories.add(history.Simulator.Category.category_id);
+            }
+        });
+        const totalCategories = uniqueCategories.size;
+
+        return new ApiResponse(null, { totalSimulators, totalCategories, histories }, TypesResponse.SUCCESS, 'Historiales obtenidos correctamente', 200)
     } catch (error) {
         console.log('Error en getHistoriesByStudent:', error.message)
-        throw error
+        throw new Error(error.message || 'Error al obtener los historiales del estudiante');
     }
 }
 
