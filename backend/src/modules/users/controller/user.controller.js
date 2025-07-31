@@ -117,7 +117,7 @@ routerUser.post('/createStudent',
 routerUser.get('/students-by-mentor/:mentorId',
     // #swagger.tags = ['Usuarios']
     // #swagger.summary = 'Obtener estudiantes por mentor'
-    // #swagger.description = 'Endpoint para obtener los estudiantes asociados a un mentor.'
+    // #swagger.description = 'Endpoint para obtener los estudiantes asociados a un mentor, con contador de estudiantes.'
     // #swagger.parameters['mentorId'] = { description: 'ID del mentor para filtrar los estudiantes.' }
     getStudentByMentorController)
 
