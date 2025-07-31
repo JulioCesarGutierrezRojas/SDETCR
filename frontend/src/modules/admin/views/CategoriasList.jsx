@@ -4,6 +4,10 @@ import { FaEdit, FaPlus, FaToggleOn, FaToggleOff } from "react-icons/fa";
 
 const CategoriasAdmin = () => {
     const [categorias, setCategorias] = useState([]);
+    const [mostrarModal, setMostrarModal] = useState(false);
+    const [categoriaEditando, setCategoriaEditando] = useState(null);
+    const [nuevoNombre, setNuevoNombre] = useState("");
+    const [nuevaDescripcion, setNuevaDescripcion] = useState("");
 
     useEffect(() => {
         setCategorias([
@@ -14,11 +18,43 @@ const CategoriasAdmin = () => {
     }, []);
 
     const handleAgregar = () => {
-        console.log("Agregar categoría");
+        setCategoriaEditando(null);
+        setNuevoNombre("");
+        setNuevaDescripcion("");
+        setMostrarModal(true);
     };
 
     const handleEditar = (id) => {
-        console.log("Editar categoría:", id);
+        const cat = categorias.find((c) => c.id === id);
+        if (cat) {
+            setCategoriaEditando(cat);
+            setNuevoNombre(cat.nombre);
+            setNuevaDescripcion(cat.descripcion);
+            setMostrarModal(true);
+        }
+    };
+
+    const handleGuardarCambios = () => {
+        if (categoriaEditando) {
+            setCategorias(prev =>
+                prev.map(cat =>
+                    cat.id === categoriaEditando.id
+                        ? { ...cat, nombre: nuevoNombre, descripcion: nuevaDescripcion }
+                        : cat
+                )
+            );
+        } else {
+            const nuevoId = Math.max(...categorias.map(cat => cat.id), 0) + 1;
+            const nuevaCategoria = {
+                id: nuevoId,
+                nombre: nuevoNombre,
+                descripcion: nuevaDescripcion,
+                activo: true
+            };
+            setCategorias(prev => [...prev, nuevaCategoria]);
+        }
+        setMostrarModal(false);
+        setCategoriaEditando(null);
     };
 
     const handleToggleActivo = (id) => {
@@ -33,10 +69,8 @@ const CategoriasAdmin = () => {
         <div className="p-4">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold text-[var(--color-lavanda-700)]">Gestión de Categorías</h1>
-                <button
-                    onClick={handleAgregar}
-                    className="flex items-center gap-2 px-4 py-2 rounded-md bg-[var(--color-lavanda-700)] text-white hover:bg-[var(--color-lavanda-500)] transition"
-                >
+                <button onClick={handleAgregar}
+                    className="flex items-center gap-2 px-4 py-2 rounded-md bg-[var(--color-lavanda-700)] text-white hover:bg-[var(--color-lavanda-500)] transition">
                     <FaPlus />
                     Agregar categoría
                 </button>
@@ -77,16 +111,52 @@ const CategoriasAdmin = () => {
                                 </button>
                             </div>
 
-                            <Link
-                                to={`/admin/categoria/${cat.id}`}
-                                className={`mt-4 block text-right text-sm ${cat.activo ? "text-[var(--color-lavanda-700)] hover:underline" : "text-gray-500 pointer-events-none"}`}
-                            >
+                            <Link to={`/admin/categoria/${cat.id}`}
+                                className={`mt-4 block text-right text-sm ${cat.activo ? "text-[var(--color-lavanda-700)] hover:underline" : "text-gray-500 pointer-events-none"}`}>
                                 Ver simuladores
                             </Link>
                         </div>
                     );
                 })}
             </div>
+
+            {/* MODAL DE EDICIÓN */}
+            {mostrarModal && (
+                <div className="fixed inset-0 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg shadow-lg p-6 w-[70%] max-w-md border border-[var(--color-gris-500)]">
+                        <h2 className="text-xl font-bold text-[var(--color-lavanda-700)] mb-4">
+                            {categoriaEditando ? "Editar Categoría" : "Agregar Categoría"}
+                        </h2>
+
+                        <div className="space-y-4">
+                            <input
+                                type="text"
+                                className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-[var(--color-lavanda-500)]"
+                                placeholder="Nombre"
+                                value={nuevoNombre}
+                                onChange={(e) => setNuevoNombre(e.target.value)}
+                            />
+                            <textarea
+                                className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring focus:ring-[var(--color-lavanda-500)]"
+                                rows={3}
+                                placeholder="Descripción"
+                                value={nuevaDescripcion}
+                                onChange={(e) => setNuevaDescripcion(e.target.value)}
+                            />
+                            <div className="flex justify-end gap-2 pt-2">
+                                <button className="px-4 py-1 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
+                                    onClick={() => setMostrarModal(false)}>
+                                    Cancelar
+                                </button>
+                                <button className="px-4 py-1 bg-[var(--color-lavanda-700)] text-white rounded-md hover:bg-[var(--color-lavanda-800)]"
+                                    onClick={handleGuardarCambios}>
+                                    Guardar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
