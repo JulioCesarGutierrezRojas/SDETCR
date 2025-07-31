@@ -127,10 +127,65 @@ const getAllSimulators = async () => {
     }
 }
 
+const getSimulatorsByCategory = async (category_id) => {
+    try {
+        if (!category_id) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El ID de la categoría es requerido', 400);
+        }
+
+        // Verificar que la categoría existe y está activa
+        const Category = require('../../categories/model/category.model');
+        const category = await Category.findOne({
+            where: {
+                category_id: category_id,
+                status: true
+            },
+            attributes: ['category_id', 'name', 'description']
+        });
+
+        if (!category) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'Categoría no encontrada o inactiva', 404);
+        }
+
+        // Obtener todos los simuladores de la categoría
+        const simulators = await Simulator.findAll({
+            where: {
+                category_id: category_id,
+                status: true
+            },
+            attributes: ['simulator_id', 'name', 'status']
+        });
+
+        // Formatear la respuesta
+        const formattedSimulators = simulators.map(simulator => ({
+            simulator_id: simulator.simulator_id,
+            simulator_name: simulator.name,
+            status: simulator.status
+        }));
+
+        const result = {
+            category: {
+                category_id: category.category_id,
+                category_name: category.name,
+                category_description: category.description
+            },
+            simulators: formattedSimulators,
+            simulators_count: formattedSimulators.length
+        };
+
+        return new ApiResponse(null, result, TypesResponse.SUCCESS, 'Simuladores de la categoría obtenidos exitosamente', 200);
+
+    } catch (error) {
+        console.error('Error en getSimulatorsByCategory:', error);
+        return new ApiResponse(null, null, TypesResponse.ERROR, 'Error interno al obtener los simuladores de la categoría', 500);
+    }
+};
+
 module.exports = {
     updateSimulator,
     createSimulator,
     disableSimulator,
     getAllSimulators,
-    saveSimulatorResult
+    saveSimulatorResult,
+    getSimulatorsByCategory
 }

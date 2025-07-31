@@ -1,4 +1,4 @@
-const { saveAnswers } = require('../service/answer.service');
+const { saveAnswers, getStudentAnswersWithEvaluation, getStudentAnswersWithoutEvaluation } = require('../service/answer.service');
 const { Router } = require('express');
 const { protectedEndpoint } = require("../../../security/auth.middleware");
 const { upload } = require("../../../config/multer")
@@ -42,6 +42,40 @@ const saveAnswerController = async (req, res) => {
     }
 }
 
+const getStudentAnswersWithEvaluationController = async (req, res) => {
+    try {
+        const { student_id, simulator_id } = req.params;
+        
+        if (!student_id || !simulator_id) {
+            return res.status(400).json({ message: 'student_id y simulator_id son requeridos' });
+        }
+
+        const result = await getStudentAnswersWithEvaluation(student_id, simulator_id);
+        return res.status(result.getStatusCode()).json(result.getResponseBody());
+
+    } catch (error) {
+        console.error('Error en getStudentAnswersWithEvaluationController:', error.message);
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+const getStudentAnswersWithoutEvaluationController = async (req, res) => {
+    try {
+        const { student_id, simulator_id } = req.params;
+        
+        if (!student_id || !simulator_id) {
+            return res.status(400).json({ message: 'student_id y simulator_id son requeridos' });
+        }
+
+        const result = await getStudentAnswersWithoutEvaluation(student_id, simulator_id);
+        return res.status(result.getStatusCode()).json(result.getResponseBody());
+
+    } catch (error) {
+        console.error('Error en getStudentAnswersWithoutEvaluationController:', error.message);
+        return res.status(500).json({ message: error.message });
+    }
+}
+
 
 routerAnswer.post('/save', //protectedEndpoint('estudiantes'),
     upload.array('files', 20),
@@ -50,6 +84,20 @@ routerAnswer.post('/save', //protectedEndpoint('estudiantes'),
     // #swagger.description = 'Endpoint para guardar la respuesta de un usuario a una pregunta del simulador.'
     // #swagger.security = [{ "bearerAuth": [] }]
     saveAnswerController);
+
+routerAnswer.get('/student/:student_id/simulator/:simulator_id/with-evaluation',
+    // #swagger.tags = ['Respuestas']
+    // #swagger.summary = 'Obtener respuestas del estudiante con evaluación del mentor'
+    // #swagger.description = 'Obtiene las respuestas de un estudiante para un simulador específico incluyendo las preguntas, si son correctas y la evaluación del mentor (calificación y comentario).'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    getStudentAnswersWithEvaluationController);
+
+routerAnswer.get('/student/:student_id/simulator/:simulator_id/without-evaluation',
+    // #swagger.tags = ['Respuestas']
+    // #swagger.summary = 'Obtener respuestas del estudiante sin evaluación del mentor'
+    // #swagger.description = 'Obtiene las respuestas de un estudiante para un simulador específico incluyendo las preguntas y si son correctas, pero sin incluir la evaluación del mentor.'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    getStudentAnswersWithoutEvaluationController);
 
 
 module.exports = {

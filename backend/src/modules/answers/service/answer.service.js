@@ -4,6 +4,8 @@ const sequelize = require('../../../config/database');
 const ApiResponse = require('../../../kernel/api.response');
 const TypesResponse = require('../../../kernel/types.response');
 const Question = require('../../questions/model/question.model');
+const User = require('../../users/model/user.model');
+const EvaluationMentor = require('../../evaluation-mentor/model/evaluation-mentor.model');
 
 const saveAnswers = async (student_id, simulator_id, answerList, files = []) => {
     const transaction = await sequelize.transaction();
@@ -100,11 +102,11 @@ const saveAnswers = async (student_id, simulator_id, answerList, files = []) => 
 
         await transaction.commit();
 
-        return new ApiResponse({
+        return new ApiResponse(null, {
             history_id: nuevoHistorial.history_id,
             answers_saved: respuestasGuardadas.length,
             final_score
-        }, null, TypesResponse.SUCCESS, 'Respuestas e historial guardados exitosamente', 201);
+        }, TypesResponse.SUCCESS, 'Respuestas e historial guardados exitosamente', 201);
 
     } catch (error) {
         await transaction.rollback();
@@ -114,6 +116,205 @@ const saveAnswers = async (student_id, simulator_id, answerList, files = []) => 
 };
 
 
+const getStudentAnswersWithEvaluation = async (student_id, simulator_id) => {
+    try {
+        if (!student_id || !simulator_id) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'student_id y simulator_id son requeridos', 400);
+        }
+
+        // Obtener las respuestas del estudiante para el simulador específico
+        const answers = await Answer.findAll({
+            where: {
+                student_id: student_id
+            },
+            include: [
+                {
+                    model: Question,
+                    as: 'Question',
+                    where: {
+                        simulator_id: simulator_id
+                    },
+                    attributes: ['question_id', 'question', 'options', 'correct_answer']
+                },
+                {
+                    model: User,
+                    as: 'Student',
+                    attributes: ['user_id', 'name', 'lastname', 'email', 'enrollment']
+                }
+            ],
+            attributes: ['answer_id', 'type_response', 'answer', 'url_video', 'date_response']
+        });
+
+        if (!answers || answers.length === 0) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'No se encontraron respuestas para este estudiante y simulador', 404);
+        }
+
+        // Obtener la evaluación del mentor si existe
+        const evaluation = await EvaluationMentor.findOne({
+            where: {
+                student_id: student_id,
+                simulator_id: simulator_id
+            },
+            include: [
+                {
+                    model: User,
+                    as: 'Mentor',
+                    attributes: ['user_id', 'name', 'lastname']
+                }
+            ],
+            attributes: ['evaluation_id', 'comment', 'final_score', 'date_evaluation']
+        });
+
+        // Formatear las respuestas con información de corrección
+        const formattedAnswers = answers.map(answer => {
+            let isCorrect = null;
+            if (answer.type_response === 'texto' && answer.Question?.correct_answer) {
+                const correctAnswer = answer.Question.correct_answer.trim().toLowerCase();
+                const studentAnswer = answer.answer?.trim().toLowerCase();
+                isCorrect = correctAnswer === studentAnswer;
+            }
+
+            // Formatear URL del video si existe
+            let videoUrl = null;
+            if (answer.url_video) {
+                const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3001}`;
+                videoUrl = `${baseUrl}/uploads/${answer.url_video}`;
+            }
+
+            return {
+                answer_id: answer.answer_id,
+                question: {
+                    question_id: answer.Question.question_id,
+                    question_text: answer.Question.question,
+                    options: answer.Question.options
+                },
+                student_response: {
+                    type: answer.type_response,
+                    answer: answer.answer,
+                    url_video: videoUrl,
+                    date_response: answer.date_response,
+                    is_correct: isCorrect
+                }
+            };
+        });
+
+        const result = {
+            student: answers[0]?.Student ? {
+                user_id: answers[0].Student.user_id,
+                name: answers[0].Student.name,
+                lastname: answers[0].Student.lastname,
+                email: answers[0].Student.email,
+                enrollment: answers[0].Student.enrollment
+            } : null,
+            answers: formattedAnswers,
+            mentor_evaluation: evaluation ? {
+                evaluation_id: evaluation.evaluation_id,
+                mentor: evaluation.Mentor ? {
+                    user_id: evaluation.Mentor.user_id,
+                    name: evaluation.Mentor.name,
+                    lastname: evaluation.Mentor.lastname
+                } : null,
+                comment: evaluation.comment,
+                final_score: evaluation.final_score,
+                date_evaluation: evaluation.date_evaluation
+            } : null
+        };
+
+        return new ApiResponse(null, result, TypesResponse.SUCCESS, 'Respuestas del estudiante obtenidas exitosamente', 200);
+
+    } catch (error) {
+        console.error('Error en getStudentAnswersWithEvaluation:', error);
+        return new ApiResponse(null, null, TypesResponse.ERROR, 'Error interno al obtener las respuestas', 500);
+    }
+};
+
+const getStudentAnswersWithoutEvaluation = async (student_id, simulator_id) => {
+    try {
+        if (!student_id || !simulator_id) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'student_id y simulator_id son requeridos', 400);
+        }
+
+        // Obtener las respuestas del estudiante para el simulador específico
+        const answers = await Answer.findAll({
+            where: {
+                student_id: student_id
+            },
+            include: [
+                {
+                    model: Question,
+                    as: 'Question',
+                    where: {
+                        simulator_id: simulator_id
+                    },
+                    attributes: ['question_id', 'question', 'options', 'correct_answer']
+                },
+                {
+                    model: User,
+                    as: 'Student',
+                    attributes: ['user_id', 'name', 'lastname', 'email', 'enrollment']
+                }
+            ],
+            attributes: ['answer_id', 'type_response', 'answer', 'url_video', 'date_response']
+        });
+
+        if (!answers || answers.length === 0) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'No se encontraron respuestas para este estudiante y simulador', 404);
+        }
+
+        // Formatear las respuestas con información de corrección
+        const formattedAnswers = answers.map(answer => {
+            let isCorrect = null;
+            if (answer.type_response === 'texto' && answer.Question?.correct_answer) {
+                const correctAnswer = answer.Question.correct_answer.trim().toLowerCase();
+                const studentAnswer = answer.answer?.trim().toLowerCase();
+                isCorrect = correctAnswer === studentAnswer;
+            }
+
+            // Formatear URL del video si existe
+            let videoUrl = null;
+            if (answer.url_video) {
+                const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3001}`;
+                videoUrl = `${baseUrl}/uploads/${answer.url_video}`;
+            }
+
+            return {
+                answer_id: answer.answer_id,
+                question: {
+                    question_id: answer.Question.question_id,
+                    question_text: answer.Question.question,
+                    options: answer.Question.options
+                },
+                student_response: {
+                    type: answer.type_response,
+                    answer: answer.answer,
+                    url_video: videoUrl,
+                    date_response: answer.date_response,
+                    is_correct: isCorrect
+                }
+            };
+        });
+
+        const result = {
+            student: answers[0]?.Student ? {
+                user_id: answers[0].Student.user_id,
+                name: answers[0].Student.name,
+                lastname: answers[0].Student.lastname,
+                email: answers[0].Student.email,
+                enrollment: answers[0].Student.enrollment
+            } : null,
+            answers: formattedAnswers
+        };
+
+        return new ApiResponse(null, result, TypesResponse.SUCCESS, 'Respuestas del estudiante obtenidas exitosamente', 200);
+
+    } catch (error) {
+        console.error('Error en getStudentAnswersWithoutEvaluation:', error);
+        return new ApiResponse(null, null, TypesResponse.ERROR, 'Error interno al obtener las respuestas', 500);
+    }
+};
+
 module.exports = {
     saveAnswers,
+    getStudentAnswersWithEvaluation,
+    getStudentAnswersWithoutEvaluation
 };

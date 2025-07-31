@@ -1,4 +1,4 @@
-const { login, restaurarPassword, enviarCodigoRecuperacion, createStudent, createMentor, getStudentByMentor, validarTokenRecuperacion } = require('../service/user.service')
+const { login, restaurarPassword, enviarCodigoRecuperacion, createStudent, createMentor, getStudentByMentor, validarTokenRecuperacion, getStudentCategories, getAllStudentsWithSimulatorCount } = require('../service/user.service')
 const { Router } = require('express')
 const routerUser = Router()
 
@@ -83,6 +83,29 @@ const validarTokenRecuperacionController = async (req, res) => {
     }
 }
 
+const getStudentCategoriesController = async (req, res) => {
+    try {
+        const { student_id } = req.params;
+        
+        const result = await getStudentCategories(student_id);
+        return res.status(result.getStatusCode()).json(result.getResponseBody());
+
+    } catch (error) {
+        console.error('Error en getStudentCategoriesController:', error.message);
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+const getAllStudentsWithSimulatorCountController = async (req, res) => {
+    try {
+        const result = await getAllStudentsWithSimulatorCount();
+        return res.status(result.getStatusCode()).json(result.getResponseBody());
+
+    } catch (error) {
+        console.error('Error en getAllStudentsWithSimulatorCountController:', error.message);
+        return res.status(500).json({ message: error.message });
+    }
+}
 
 routerUser.post('/createMentor',
     // #swagger.tags = ['Usuarios']
@@ -126,6 +149,19 @@ routerUser.post('/validate-recovery-token',
     // #swagger.summary = 'Validar token de recuperación'
     // #swagger.description = 'Endpoint para validar un token de recuperación de contraseña.'
     validarTokenRecuperacionController)
+
+routerUser.get('/student/:student_id/categories',
+    // #swagger.tags = ['Usuarios']
+    // #swagger.summary = 'Obtener categorías del estudiante'
+    // #swagger.description = 'Obtiene las categorías que eligió el estudiante.'
+    // #swagger.parameters['student_id'] = { description: 'ID del estudiante', in: 'path', required: true, type: 'integer' }
+    getStudentCategoriesController)
+
+routerUser.get('/students/simulator-count',
+    // #swagger.tags = ['Usuarios']
+    // #swagger.summary = 'Obtener todos los estudiantes con conteo de simuladores'
+    // #swagger.description = 'Obtiene una lista de todos los estudiantes con el número de simuladores que han respondido.'
+    getAllStudentsWithSimulatorCountController)
 
 module.exports = {
     routerUser

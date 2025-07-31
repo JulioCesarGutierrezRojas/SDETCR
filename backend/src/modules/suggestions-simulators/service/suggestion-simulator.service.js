@@ -49,7 +49,46 @@ const updateSuggestionStatus = async (suggestion_id, status) => {
     }
 }
 
+const getSuggestionsApprovedAndPending = async () => {
+    try {
+        const suggestions = await SuggestionSimulator.findAll({
+            where: {
+                status: ['aprobado', 'pendiente']
+            },
+            attributes: [
+                'suggestion_id',
+                'suggested_category',
+                'suggested_name', 
+                'suggested_descrption',
+                'date_suggestion',
+                'status'
+            ],
+            order: [['date_suggestion', 'DESC']]
+        });
+
+        if (!suggestions || suggestions.length === 0) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'No se encontraron sugerencias aprobadas o pendientes', 404);
+        }
+
+        const formattedSuggestions = suggestions.map(suggestion => ({
+            suggestion_id: suggestion.suggestion_id,
+            suggested_category: suggestion.suggested_category,
+            suggested_name: suggestion.suggested_name,
+            suggested_description: suggestion.suggested_descrption, // Corrigiendo el typo del modelo
+            date_suggestion: suggestion.date_suggestion,
+            status: suggestion.status
+        }));
+
+        return new ApiResponse(null, formattedSuggestions, TypesResponse.SUCCESS, 'Sugerencias obtenidas exitosamente', 200);
+
+    } catch (error) {
+        console.error('Error en getSuggestionsApprovedAndPending:', error);
+        return new ApiResponse(null, null, TypesResponse.ERROR, 'Error interno al obtener las sugerencias', 500);
+    }
+};
+
 module.exports = {
     updateSuggestionStatus,
-    saveSuggestion
+    saveSuggestion,
+    getSuggestionsApprovedAndPending
 }
