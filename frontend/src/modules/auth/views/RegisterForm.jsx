@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const RegisterForm = () => {
@@ -7,8 +7,17 @@ const RegisterForm = () => {
         apellido: '',
         correo: '',
         rol: 'estudiante',
-        password: ''
+        password: '',
+        categorias: []
     });
+
+    const [categoriasDisponibles, setCategoriasDisponibles] = useState([
+        'Redes',
+        'Desarrollo de software',
+        'Administración de empresas',
+    ]);
+
+    useEffect(() => { }, []);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -17,6 +26,15 @@ const RegisterForm = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log('Datos del formulario:', formData);
+    };
+
+    const handleCategoriaChange = (e) => {
+        const { value, checked } = e.target;
+        const updatedCategorias = checked
+            ? [...formData.categorias, value]
+            : formData.categorias.filter((cat) => cat !== value);
+
+        setFormData({ ...formData, categorias: updatedCategorias });
     };
 
     return (
@@ -93,6 +111,29 @@ const RegisterForm = () => {
                             <option value="maestro">Maestro</option>
                         </select>
                     </div>
+
+                    {formData.rol === 'estudiante' && (
+                        <div className="mb-4">
+                            <label className="block font-semibold text-[var(--primary)] mb-1">
+                                Selecciona tus categorías
+                            </label>
+                            <div className="max-h-29 overflow-y-auto flex flex-col gap-2 bg-[var(--color-nude-200)] p-3 rounded-lg border-2 border-[var(--blue)]">
+                                {categoriasDisponibles.map((categoria) => (
+                                    <label key={categoria} className="flex items-center gap-2">
+                                        <input
+                                            type="checkbox"
+                                            name="categorias"
+                                            value={categoria}
+                                            checked={formData.categorias?.includes(categoria)}
+                                            onChange={handleCategoriaChange}
+                                            className="accent-[var(--primary)]"
+                                        />
+                                        {categoria}
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
+                    )}
 
                     <button type="submit" className="w-full mt-3 p-3 bg-[var(--primary)] text-white font-bold rounded-lg hover:bg-[var(--color-lavanda-800)] transition">
                         Registrarse
