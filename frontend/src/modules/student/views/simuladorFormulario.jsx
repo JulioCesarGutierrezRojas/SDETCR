@@ -2,7 +2,8 @@ import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { FaVideo, FaKeyboard } from "react-icons/fa";
 import VideoRecorderModal from "../components/VideoRecorderModal.jsx";
-// import Feedback from "../../components/Feedback.jsx";
+import Feedback from "../../../components/Feedback.jsx";
+import CalificacionProv from "../../../components/Calificacion.jsx"
 
 const SimuladorFormulario = () => {
     const { simuladorId } = useParams();
@@ -67,7 +68,16 @@ const SimuladorFormulario = () => {
 
     return (
         <div className="p-4 max-w-6xl mx-auto">
-            <h1 className="text-2xl font-bold text-[var(--color-lavanda-700)] mb-6">Simulador #{simuladorId}</h1>
+            <div className="flex justify-between items-center mb-6">
+                <h1 className="text-2xl font-bold text-[var(--color-lavanda-700)]">Simulador #{simuladorId}</h1>
+                {/* <CalificacionProv /> */}
+            </div>
+
+            <div className="w-full mb-12">
+                {/* <Feedback/> */}
+            </div>
+
+
 
             <div className="space-y-8">
                 {preguntas.map((preg, index) => (
