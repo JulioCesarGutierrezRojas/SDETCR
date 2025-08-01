@@ -1,9 +1,17 @@
 import { IoMdNotifications } from "react-icons/io";
 import { useState, useRef, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 const Navbar = () => {
     const [showNotifications, setShowNotifications] = useState(false);
     const notificationRef = useRef(null);
+    const location = useLocation();
+
+    // Detectar el rol por ruta
+    let rol = "";
+    if (location.pathname.startsWith("/admin")) rol = "Administrador";
+    else if (location.pathname.startsWith("/teacher")) rol = "Docente";
+    else if (location.pathname.startsWith("/student")) rol = "Estudiante";
 
     const toggleNotifications = () => {
         setShowNotifications(!showNotifications);
@@ -21,7 +29,6 @@ const Navbar = () => {
         };
     }, []);
 
-    // Notificaciones de prueba
     const notificaciones = [
         { id: 1, mensaje: "Tienes una nueva entrevista programada." },
         { id: 2, mensaje: "Tu simulador fue evaluado." },
@@ -37,7 +44,20 @@ const Navbar = () => {
             </h2>
 
             <div className="flex items-center gap-4 relative">
-                <span className="text-xm text-[var(--color-gris-900)]">Rol del Usuario</span>
+                
+                {rol && (
+                    <span
+                        className={`text-sm font-medium px-3 py-1 rounded-full 
+                            ${rol === "Administrador"
+                                ? "bg-yellow-100 text-yellow-700 border border-yellow-400"
+                                : rol === "Docente"
+                                    ? "bg-blue-100 text-blue-700 border border-blue-300"
+                                    : "bg-blue-100 text-blue-700 border border-blue-300"
+                            }`}
+                    >
+                        {rol}
+                    </span>
+                )}
 
                 <div className="relative" ref={notificationRef}>
                     <button
