@@ -19,12 +19,14 @@ const ResultadosEstudiante = () => {
                     titulo: 'Entrevista para Desarrollador React',
                     fecha: '14/07/2024',
                     calificacion: '8',
+                    calificacionFinal: null,
                 },
                 {
                     id: 2,
                     titulo: 'Entrevista HTML/CSS',
                     fecha: '12/07/2024',
                     calificacion: '9',
+                    calificacionFinal: '9'
                 },
             ],
         },
@@ -38,12 +40,14 @@ const ResultadosEstudiante = () => {
                     titulo: 'Entrevista de Comportamiento 1',
                     fecha: '10/07/2024',
                     calificacion: '7',
+                    calificacionFinal: null
                 },
                 {
                     id: 4,
                     titulo: 'Entrevista de Contabilidad',
                     fecha: '10/07/2024',
                     calificacion: '8',
+                    calificacionFinal: '9'
                 },
             ],
         },
@@ -57,12 +61,14 @@ const ResultadosEstudiante = () => {
                     titulo: 'Seguridad 1',
                     fecha: '10/07/2024',
                     calificacion: '6',
+                    calificacionFinal: null
                 },
                 {
                     id: 6,
                     titulo: 'Entrevista de analisis',
                     fecha: '10/07/2024',
                     calificacion: '5',
+                    calificacionFinal: '7'
                 },
             ],
         },
@@ -76,7 +82,7 @@ const ResultadosEstudiante = () => {
             </div>
 
             {categorias.map((cat) => (
-                <div key={cat.id} className="bg-[var(--color-lavanda-100)] border border-[var(--color-lavanda-200)] rounded-xl shadow-md">
+                <div key={cat.id} className="bg-[var(--color-lavanda-100)] border border-[var(--color-lavanda-300)] rounded-xl shadow-md">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 py-3 cursor-pointer relative" onClick={() => setExpandedCategory(expandedCategory === cat.id ? null : cat.id)}>
                         <div>
                             <p className="font-semibold text-[var(--color-lavanda-800)]">Categoria: {cat.nombre}</p>
@@ -90,19 +96,40 @@ const ResultadosEstudiante = () => {
                     </div>
 
                     {expandedCategory === cat.id && (
-                        <div className="border-t border-[var(--color-gris-200)] divide-y divide-[var(--color-gris-300)] bg-[var(--color-verde-claro)] mt-3">
+                        <div className="border-t border-[var(--color-gris-400)] divide-y divide-[var(--color-gris-100)] bg-[var(--color-verde-claro)] mt-3">
                             {cat.simuladores.map((sim) => (
                                 <div key={sim.id}
-                                    className={`flex items-center justify-between px-4 py-3
-                                        ${sim.calificacion > 7
-                                            ? 'bg-[var(--color-verde-claro)]'
-                                            : 'bg-[var(--color-rojo-claro)]'}`}
+                                    className={`flex items-center justify-between px-4 py-3 rounded-md
+                                    ${sim.calificacionFinal
+                                            ? sim.calificacionFinal >= 8
+                                                ? 'bg-green-100'
+                                                : 'bg-red-100'
+                                            : 'bg-[var(--color-nude-100)]'
+                                        }`}
                                 >
-
                                     <div>
                                         <p className="font-medium text-[var(--color-gris-900)]">Simulador: {sim.titulo}</p>
                                         <p className="text-sm text-[var(--color-gris-700)]">{sim.fecha}</p>
-                                        <p className="text-sm mt-2 font-semibold text-[var(--color-lavanda-800)]">Calificación: {sim.calificacion}/10</p>
+                                        <p className="text-sm mt-2 font-semibold text-[var(--color-lavanda-800)]">
+                                            Calificación Automática: {sim.calificacion}/10
+                                        </p>
+                                        <div className="mt-2">
+                                            {sim.calificacionFinal ? (
+                                                <span
+                                                    className={`text-xs font-semibold px-2.5 py-1 rounded-md shadow-sm
+                                                            ${sim.calificacionFinal >= 8
+                                                            ? 'bg-green-200 text-green-900 border border-green-300'
+                                                            : 'bg-red-200 text-red-900 border border-red-300'
+                                                        }`}
+                                                >
+                                                    {sim.calificacionFinal >= 8 ? '' : ''} Evaluado por el docente: {sim.calificacionFinal}/10
+                                                </span>
+                                            ) : (
+                                                <span className="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-1 rounded-md shadow-sm border border-yellow-400">
+                                                    Pendiente de evaluación
+                                                </span>
+                                            )}
+                                        </div>
                                     </div>
                                     <button className="bg-[var(--color-lavanda-600)] hover:bg-[var(--color-lavanda-800)] text-white text-sm font-semibold px-4 py-2 rounded-xl"
                                         onClick={() => navigate(`/student/comentariosObtenidos`)}>
