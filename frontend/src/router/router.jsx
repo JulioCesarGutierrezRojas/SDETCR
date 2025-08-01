@@ -40,7 +40,7 @@ const AppRouter = () => {
           <Route path="simuladores/:categoriaID" element={<Simuladores />} />
           <Route path="formulario/:simuladorID" element={<SimuladorFormulario />} />
           <Route path="resultadosObtenidos" element={<ResultadosEstudiante />} />
-          <Route path="comentariosObtenidos" element={<ComentariosEstudiante />} />
+          <Route path="comentariosObtenidos/:simuladorId" element={<ComentariosEstudiante />} />
           <Route path="sugerirSimulador" element={<SugerirSimulador/>} />
         </Route>
 
@@ -60,7 +60,7 @@ const AppRouter = () => {
           <Route path="seleccionarEstudiante" element={<SeleccionarEstudiante />} />
           <Route path="estudiantesSeleccionados" element={<ListaEstudiantes />} />
           <Route path="evaluarEstudiante" element={<EvaluarEstudiante />} />
-          <Route path="evaluarSimulador" element={<EvaluarSimulador />} />
+          <Route path="evaluarSimulador/:simuladorId" element={<EvaluarSimulador />} />
           <Route path="videos" element={<Videos />} />
         </Route>
   

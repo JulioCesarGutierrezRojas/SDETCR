@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { FaUser, FaReply } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const EvaluarSimulador = () => {
     const navigate = useNavigate();
     const [comentario, setComentario] = useState("");
     const [calificacion, setCalificacion] = useState('');
+    const [indiceActual, setIndiceActual] = useState(0);
+    const { simuladorId } = useParams();
 
     const preguntas = [
         {
@@ -41,6 +43,20 @@ const EvaluarSimulador = () => {
         year: "numeric",
     });
 
+    const siguientePregunta = () => {
+        if (indiceActual < preguntas.length - 1) {
+            setIndiceActual(indiceActual + 1);
+        }
+    };
+
+    const anteriorPregunta = () => {
+        if (indiceActual > 0) {
+            setIndiceActual(indiceActual - 1);
+        }
+    };
+
+    const pregunta = preguntas[indiceActual];
+
     return (
         <div className="max-w-5xl mx-auto p-4">
             <div className="flex bg-white shadow-md rounded-xl border border-[var(--color-gris-200)] overflow-hidden mb-6">
@@ -61,58 +77,74 @@ const EvaluarSimulador = () => {
             <div className="bg-white border border-[var(--color-gris-300)] rounded-xl shadow-md p-5 mb-6">
                 <h3 className="text-xl font-semibold text-[var(--color-gris-900)] mb-4">Respuestas del simulador</h3>
 
-                <div className="space-y-5 max-h-60 overflow-y-auto pr-2">
-                    {preguntas.map((pregunta, index) => (
-                        <div key={index} className="border border-[var(--color-gris-500)] rounded-md">
-                            {pregunta.tipo === "texto" ? (
-                                <div className={`border-l-4 rounded-md p-4 ${pregunta.correcta ? "border-green-500 bg-green-50" : "border-red-500 bg-red-50"}`}>
-                                    <p className="text-sm font-medium text-[var(--color-gris-900)] mb-2">
-                                        Pregunta {index + 1}: {pregunta.texto}
-                                    </p>
-                                    <ul className="space-y-1">
-                                        {pregunta.opciones.map((opcion, i) => {
-                                            const esSeleccionada = opcion === pregunta.respuesta;
-                                            const color =
-                                                esSeleccionada && pregunta.correcta
-                                                    ? "bg-green-100 border-green-500 text-green-700"
-                                                    : esSeleccionada && !pregunta.correcta
-                                                        ? "bg-red-100 border-red-500 text-red-700"
-                                                        : "bg-[var(--color-blanco)] border-[var(--color-gris-400)] text-[var(--color-gris-900)]";
-                                            return (
-                                                <li
-                                                    key={i}
-                                                    className={`px-3 py-2 rounded-md border ${color} text-sm`}
-                                                >
-                                                    {opcion}
-                                                </li>
-                                            );
-                                        })}
-                                    </ul>
+                <div className="space-y-5">
+                    <div className="border border-[var(--color-gris-500)] rounded-md">
+                        {pregunta.tipo === "texto" ? (
+                            <div className={`border-l-4 rounded-md p-4 ${pregunta.correcta ? "border-green-500 bg-green-50" : "border-red-500 bg-red-50"}`}>
+                                <p className="text-sm font-medium text-[var(--color-gris-900)] mb-2">
+                                    Pregunta {indiceActual + 1}: {pregunta.texto}
+                                </p>
+                                <ul className="space-y-1">
+                                    {pregunta.opciones.map((opcion, i) => {
+                                        const esSeleccionada = opcion === pregunta.respuesta;
+                                        const color =
+                                            esSeleccionada && pregunta.correcta
+                                                ? "bg-green-100 border-green-500 text-green-700"
+                                                : esSeleccionada && !pregunta.correcta
+                                                    ? "bg-red-100 border-red-500 text-red-700"
+                                                    : "bg-[var(--color-blanco)] border-[var(--color-gris-400)] text-[var(--color-gris-900)]";
+                                        return (
+                                            <li
+                                                key={i}
+                                                className={`px-3 py-2 rounded-md border ${color} text-sm`}
+                                            >
+                                                {opcion}
+                                            </li>
+                                        );
+                                    })}
+                                </ul>
+                            </div>
+                        ) : (
+                            <div className="border-l-4 border-[var(--color-lavanda-600)] bg-[var(--color-lavanda-100)] rounded-md p-4">
+                                <p className="text-sm font-medium text-[var(--color-gris-900)] mb-2">
+                                    Pregunta {indiceActual + 1}: {pregunta.texto}
+                                </p>
+                                <div className="text-sm text-[var(--color-gris-800)] mb-2">
+                                    Respuesta enviada en video; evaluación a cargo del docente
                                 </div>
-                            ) : (
-                                <div className="border-l-4 border-[var(--color-lavanda-600)] bg-[var(--color-lavanda-100)] rounded-md p-4">
-                                    <p className="text-sm font-medium text-[var(--color-gris-900)] mb-2">
-                                        Pregunta {index + 1}: {pregunta.texto}
-                                    </p>
+                                <video
+                                    src={pregunta.videoURL}
+                                    controls
+                                    className="max-w-xs w-full aspect-video rounded-md border border-[var(--color-gris-400)]"
+                                >
+                                    Tu navegador no soporta la reproducción de video.
+                                </video>
+                            </div>
+                        )}
+                    </div>
 
-                                    <div className="text-sm text-[var(--color-gris-800)] mb-2">
-                                        Respuesta enviada en video; evaluación a cargo del docente
-                                    </div>
-
-                                    <video
-                                        src={pregunta.videoURL}
-                                        controls
-                                        className="max-w-xs w-full aspect-video rounded-md border border-[var(--color-gris-400)]"
-                                    >
-                                        Tu navegador no soporta la reproducción de video.
-                                    </video>
-                                </div>
-                            )}
-                        </div>
-                    ))}
+                    {/* Navegación entre preguntas */}
+                    <div className="flex justify-between items-center mt-4">
+                        <button
+                            onClick={anteriorPregunta}
+                            disabled={indiceActual === 0}
+                            className={`px-4 py-1 rounded-md font-medium ${indiceActual === 0 ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-[var(--color-lavanda-600)] text-white hover:bg-[var(--color-lavanda-800)]'}`}
+                        >
+                            Anterior
+                        </button>
+                        <span className="text-sm text-[var(--color-gris-700)]">
+                            Pregunta {indiceActual + 1} de {preguntas.length}
+                        </span>
+                        <button
+                            onClick={siguientePregunta}
+                            disabled={indiceActual === preguntas.length - 1}
+                            className={`px-4 py-1 rounded-md font-medium ${indiceActual === preguntas.length - 1 ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-[var(--color-lavanda-600)] text-white hover:bg-[var(--color-lavanda-800)]'}`}
+                        >
+                            Siguiente
+                        </button>
+                    </div>
                 </div>
             </div>
-
 
             {/* Comentario del docente */}
             <div className="bg-white border border-[var(--color-gris-400)] rounded-xl shadow-md p-5">
@@ -159,7 +191,6 @@ const EvaluarSimulador = () => {
                     </button>
                 </div>
             </div>
-
         </div>
     );
 };

@@ -1,9 +1,11 @@
 import React from "react";
 import { FaUser, FaReply } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 const ComentariosEstudiante = () => {
     const navigate = useNavigate();
+    const { simuladorId } = useParams();
 
     const preguntas = [
         {
@@ -32,12 +34,8 @@ const ComentariosEstudiante = () => {
             docente: 'Dra. Marcela Jiménez',
             fecha: '18 de julio de 2024',
             texto: 'Buen trabajo general, pero podrías repasar el tema de jsx y su sintaxis.',
-        },
-        {
-            docente: 'Mtro. Jorge Diaz',
-            fecha: '19 de julio de 2024',
-            texto: 'Tu comprensión de hooks es sólida, sigue practicando, tu puedes...',
-        },
+            calificacionFinal: 9
+        }
     ];
 
     const student = {
@@ -131,8 +129,19 @@ const ComentariosEstudiante = () => {
                         {comentarios.map((comentario, index) => (
                             <div key={index} className="bg-[var(--color-lavanda-100)] p-4 rounded-lg border border-[var(--color-lavanda-300)]">
                                 <p className="font-semibold text-[var(--color-lavanda-800)]">{comentario.docente}</p>
-                                <p className="text-sm text-[var(--color-gris-800)] ">{comentario.fecha}</p>
-                                <p className="mt-2 text-[var(--color-gris-900)] text-sm">{comentario.texto}</p>
+                                <p className="text-sm text-[var(--color-gris-800)]">{comentario.fecha}</p>
+                                <p className="mt-3 text-[var(--color-gris-900)] text-sm">{comentario.texto}</p>
+
+                                {comentario.calificacionFinal !== null && (
+                                    <div className="mt-2">
+                                        <span className={`text-xs font-semibold px-2.5 py-2 rounded-md shadow-sm
+                                  ${comentario.calificacionFinal >= 8
+                                                ? 'bg-green-200 text-green-800 border border-green-300'
+                                                : 'bg-red-200 text-red-800 border border-red-300'}`}>
+                                            {comentario.calificacionFinal >= 8 ? '' : ''} Calificación Final: {comentario.calificacionFinal}/10
+                                        </span>
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </div>
