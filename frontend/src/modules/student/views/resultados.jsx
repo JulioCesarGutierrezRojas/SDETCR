@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { FaReply } from 'react-icons/fa';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import { useNavigate } from "react-router-dom";
 
@@ -132,7 +131,7 @@ const ResultadosEstudiante = () => {
                                         </div>
                                     </div>
                                     <button className="bg-[var(--color-lavanda-600)] hover:bg-[var(--color-lavanda-800)] text-white text-sm font-semibold px-4 py-2 rounded-xl"
-                                        onClick={() => navigate(`/student/comentariosObtenidos`)}>
+                                        onClick={() => navigate(`/student/comentariosObtenidos/${sim.id}`)}>
                                         Ver comentarios
                                     </button>
                                 </div>

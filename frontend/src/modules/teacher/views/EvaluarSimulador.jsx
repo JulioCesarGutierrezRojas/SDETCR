@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { FaUser, FaReply } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 const EvaluarSimulador = () => {
     const navigate = useNavigate();
     const [comentario, setComentario] = useState("");
     const [calificacion, setCalificacion] = useState('');
+    const { simuladorId } = useParams();
 
     const preguntas = [
         {

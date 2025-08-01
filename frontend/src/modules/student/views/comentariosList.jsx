@@ -1,9 +1,11 @@
 import React from "react";
 import { FaUser, FaReply } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 const ComentariosEstudiante = () => {
     const navigate = useNavigate();
+    const { simuladorId } = useParams();
 
     const preguntas = [
         {
