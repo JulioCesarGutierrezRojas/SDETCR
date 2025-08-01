@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router";
+import { FaSearch } from "react-icons/fa";
 
 const Categorias = () => {
     const [categorias, setCategorias] = useState([]);
+    const [busquedaCategoria, setBusquedaCategoria] = useState("");
 
     useEffect(() => {
         setCategorias([
@@ -12,11 +14,32 @@ const Categorias = () => {
         ]);
     }, []);
 
+    const categoriasFiltradas = categorias.filter((e) =>
+        e.nombre.toLowerCase().includes(busquedaCategoria.toLowerCase())
+    );
+
     return (
         <div className="p-4">
-            <h1 className="text-2xl font-bold text-[var(--primary)] mb-6">Selecciona una Categoría</h1>
+            <div className="flex justify-between items-center mb-4 pb-2 pt-2">
+                <h1 className="text-2xl font-bold text-[var(--primary)]">Selecciona una Categoría</h1>
+                <div className="relative w-full max-w-xs">
+                    <span className="absolute inset-y-0 right-4 flex items-center text-gray-400">
+                        <FaSearch />
+                    </span>
+                    <input
+                        type="text"
+                        placeholder="Buscar por nombre de categoria..."
+                        className="pl-5 pr-4 py-2 w-full border border-[var(--blue)] rounded-full text-sm bg-[var(--color-blanco)] focus:outline-none focus:ring focus:ring-[var(--color-lavanda-300)]"
+                        value={busquedaCategoria}
+                        onChange={(e) => {
+                            setBusquedaCategoria(e.target.value);
+                        }}
+                    />
+                </div>
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {categorias.map((cat) => (
+                {categoriasFiltradas.map((cat) => (
                     <Link
                         key={cat.id}
                         to={cat.estatus === "activo" ? `/student/simuladores/${cat.id}` : "#"}
