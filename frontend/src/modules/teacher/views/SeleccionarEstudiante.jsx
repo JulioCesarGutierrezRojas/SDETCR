@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { FaSearch, FaUser } from "react-icons/fa";
-import Paginacion from "../../../components/Paginacion"; // Ajusta el path si es necesario
+import Paginacion from "../../../components/Paginacion";
 
 const estudiantesMock = [
   {
@@ -42,6 +42,8 @@ const estudiantesMock = [
 const SeleccionarEstudiante = () => {
   const [busqueda, setBusqueda] = useState("");
   const [paginaActual, setPaginaActual] = useState(1);
+  const [seleccionados, setSeleccionados] = useState([]);
+
   const estudiantesPorPagina = 6;
 
   const estudiantesFiltrados = estudiantesMock.filter((e) =>
@@ -56,12 +58,26 @@ const SeleccionarEstudiante = () => {
   const estudiantesPaginados = estudiantesFiltrados.slice(indexInicio, indexFin);
 
   useEffect(() => {
-    setPaginaActual(1); // Reiniciar a la primera página al hacer nueva búsqueda
+    setPaginaActual(1);
   }, [busqueda]);
+
+  const toggleSeleccion = (id) => {
+    if (seleccionados.includes(id)) {
+      setSeleccionados(seleccionados.filter((sid) => sid !== id));
+    } else {
+      setSeleccionados([...seleccionados, id]);
+    }
+  };
+
+  const aceptarSeleccionados = () => {
+    const aceptados = estudiantesMock.filter((e) => seleccionados.includes(e.id));
+    console.log("✅ Estudiantes aceptados:", aceptados);
+    setSeleccionados([]);
+  };
 
   return (
     <div className="max-w-6xl mx-auto">
-      {/*  Buscador */}
+      {/* Buscador */}
       <div className="flex items-center gap-3 mb-6">
         <FaSearch className="text-[var(--color-gris-700)]" />
         <input
@@ -73,62 +89,87 @@ const SeleccionarEstudiante = () => {
         />
       </div>
 
-      {/*  Tarjetas de estudiantes */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {estudiantesPaginados.map((estudiante) => (
-          <div
-            key={estudiante.id}
-            className="relative bg-white shadow-md border border-[var(--color-gris-200)] rounded-xl p-4 flex flex-col gap-3"
+      {/* Botón aceptar */}
+      {seleccionados.length > 0 && (
+        <div className="mb-4">
+          <button
+            onClick={aceptarSeleccionados}
+            className="bg-[var(--color-lavanda-700)] text-white font-medium py-2 px-5 rounded-lg hover:bg-[var(--color-lavanda-600)] transition"
           >
-            {/*  Contador circular con título */}
-            <div className="absolute top-3 right-3 flex flex-col items-center text-center">
-              <span className="bg-[var(--color-lavanda-600)] text-white text-sm font-bold w-8 h-8 rounded-full flex items-center justify-center shadow">
-                {estudiante.simuladores.length}
-              </span>
-              <span className="text-[10px] text-[var(--color-gris-600)] mt-1 leading-tight">
-                Simuladores<br />contestados
-              </span>
-            </div>
+            Aceptar {seleccionados.length} estudiante{seleccionados.length > 1 ? "s" : ""}
+          </button>
+        </div>
+      )}
 
-            {/*  Info principal */}
-            <div className="flex items-center gap-3">
-              <div className="bg-[var(--color-lavanda-200)] p-3 rounded-full">
-                <FaUser className="text-[var(--color-lavanda-700)] text-xl" />
+      {/* Tarjetas */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        {estudiantesPaginados.map((estudiante) => {
+          const estaSeleccionado = seleccionados.includes(estudiante.id);
+          return (
+            <div
+              key={estudiante.id}
+              className={`relative bg-white shadow-md border border-[var(--color-gris-200)] rounded-xl p-4 flex flex-col gap-3 ${
+                estaSeleccionado ? "ring-2 ring-[var(--color-lavanda-600)]" : ""
+              }`}
+            >
+              {/* Contador simuladores */}
+              <div className="absolute top-3 right-3 flex flex-col items-center text-center">
+                <span className="bg-[var(--color-lavanda-600)] text-white text-sm font-bold w-8 h-8 rounded-full flex items-center justify-center shadow">
+                  {estudiante.simuladores.length}
+                </span>
+                <span className="text-[10px] text-[var(--color-gris-600)] mt-1 leading-tight">
+                  Simuladores<br />contestados
+                </span>
               </div>
+
+              {/* Info estudiante */}
+              <div className="flex items-center gap-3">
+                <div className="bg-[var(--color-lavanda-200)] p-3 rounded-full">
+                  <FaUser className="text-[var(--color-lavanda-700)] text-xl" />
+                </div>
+                <div>
+                  <h3 className="text-[var(--color-gris-900)] font-semibold text-lg">
+                    {estudiante.nombre}
+                  </h3>
+                  <p className="text-sm text-[var(--color-gris-600)]">
+                    Matrícula: {estudiante.matricula}
+                  </p>
+                </div>
+              </div>
+
+              {/* Categorías */}
               <div>
-                <h3 className="text-[var(--color-gris-900)] font-semibold text-lg">
-                  {estudiante.nombre}
-                </h3>
-                <p className="text-sm text-[var(--color-gris-600)]">
-                  Matrícula: {estudiante.matricula}
-                </p>
+                <p className="text-sm text-[var(--color-gris-700)] font-medium">Categorías:</p>
+                <div className="flex flex-wrap gap-2 mt-1">
+                  {estudiante.categorias.map((cat, i) => (
+                    <span
+                      key={i}
+                      className="bg-[var(--color-lavanda-100)] text-[var(--color-lavanda-800)] text-xs font-medium px-2 py-1 rounded-full"
+                    >
+                      {cat}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Checkbox abajo derecha */}
+              <div className="flex justify-end mt-auto">
+                <label className="flex items-center gap-2 text-sm text-[var(--color-gris-700)]">
+                  <span>Seleccionar</span>
+                  <input
+                    type="checkbox"
+                    checked={estaSeleccionado}
+                    onChange={() => toggleSeleccion(estudiante.id)}
+                    className="w-5 h-5 accent-[var(--color-lavanda-600)]"
+                  />
+                </label>
               </div>
             </div>
-
-            {/*  Categorías */}
-            <div>
-              <p className="text-sm text-[var(--color-gris-700)] font-medium">Categorías:</p>
-              <div className="flex flex-wrap gap-2 mt-1">
-                {estudiante.categorias.map((cat, i) => (
-                  <span
-                    key={i}
-                    className="bg-[var(--color-lavanda-100)] text-[var(--color-lavanda-800)] text-xs font-medium px-2 py-1 rounded-full"
-                  >
-                    {cat}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/*  Botón */}
-            <button className="mt-auto bg-[var(--color-lavanda-700)] text-white font-medium py-2 px-4 rounded-lg hover:bg-[var(--color-lavanda-600)] transition">
-              Aceptar estudiante
-            </button>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
-      {/*  Paginación */}
+      {/* Paginación */}
       <Paginacion
         paginaActual={paginaActual}
         totalPaginas={totalPaginas}
