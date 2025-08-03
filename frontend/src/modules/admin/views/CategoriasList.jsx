@@ -55,7 +55,7 @@ const CategoriasAdmin = () => {
             let response;
             if (categoriaEditando) {
                 response = await updateCategory({
-                    category_id: categoriaEditando.id,
+                    id: categoriaEditando.id,
                     name: nuevoNombre,
                     description: nuevaDescripcion
                 });
@@ -83,9 +83,9 @@ const CategoriasAdmin = () => {
     };
 
 
-    const handleToggleActivo = async (id) => {
+    const handleToggleActivo = async (nombre) => {
         try {
-            await disableCategory(id);
+            await disableCategory(nombre);
             const {result} = await getAllCategories();
             const categoriasMapeadas = result.map((cat) => ({
                 id: cat.category_id,
@@ -133,7 +133,7 @@ const CategoriasAdmin = () => {
                                     <FaEdit className="text-[var(--color-verde-feedback)]" />
                                 </button>
                                 <button
-                                    onClick={() => handleToggleActivo(cat.id)}
+                                    onClick={() => handleToggleActivo(cat.nombre)}
                                     title={cat.activo ? "Desactivar" : "Activar"}
                                     className="p-1 rounded-md hover:bg-white hover:shadow transition"
                                 >

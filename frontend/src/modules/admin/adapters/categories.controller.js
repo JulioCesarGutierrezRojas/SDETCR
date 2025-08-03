@@ -42,9 +42,9 @@ export const updateCategory = async (payload) => {
 };
 
 
-export const disableCategory = async (category_id) => {
+export const disableCategory = async (name) => {
   try {
-    const response = await handleRequest("patch", "/categories/disable", { category_id });
+    const response = await handleRequest("patch", "/categories/disable", { name });
 
     if (response.type !== 'SUCCESS')
       throw new Error(response.text);
