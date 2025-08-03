@@ -52,6 +52,18 @@
   --color-blanco: #ffffff;
   /* fondo de blanco para el fondo */
 
+  /* Nuevos colores OKLCH para botones */
+  --color-aceptar-oklch: oklch(79.2% 0.209 151.711);
+  --color-rechazar-oklch: oklch(64.5% 0.246 16.439);
+
+  --color-verde-suave-1: #D9F2E6;
+  --color-verde-suave-2: #C7EFD9;
+  --color-verde-suave-oklch: oklch(86.281% 0.13788 148.793);
+
+  --color-rojo-suave-1: #FBE4E4;
+  --color-rojo-suave-2: #F5CFCF;
+  --color-rojo-suave-oklch: oklch(70.985% 0.11875 21.717);
+
 }
 
 :root {
