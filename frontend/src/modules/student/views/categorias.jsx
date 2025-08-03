@@ -1,17 +1,38 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router";
 import { FaSearch } from "react-icons/fa";
+import { getCategoriesByStudent } from "../adapters/studentCategories.controller";
 
 const Categorias = () => {
     const [categorias, setCategorias] = useState([]);
     const [busquedaCategoria, setBusquedaCategoria] = useState("");
 
     useEffect(() => {
-        setCategorias([
-            { id: 1, nombre: "Desarrollo de Software", descripcion: "Entrevistas sobre desarrollo junior", estatus: "activo" },
-            { id: 2, nombre: "Manejo de Redes", descripcion: "Entrevistas sobre configuración y redes", estatus: "inactivo" },
-            { id: 3, nombre: "Administración de Empresas", descripcion: "Entrevistas sobre gestión empresarial", estatus: "activo" }
-        ]);
+        const fetchCategorias = async () => {
+            const student_id = localStorage.getItem("userId");
+    
+            if (!student_id) {
+                console.warn("No se encontró el ID del estudiante en localStorage");
+                return;
+            }
+    
+            try {
+                const { categories } = await getCategoriesByStudent(student_id);
+    
+                const categoriasMapeadas = categories.map(cat => ({
+                    id: cat.category_id,
+                    nombre: cat.category_name,
+                    descripcion: cat.category_description,
+                    estatus: "activo"
+                }));
+    
+                setCategorias(categoriasMapeadas);
+            } catch (error) {
+                console.error("Error al obtener categorías del estudiante:", error.message);
+            }
+        };
+    
+        fetchCategorias();
     }, []);
 
     const categoriasFiltradas = categorias.filter((e) =>
@@ -20,7 +41,7 @@ const Categorias = () => {
 
     return (
         <div className="p-4">
-            <div className="flex justify-between items-center mb-4 pb-2 pt-2">
+            <div className="flex justify-between items-center mb-4 pb-2">
                 <h1 className="text-2xl font-bold text-[var(--primary)]">Selecciona una Categoría</h1>
                 <div className="relative w-full max-w-xs">
                     <span className="absolute inset-y-0 right-4 flex items-center text-gray-400">
