@@ -6,14 +6,11 @@ const routerHistory = Router()
 const getSimulatorFromHistoryController = async (req, res) => {
     try {
         const { studentId, simulatorId } = req.params;
-
         const result = await getSimulatorFromHistory(studentId, simulatorId);
-        res.status(result.success ? 200 : 404).json(result);
+        res.status(result.getStatusCode()).json(result.getResponseBody());
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Error al obtener el historial del simulador'
-        });
+        console.error('Error en getSimulatorFromHistoryController:', error.message);
+        res.status(500).json({message: 'Error al obtener el historial del simulador'});
     }
 };
 
@@ -21,11 +18,10 @@ const getHistoriesByStudentController = async (req, res) => {
     try {
         const { studentId } = req.params
         const histories = await getHistoriesByStudent(studentId)
-        res.status(200).json(histories)
+        res.status(histories.getStatusCode()).json(histories.getResponseBody())
     } catch (error) {
         console.error('Error en controller:', error.message)
-        const status = error.statusCode || 500
-        res.status(status).json({ message: error.message || 'Error interno del servidor' })
+        res.status(500).json({ message: error.message || 'Error interno del servidor' })
     }
 }
 
@@ -49,7 +45,7 @@ const getStudentCategoriesAndSimulatorsController = async (req, res) => {
 routerHistory.get('/student/:studentId', protectedEndpoint('mentor', 'administrador'),
     // #swagger.tags = ['Historial']
     // #swagger.summary = 'Obtener historial por estudiante'
-    // #swagger.description = 'Devuelve todas las entrevistas simuladas realizadas por un estudiante específico.'
+    // #swagger.description = 'Devuelve todas las entrevistas simuladas realizadas por un estudiante específico, incluyendo detalles de los simuladores y categorías (contadores).'
     // #swagger.parameters['studentId'] = { description: 'ID del estudiante', in: 'path', required: true, type: 'string' }
     getHistoriesByStudentController)
 
