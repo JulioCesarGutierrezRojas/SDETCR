@@ -3,6 +3,7 @@ import styles from '../../../styles/form-login.module.css';
 import { resetPassword } from '../adapters/auth.controller';
 import { useNavigate } from 'react-router-dom';
 import {showErrorToast, showSuccessToast} from "../../../kernel/alerts.js";
+import { validatePassword } from '../../../kernel/validations.js';
 import Loader from "../../../components/Loader.jsx";
 
 const ChangePasswordComponent = ({ email, token, setStep, user }) => {
@@ -17,18 +18,21 @@ const ChangePasswordComponent = ({ email, token, setStep, user }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!newPassword || !confirmPassword) {
-      setError('Ambas contraseñas son requeridas');
+    // Validación de nueva contraseña usando validatePassword
+    const passwordError = validatePassword(newPassword);
+    if (passwordError) {
+      setError(passwordError);
+      return;
+    }
+
+    // Validación de confirmación de contraseña
+    if (!confirmPassword) {
+      setError('La confirmación de contraseña es requerida');
       return;
     }
 
     if (newPassword !== confirmPassword) {
       setError('Las contraseñas no coinciden');
-      return;
-    }
-
-    if (newPassword.length < 6) {
-      setError('La contraseña debe tener al menos 6 caracteres');
       return;
     }
 

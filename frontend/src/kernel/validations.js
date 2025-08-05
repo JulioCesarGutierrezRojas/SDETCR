@@ -28,3 +28,41 @@ export function validatePassword(password) {
   return ""
 }
 
+export function validateName(name) {
+  if (!name || !name.trim()) {
+    return "Este campo es requerido."
+  }
+
+  if (name.trim().length < 2) {
+    return "Debe tener al menos 2 caracteres."
+  }
+
+  if (name.trim().length > 50) {
+    return "No puede tener más de 50 caracteres."
+  }
+
+  // Solo letras, espacios y algunos caracteres especiales
+  const nameRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s'.-]+$/
+  if (!nameRegex.test(name.trim())) {
+    return "Solo se permiten letras, espacios y algunos caracteres especiales."
+  }
+
+  return ""
+}
+
+export function validateEnrollment(enrollment) {
+  if (!enrollment || !enrollment.trim()) {
+    return "La matrícula es requerida."
+  }
+
+  if (enrollment.trim().length < 5) {
+    return "La matrícula debe tener al menos 5 caracteres."
+  }
+
+  if (enrollment.trim().length > 12) {
+    return "La matrícula no puede tener más de 12 caracteres."
+  }
+
+  return ""
+}
+
