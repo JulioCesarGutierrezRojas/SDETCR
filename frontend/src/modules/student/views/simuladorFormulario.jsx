@@ -6,6 +6,7 @@ import Feedback from "../../../components/Feedback.jsx";
 import CalificacionProv from "../../../components/Calificacion.jsx";
 import { getSimulatorQuestions, saveStudentAnswers } from "../adapters/student.controller.js";
 import { showAlert, showConfirmation, showErrorToast, showSuccessToast, showWarningToast } from "../../../kernel/alerts.js";
+import { isValidVideoFile, getFileSizeInMB, validateVideoFileSize } from "../../../kernel/validations.js";
 
 const SimuladorFormulario = () => {
     const { simuladorId } = useParams();
@@ -59,6 +60,27 @@ const SimuladorFormulario = () => {
     };
 
     const handleRespuestaVideo = (idPregunta, archivo) => {
+        if (!archivo) return;
+        
+        // Validar que el archivo sea un video
+        if (!isValidVideoFile(archivo)) {
+            showErrorToast({
+                title: 'Archivo no válido',
+                text: 'Por favor selecciona un archivo de video válido (MP4, AVI, MOV, WMV, etc.)'
+            });
+            return;
+        }
+        
+        // Validar el tamaño del archivo
+        const sizeError = validateVideoFileSize(archivo);
+        if (sizeError) {
+            showWarningToast({
+                title: 'Archivo muy grande',
+                text: sizeError
+            });
+            return;
+        }
+        
         setRespuestas({ ...respuestas, [idPregunta]: { tipo: "video", valor: archivo } });
     };
 
@@ -68,7 +90,26 @@ const SimuladorFormulario = () => {
     };
 
     const handleVideoGrabado = (archivo) => {
-        if (preguntaActualModal) {
+        if (preguntaActualModal && archivo) {
+            // Validar que el archivo grabado sea un video
+            if (!isValidVideoFile(archivo)) {
+                showErrorToast({
+                    title: 'Error en grabación',
+                    text: 'El archivo grabado no es un video válido. Por favor intenta grabar de nuevo.'
+                });
+                return;
+            }
+            
+            // Validar el tamaño del archivo grabado
+            const sizeError = validateVideoFileSize(archivo);
+            if (sizeError) {
+                showWarningToast({
+                    title: 'Video muy grande',
+                    text: sizeError
+                });
+                return;
+            }
+            
             setRespuestas({ ...respuestas, [preguntaActualModal]: { tipo: "video", valor: archivo } });
         }
     };
@@ -248,8 +289,15 @@ const SimuladorFormulario = () => {
                                                     <span className="text-[var(--color-gris-700)] text-sm">Haz clic para subir video o arrastralo aquí</span>
                                                     <input
                                                         type="file"
-                                                        accept="video/*"
-                                                        onChange={(e) => handleRespuestaVideo(preg.question_id, e.target.files[0])}
+                                                        accept="video/*,.mp4,.avi,.mov,.wmv,.flv,.webm,.mkv,.3gp,.m4v,.mpg,.mpeg,.ogv"
+                                                        onChange={(e) => {
+                                                            const file = e.target.files[0];
+                                                            if (file) {
+                                                                handleRespuestaVideo(preg.question_id, file);
+                                                            }
+                                                            // Limpiar el input para permitir seleccionar el mismo archivo
+                                                            e.target.value = '';
+                                                        }}
                                                         className="hidden"
                                                     />
                                                 </label>
