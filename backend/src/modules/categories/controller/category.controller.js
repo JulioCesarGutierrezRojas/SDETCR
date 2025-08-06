@@ -49,7 +49,7 @@ const updateCategoryController = async (req, res) => {
 routerCategory.get('/all',
     // #swagger.tags = ['Categorías']
     // #swagger.summary = 'Obtener todas las categorías'
-    // #swagger.description = 'Endpoint para obtener todas las categorías de preguntas disponibles en el sistema.'
+    // #swagger.description = 'Endpoint para obtener todas las categorías de preguntas disponibles en el sistema, incluyendo el contador de simuladores activos por categoría.'
     getAllCategoriesController)
 
 routerCategory.post('/create', protectedEndpoint('administrador'),
