@@ -64,5 +64,46 @@ export function validateEnrollment(enrollment) {
   }
 
   return ""
+  
+// Función para validar que el archivo sea de tipo video
+export function isValidVideoFile(file) {
+  if (!file || !file.type) return false;
+  
+  // Tipos MIME de video válidos
+  const validVideoTypes = [
+    'video/mp4',
+    'video/avi',
+    'video/mov',
+    'video/quicktime',
+    'video/wmv',
+    'video/flv',
+    'video/webm',
+    'video/mkv',
+    'video/3gp',
+    'video/m4v',
+    'video/mpg',
+    'video/mpeg',
+    'video/ogv'
+  ];
+  
+  return validVideoTypes.includes(file.type.toLowerCase());
+}
+
+// Función para obtener el tamaño del archivo en MB
+export function getFileSizeInMB(file) {
+  return file ? (file.size / (1024 * 1024)).toFixed(2) : 0;
+}
+
+// Función para validar el tamaño del archivo de video
+export function validateVideoFileSize(file, maxSizeInMB = 500) {
+  if (!file) return "No se ha seleccionado ningún archivo.";
+  
+  const fileSizeInMB = getFileSizeInMB(file);
+  
+  if (fileSizeInMB > maxSizeInMB) {
+    return `El archivo es demasiado grande (${fileSizeInMB}MB). El tamaño máximo permitido es ${maxSizeInMB}MB.`;
+  }
+  
+  return "";
 }
 

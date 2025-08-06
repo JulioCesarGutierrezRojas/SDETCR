@@ -104,7 +104,51 @@ const createMultipleQuestions = async (simulator_id, questionsList) => {
     }
 };
 
+const getQuestionsBySimulator = async (simulator_id) => {
+    try {
+        if (!simulator_id) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El ID del simulador es requerido', 400);
+        }
+
+        // Verificar que el simulador existe
+        const simulator = await Simulator.findByPk(simulator_id);
+        if (!simulator) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El simulador especificado no existe', 404);
+        }
+
+        // Obtener las preguntas del simulador
+        const questions = await Question.findAll({
+            where: { simulator_id },
+            attributes: ['question_id', 'question', 'options'],
+            order: [['question_id', 'ASC']]
+        });
+
+        if (questions.length === 0) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'No se encontraron preguntas para este simulador', 404);
+        }
+
+        const result = {
+            simulator: {
+                simulator_id: simulator.simulator_id,
+                name: simulator.name
+            },
+            questions: questions.map(q => ({
+                question_id: q.question_id,
+                question: q.question,
+                options: q.options
+            }))
+        };
+
+        return new ApiResponse(null, result, TypesResponse.SUCCESS, 'Preguntas obtenidas exitosamente', 200);
+
+    } catch (error) {
+        console.error('Error en getQuestionsBySimulator:', error);
+        return new ApiResponse(null, null, TypesResponse.ERROR, 'Error interno al obtener las preguntas', 500);
+    }
+};
+
 module.exports = {
     createQuestion,
-    createMultipleQuestions
+    createMultipleQuestions,
+    getQuestionsBySimulator
 }
