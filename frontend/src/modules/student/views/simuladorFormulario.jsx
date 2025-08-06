@@ -16,6 +16,8 @@ const SimuladorFormulario = () => {
     const [preguntaActualModal, setPreguntaActualModal] = useState(null);
     const [loading, setLoading] = useState(true);
     const [simulatorInfo, setSimulatorInfo] = useState(null);
+    const [isSubmitted, setIsSubmitted] = useState(false);
+    const [finalScore, setFinalScore] = useState(null);
 
     useEffect(() => {
         const loadQuestions = async () => {
@@ -91,7 +93,14 @@ const SimuladorFormulario = () => {
                 .filter(r => r.tipo === 'video' && r.valor instanceof File)
                 .map(r => r.valor);
 
-            await saveStudentAnswers(studentId, simuladorId, answersToSend, videoFiles);
+            const response = await saveStudentAnswers(studentId, simuladorId, answersToSend, videoFiles);
+
+            // Capturar la calificación de la respuesta
+            if (response.result && response.result.final_score !== undefined) {
+                setFinalScore(response.result.final_score);
+            }
+
+            setIsSubmitted(true);
 
             showSuccessToast({
                 title: '¡Respuestas enviadas!',
@@ -259,16 +268,37 @@ const SimuladorFormulario = () => {
                         ))}
                     </div>
 
+                    {/* Mostrar componentes de feedback y calificación después del envío */}
+                    {isSubmitted && finalScore !== null && (
+                        <div className="mt-8 space-y-6">
+                            {/* Calificación provisional */}
+                            <div className="flex justify-end">
+                                <CalificacionProv score={finalScore} />
+                            </div>
+                            
+                            {/* Feedback final */}
+                            <Feedback score={finalScore} />
+                        </div>
+                    )}
+
                     <div className="mt-10 flex gap-4">
                         <button
                             onClick={handleSubmit}
-                            className="px-4 py-2 rounded-md bg-[var(--color-lavanda-700)] text-white font-semibold hover:bg-[var(--color-verde-feedback)] transition"
+                            disabled={isSubmitted || loading}
+                            className={`px-4 py-2 rounded-md text-white font-semibold transition ${
+                                isSubmitted || loading 
+                                    ? 'bg-gray-400 cursor-not-allowed' 
+                                    : 'bg-[var(--color-lavanda-700)] hover:bg-[var(--color-verde-feedback)]'
+                            }`}
                         >
-                            Enviar respuestas
+                            {loading ? 'Enviando...' : isSubmitted ? 'Respuestas enviadas' : 'Enviar respuestas'}
                         </button>
 
-                        <Link to={`/student/simuladores/${simuladorId}`} className="px-5 py-2 rounded-md bg-[var(--color-gris-700)] text-white font-semibold hover:bg-[var(--color-gris-900)] transition text-center">
-                            Atrás
+                        <Link 
+                            to={isSubmitted ? '/student/resultadosObtenidos' : `/student/simuladores/${simuladorId}`} 
+                            className="px-5 py-2 rounded-md bg-[var(--color-gris-700)] text-white font-semibold hover:bg-[var(--color-gris-900)] transition text-center"
+                        >
+                            {isSubmitted ? 'Ver mis resultados' : 'Atrás'}
                         </Link>
                     </div>
 
