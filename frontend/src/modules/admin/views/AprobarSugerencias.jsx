@@ -77,13 +77,13 @@ const AprobarSugerencias = () => {
 
             <div className="flex justify-center gap-4 mt-2">
               <button
-                className="bg-[var(--color-verde-feedback)] text-white font-bold px-6 py-2 rounded-lg hover:opacity-90 transition"
+                className="bg-[var(--color-verde-suave-oklch)] text-white font-bold px-6 py-2 rounded-lg hover:opacity-90 transition"
                 onClick={() => manejarAccion(sugerencia.id, "aceptar")}
               >
                 Aceptar
               </button>
               <button
-                className="bg-[var(--color-rojo-error)] text-white font-bold px-6 py-2 rounded-lg hover:opacity-90 transition"
+                className="bg-[var(--color-rojo-suave-oklch)] text-white font-bold px-6 py-2 rounded-lg hover:opacity-90 transition"
                 onClick={() => manejarAccion(sugerencia.id, "rechazar")}
               >
                 Rechazar
