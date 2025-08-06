@@ -28,7 +28,7 @@ const createAdmin = async (name, lastname, email, enrollment, role, password) =>
 }
 
 const createInitialConfig = async () => {
-    await createAdmin('Admin', 'User', 'admin@gmail.com', '0000000000', 'administrador', 'admin123#')
+    await createAdmin('Admin', 'User', 'admin@gmail.com', '0000000000', 'administrador', 'admin123')
 }
 
 module.exports = createInitialConfig;
