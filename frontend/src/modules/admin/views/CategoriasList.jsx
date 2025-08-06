@@ -128,14 +128,14 @@ const CategoriasAdmin = () => {
                                 <button
                                     onClick={() => handleEditar(cat.id)}
                                     title="Editar"
-                                    className="p-1 rounded-md hover:bg-white hover:shadow transition"
+                                    className="p-1 rounded-md hover:bg-[var(--color-lavanda-300)] hover:shadow transition"
                                 >
                                     <FaEdit className="text-[var(--color-verde-feedback)]" />
                                 </button>
                                 <button
                                     onClick={() => handleToggleActivo(cat.nombre)}
                                     title={cat.activo ? "Desactivar" : "Activar"}
-                                    className="p-1 rounded-md hover:bg-white hover:shadow transition"
+                                    className="p-1 rounded-md hover:bg-[var(--color-lavanda-300)] hover:shadow transition"
                                 >
                                     {cat.activo ? (
                                         <FaToggleOn className="text-[var(--color-lavanda-700)]" />

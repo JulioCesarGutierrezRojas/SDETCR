@@ -1,11 +1,11 @@
 import { Link, useLocation } from "react-router-dom";
-import { FaUserGraduate, FaComments, FaChevronLeft, FaChevronRight, FaVideo, FaUserPlus } from "react-icons/fa";
+import { FaUserGraduate, FaChevronLeft, FaChevronRight, FaVideo, FaUserPlus } from "react-icons/fa";
 
 const sidebarTeacher = ({ isCollapsed, setIsCollapsed }) => {
     const location = useLocation();
 
     const links = [
-        { to: "/teacher", label: "Seleccionar estudiantes", icon: <FaUserPlus /> },
+        { to: "/teacher/seleccionarEstudiante", label: "Seleccionar estudiantes", icon: <FaUserPlus /> },
         { to: "/teacher/estudiantesSeleccionados", label: "Estudiantes asignados", icon: <FaUserGraduate /> },
         { to: "/teacher/videos", label: "Entrevistas por visualizar", icon: <FaVideo /> },
         
