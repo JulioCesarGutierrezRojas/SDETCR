@@ -1,4 +1,4 @@
-// src/kernel/validation.js
+//src/kernel/validation.js
 
 export function validateEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -64,7 +64,8 @@ export function validateEnrollment(enrollment) {
   }
 
   return ""
-  
+}
+
 // Función para validar que el archivo sea de tipo video
 export function isValidVideoFile(file) {
   if (!file || !file.type) return false;
