@@ -48,6 +48,12 @@ AxiosClient.interceptors.response.use(
     (error) => {
         if (error.response) {
             const { status, data } = error.response;
+            
+            // No mostrar alerta para este mensaje específico
+            if (data.text && data.text.includes('No se encontraron preguntas para este simulador')) {
+                return Promise.reject(error);
+            }
+            
             let errorMessage = Object.values(errorMessages).find(msg => msg.title === data.text);
 
             if (!errorMessage && data.text) {

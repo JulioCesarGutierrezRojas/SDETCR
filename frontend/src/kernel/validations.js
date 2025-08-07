@@ -182,3 +182,104 @@ export function validateSimulatorName(name) {
   return "";
 }
 
+export function validateQuestionText(question) {
+  if (!question || !question.trim()) {
+    return "El texto de la pregunta es requerido.";
+  }
+
+  if (question.trim().length < 10) {
+    return "La pregunta debe tener al menos 10 caracteres.";
+  }
+
+  if (question.trim().length > 500) {
+    return "La pregunta no puede tener más de 500 caracteres.";
+  }
+
+  return "";
+}
+
+export function validateAnswerOption(option) {
+  if (!option || !option.trim()) {
+    return "La opción de respuesta es requerida.";
+  }
+
+  if (option.trim().length < 1) {
+    return "La opción debe tener al menos 1 caracter.";
+  }
+
+  if (option.trim().length > 200) {
+    return "La opción no puede tener más de 200 caracteres.";
+  }
+
+  return "";
+}
+
+export function validateQuestionComplete(pregunta) {
+  const errors = {};
+  
+  // Validar texto de la pregunta
+  const questionError = validateQuestionText(pregunta.texto);
+  if (questionError) errors.texto = questionError;
+
+  // Validar que tenga al menos 2 respuestas
+  if (!pregunta.respuestas || pregunta.respuestas.length < 2) {
+    errors.respuestas = "Debe tener al menos 2 opciones de respuesta.";
+    return errors;
+  }
+
+  // Validar que tenga máximo 4 respuestas
+  if (pregunta.respuestas.length > 4) {
+    errors.respuestas = "No puede tener más de 4 opciones de respuesta.";
+    return errors;
+  }
+
+  // Validar cada respuesta
+  let hasValidAnswers = true;
+  pregunta.respuestas.forEach((resp, index) => {
+    const respError = validateAnswerOption(resp);
+    if (respError) {
+      errors[`respuesta_${index}`] = respError;
+      hasValidAnswers = false;
+    }
+  });
+
+  // Validar que tenga una respuesta correcta seleccionada
+  if (pregunta.correcta === undefined || pregunta.correcta === null || pregunta.correcta < 0) {
+    errors.correcta = "Debe seleccionar una respuesta correcta.";
+  } else if (pregunta.correcta >= pregunta.respuestas.length) {
+    errors.correcta = "La respuesta correcta seleccionada no es válida.";
+  }
+
+  // Validar que no haya respuestas duplicadas
+  if (hasValidAnswers) {
+    const respuestasLimpias = pregunta.respuestas.map(r => r.trim().toLowerCase());
+    const respuestasUnicas = [...new Set(respuestasLimpias)];
+    if (respuestasLimpias.length !== respuestasUnicas.length) {
+      errors.respuestas = "No puede haber opciones de respuesta duplicadas.";
+    }
+  }
+
+  return errors;
+}
+
+export function validateAllQuestions(preguntas) {
+  const errors = {};
+
+  if (!preguntas || preguntas.length === 0) {
+    return { general: "Debe agregar al menos una pregunta." };
+  }
+
+  if (preguntas.length !== 10) {
+    return { general: "Debe agregar exactamente 10 preguntas." };
+  }
+
+  preguntas.forEach((pregunta, index) => {
+    const preguntaErrors = validateQuestionComplete(pregunta);
+    if (Object.keys(preguntaErrors).length > 0) {
+      errors[`pregunta_${index}`] = preguntaErrors;
+    }
+  });
+
+  return errors;
+}
+
