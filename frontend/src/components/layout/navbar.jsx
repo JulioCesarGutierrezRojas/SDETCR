@@ -1,6 +1,7 @@
 import { IoMdNotifications } from "react-icons/io";
 import { useState, useRef, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { FaSignOutAlt } from "react-icons/fa";
 
 const Navbar = () => {
     const [showNotifications, setShowNotifications] = useState(false);
@@ -44,7 +45,7 @@ const Navbar = () => {
             </h2>
 
             <div className="flex items-center gap-4 relative">
-                
+
                 {rol && (
                     <span
                         className={`text-sm font-medium px-3 py-1 rounded-full 
@@ -84,7 +85,8 @@ const Navbar = () => {
                     )}
                 </div>
 
-                <button className="px-3 py-2 rounded-md bg-[var(--color-lavanda-700)] text-white font-medium hover:bg-[var(--color-lavanda-500)] transition">
+                <button className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--color-lavanda-700)] text-white font-medium hover:bg-[var(--color-lavanda-500)] transition">
+                    <FaSignOutAlt />
                     Cerrar sesión
                 </button>
             </div>

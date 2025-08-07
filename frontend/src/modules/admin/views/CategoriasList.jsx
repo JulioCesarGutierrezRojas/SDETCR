@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaEdit, FaPlus, FaToggleOn, FaToggleOff } from "react-icons/fa";
+import {
+    getAllCategories,
+    createCategory,
+    updateCategory,
+    disableCategory
+} from "../adapters/categories.controller";
 
 const CategoriasAdmin = () => {
     const [categorias, setCategorias] = useState([]);
@@ -10,11 +16,21 @@ const CategoriasAdmin = () => {
     const [nuevaDescripcion, setNuevaDescripcion] = useState("");
 
     useEffect(() => {
-        setCategorias([
-            { id: 1, nombre: "Software", descripcion: "Entrevista para desarrollo frontend", activo: true },
-            { id: 2, nombre: "Redes", descripcion: "Entrevista para configuracion basica", activo: false },
-            { id: 3, nombre: "Administración", descripcion: "Entrevista para sistemas de finanzas personales", activo: true }
-        ]);
+        const fetchData = async () => {
+            try {
+                const {result} = await getAllCategories();
+                const categoriasMapeadas = result.map((cat) => ({
+                    id: cat.category_id,
+                    nombre: cat.name,
+                    descripcion: cat.description,
+                    activo: cat.status
+                }));
+                setCategorias(categoriasMapeadas);
+            } catch (error) {
+                console.error("Error al obtener categorías:", error);
+            }
+        };
+        fetchData();
     }, []);
 
     const handleAgregar = () => {
@@ -34,35 +50,53 @@ const CategoriasAdmin = () => {
         }
     };
 
-    const handleGuardarCambios = () => {
-        if (categoriaEditando) {
-            setCategorias(prev =>
-                prev.map(cat =>
-                    cat.id === categoriaEditando.id
-                        ? { ...cat, nombre: nuevoNombre, descripcion: nuevaDescripcion }
-                        : cat
-                )
-            );
-        } else {
-            const nuevoId = Math.max(...categorias.map(cat => cat.id), 0) + 1;
-            const nuevaCategoria = {
-                id: nuevoId,
-                nombre: nuevoNombre,
-                descripcion: nuevaDescripcion,
-                activo: true
-            };
-            setCategorias(prev => [...prev, nuevaCategoria]);
+    const handleGuardarCambios = async () => {
+        try {
+            let response;
+            if (categoriaEditando) {
+                response = await updateCategory({
+                    id: categoriaEditando.id,
+                    name: nuevoNombre,
+                    description: nuevaDescripcion
+                });
+            } else {
+                response = await createCategory({
+                    name: nuevoNombre,
+                    description: nuevaDescripcion
+                });
+            }
+
+            const {result} = await getAllCategories();
+            const categoriasMapeadas = result.map((cat) => ({
+                id: cat.category_id,
+                nombre: cat.name,
+                descripcion: cat.description,
+                activo: cat.status
+            }));
+            setCategorias(categoriasMapeadas);
+            setMostrarModal(false);
+            setCategoriaEditando(null);
+
+        } catch (error) {
+            console.error("Error:", error.message);
         }
-        setMostrarModal(false);
-        setCategoriaEditando(null);
     };
 
-    const handleToggleActivo = (id) => {
-        setCategorias(prev =>
-            prev.map(cat =>
-                cat.id === id ? { ...cat, activo: !cat.activo } : cat
-            )
-        );
+
+    const handleToggleActivo = async (nombre) => {
+        try {
+            await disableCategory(nombre);
+            const {result} = await getAllCategories();
+            const categoriasMapeadas = result.map((cat) => ({
+                id: cat.category_id,
+                nombre: cat.name,
+                descripcion: cat.description,
+                activo: cat.status
+            }));
+            setCategorias(categoriasMapeadas);
+        } catch (error) {
+            console.error("Error al cambiar estado:", error);
+        }
     };
 
     return (
@@ -94,14 +128,14 @@ const CategoriasAdmin = () => {
                                 <button
                                     onClick={() => handleEditar(cat.id)}
                                     title="Editar"
-                                    className="p-1 rounded-md hover:bg-white hover:shadow transition"
+                                    className="p-1 rounded-md hover:bg-[var(--color-lavanda-300)] hover:shadow transition"
                                 >
                                     <FaEdit className="text-[var(--color-verde-feedback)]" />
                                 </button>
                                 <button
-                                    onClick={() => handleToggleActivo(cat.id)}
+                                    onClick={() => handleToggleActivo(cat.nombre)}
                                     title={cat.activo ? "Desactivar" : "Activar"}
-                                    className="p-1 rounded-md hover:bg-white hover:shadow transition"
+                                    className="p-1 rounded-md hover:bg-[var(--color-lavanda-300)] hover:shadow transition"
                                 >
                                     {cat.activo ? (
                                         <FaToggleOn className="text-[var(--color-lavanda-700)]" />
