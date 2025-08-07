@@ -1,4 +1,4 @@
-const { login, restaurarPassword, enviarCodigoRecuperacion, createStudent, createMentor, getStudentByMentor, validarTokenRecuperacion, getStudentCategories, getAllStudentsWithSimulatorCount } = require('../service/user.service')
+const { login, restaurarPassword, enviarCodigoRecuperacion, createStudent, createMentor, getStudentByMentor, validarTokenRecuperacion, getStudentCategories, getAllStudentsWithSimulatorCount, getAllUsers, updateUser, deleteUser, createUser } = require('../service/user.service')
 const { Router } = require('express')
 const routerUser = Router()
 
@@ -107,6 +107,54 @@ const getAllStudentsWithSimulatorCountController = async (req, res) => {
     }
 }
 
+// Nuevos controladores para CRUD de usuarios
+const getAllUsersController = async (req, res) => {
+    try {
+        const result = await getAllUsers();
+        return res.status(result.getStatusCode()).json(result.getResponseBody());
+    } catch (error) {
+        console.error('Error en getAllUsersController:', error.message);
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+const updateUserController = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const userData = req.body;
+        
+        const result = await updateUser(userId, userData);
+        return res.status(result.getStatusCode()).json(result.getResponseBody());
+    } catch (error) {
+        console.error('Error en updateUserController:', error.message);
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+const deleteUserController = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        
+        const result = await deleteUser(userId);
+        return res.status(result.getStatusCode()).json(result.getResponseBody());
+    } catch (error) {
+        console.error('Error en deleteUserController:', error.message);
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+const createUserController = async (req, res) => {
+    try {
+        const userData = req.body;
+        
+        const result = await createUser(userData);
+        return res.status(result.getStatusCode()).json(result.getResponseBody());
+    } catch (error) {
+        console.error('Error en createUserController:', error.message);
+        return res.status(500).json({ message: error.message });
+    }
+}
+
 routerUser.post('/createMentor',
     // #swagger.tags = ['Usuarios']
     // #swagger.summary = 'Crear un mentor'
@@ -162,6 +210,37 @@ routerUser.get('/students/simulator-count',
     // #swagger.summary = 'Obtener todos los estudiantes con conteo de simuladores'
     // #swagger.description = 'Obtiene una lista de todos los estudiantes con el número de simuladores que han respondido.'
     getAllStudentsWithSimulatorCountController)
+
+// Nuevas rutas para CRUD de usuarios
+routerUser.get('/all',
+    // #swagger.tags = ['Usuarios']
+    // #swagger.summary = 'Obtener todos los usuarios'
+    // #swagger.description = 'Endpoint para obtener todos los usuarios del sistema (para administradores).'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    getAllUsersController)
+
+routerUser.post('/create',
+    // #swagger.tags = ['Usuarios']
+    // #swagger.summary = 'Crear un usuario'
+    // #swagger.description = 'Endpoint para crear un nuevo usuario (genérico para administradores).'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    createUserController)
+
+routerUser.put('/:userId',
+    // #swagger.tags = ['Usuarios']
+    // #swagger.summary = 'Actualizar un usuario'
+    // #swagger.description = 'Endpoint para actualizar la información de un usuario específico.'
+    // #swagger.parameters['userId'] = { description: 'ID del usuario a actualizar', in: 'path', required: true, type: 'integer' }
+    // #swagger.security = [{ "bearerAuth": [] }]
+    updateUserController)
+
+routerUser.delete('/:userId',
+    // #swagger.tags = ['Usuarios']
+    // #swagger.summary = 'Eliminar un usuario'
+    // #swagger.description = 'Endpoint para eliminar un usuario específico.'
+    // #swagger.parameters['userId'] = { description: 'ID del usuario a eliminar', in: 'path', required: true, type: 'integer' }
+    // #swagger.security = [{ "bearerAuth": [] }]
+    deleteUserController)
 
 module.exports = {
     routerUser
