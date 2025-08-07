@@ -74,3 +74,16 @@ export const toggleSimulatorStatus = async (id, currentStatus) => {
     throw new Error(e.message);
   }
 };
+
+export const getSimulatorById = async (id) => {
+  try {
+    const response = await handleRequest("get", `/simulators/${id}`);
+
+    if (response.type !== 'SUCCESS')
+      throw new Error(response.text);
+
+    return response;
+  } catch (e) {
+    throw new Error(e.message);
+  }
+};

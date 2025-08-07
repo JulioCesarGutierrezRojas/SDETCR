@@ -1,4 +1,4 @@
-const { createQuestion, createMultipleQuestions, getQuestionsBySimulator } = require('../service/question.service')
+const { createQuestion, createMultipleQuestions, getQuestionsBySimulator, getQuestionsWithAnswersBySimulator, updateMultipleQuestions } = require('../service/question.service')
 const { Router } = require('express')
 const {protectedEndpoint} = require("../../../security/auth.middleware");
 const routerQuestion = Router()
@@ -44,6 +44,36 @@ const getQuestionsBySimulatorController = async (req, res) => {
     }
 }
 
+const getQuestionsWithAnswersBySimulatorController = async (req, res) => {
+    try {
+        const { simulator_id } = req.params;
+        
+        const result = await getQuestionsWithAnswersBySimulator(simulator_id);
+        return res.status(result.getStatusCode()).json(result.getResponseBody());
+
+    } catch (error) {
+        console.error('Error en getQuestionsWithAnswersBySimulatorController:', error.message);
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+const updateMultipleQuestionsController = async (req, res) => {
+    try {
+        const { simulator_id, questions } = req.body;
+        
+        if (!Array.isArray(questions)) {
+            return res.status(400).json({ message: 'El campo questions debe ser un array' });
+        }
+
+        const result = await updateMultipleQuestions(simulator_id, questions);
+        return res.status(result.getStatusCode()).json(result.getResponseBody());
+
+    } catch (error) {
+        console.error('Error en updateMultipleQuestionsController:', error.message);
+        return res.status(500).json({ message: error.message });
+    }
+}
+
 routerQuestion.post('/create', protectedEndpoint('administrador', 'mentor'),
     // #swagger.tags = ['Preguntas']
     // #swagger.summary = 'Crear una nueva pregunta'
@@ -64,6 +94,21 @@ routerQuestion.get('/simulator/:simulator_id',
     // #swagger.description = 'Endpoint para obtener todas las preguntas de un simulador específico con sus opciones (sin mostrar las respuestas correctas).'
     // #swagger.parameters['simulator_id'] = { description: 'ID del simulador', in: 'path', required: true, type: 'integer' }
     getQuestionsBySimulatorController)
+
+routerQuestion.get('/admin/simulator/:simulator_id', protectedEndpoint('administrador'),
+    // #swagger.tags = ['Preguntas']
+    // #swagger.summary = 'Obtener preguntas con respuestas correctas (Admin)'
+    // #swagger.description = 'Endpoint para obtener todas las preguntas de un simulador con respuestas correctas. Solo para administradores.'
+    // #swagger.parameters['simulator_id'] = { description: 'ID del simulador', in: 'path', required: true, type: 'integer' }
+    // #swagger.security = [{ "bearerAuth": [] }]
+    getQuestionsWithAnswersBySimulatorController)
+
+routerQuestion.put('/update-multiple', protectedEndpoint('administrador'),
+    // #swagger.tags = ['Preguntas']
+    // #swagger.summary = 'Actualizar múltiples preguntas'
+    // #swagger.description = 'Endpoint para actualizar exactamente 10 preguntas de un simulador. Reemplaza todas las preguntas existentes.'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    updateMultipleQuestionsController)
 
 module.exports = {
     routerQuestion

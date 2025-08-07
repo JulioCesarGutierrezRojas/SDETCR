@@ -181,11 +181,57 @@ const getSimulatorsByCategory = async (category_id) => {
     }
 };
 
+const getSimulatorById = async (simulator_id) => {
+    try {
+        if (!simulator_id) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El ID del simulador es requerido', 400);
+        }
+
+        // Obtener el simulador con información de la categoría
+        const Category = require('../../categories/model/category.model');
+        const simulator = await Simulator.findOne({
+            where: {
+                simulator_id: simulator_id,
+                status: true
+            },
+            include: [{
+                model: Category,
+                as: 'category',
+                attributes: ['category_id', 'name', 'description']
+            }],
+            attributes: ['simulator_id', 'name', 'status', 'category_id']
+        });
+
+        if (!simulator) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'Simulador no encontrado o inactivo', 404);
+        }
+
+        const result = {
+            simulator_id: simulator.simulator_id,
+            name: simulator.name,
+            status: simulator.status,
+            category_id: simulator.category_id,
+            category: simulator.category ? {
+                category_id: simulator.category.category_id,
+                name: simulator.category.name,
+                description: simulator.category.description
+            } : null
+        };
+
+        return new ApiResponse(null, result, TypesResponse.SUCCESS, 'Simulador obtenido exitosamente', 200);
+
+    } catch (error) {
+        console.error('Error en getSimulatorById:', error);
+        return new ApiResponse(null, null, TypesResponse.ERROR, 'Error interno al obtener el simulador', 500);
+    }
+};
+
 module.exports = {
     updateSimulator,
     createSimulator,
     disableSimulator,
     getAllSimulators,
     saveSimulatorResult,
-    getSimulatorsByCategory
+    getSimulatorsByCategory,
+    getSimulatorById
 }
