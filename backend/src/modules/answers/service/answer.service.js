@@ -6,6 +6,8 @@ const TypesResponse = require('../../../kernel/types.response');
 const Question = require('../../questions/model/question.model');
 const User = require('../../users/model/user.model');
 const EvaluationMentor = require('../../evaluation-mentor/model/evaluation-mentor.model');
+const Simulator = require('../../simulators/model/simulator.model');
+const { notifySimulatorCompleted, notifyMentorStudentCompleted } = require('../../notifications/service/notification.service');
 
 const saveAnswers = async (student_id, simulator_id, answerList, files = []) => {
     const transaction = await sequelize.transaction();
@@ -101,6 +103,40 @@ const saveAnswers = async (student_id, simulator_id, answerList, files = []) => 
         }, { transaction });
 
         await transaction.commit();
+
+        // Enviar notificaciones de simulador completado
+        try {
+            const simulator = await Simulator.findByPk(simulator_id);
+            const student = await User.findByPk(student_id, {
+                include: [
+                    {
+                        model: User,
+                        as: 'Mentor',
+                        attributes: ['user_id', 'name', 'lastname']
+                    }
+                ],
+                attributes: ['user_id', 'name', 'lastname', 'mentor_id']
+            });
+            
+            if (simulator) {
+                // Notificar al estudiante
+                await notifySimulatorCompleted(student_id, simulator.name, final_score);
+                
+                // Notificar al mentor si el estudiante tiene uno asignado
+                if (student && student.mentor_id && student.Mentor) {
+                    const studentName = `${student.name} ${student.lastname}`;
+                    await notifyMentorStudentCompleted(
+                        student.mentor_id, 
+                        studentName, 
+                        simulator.name, 
+                        final_score
+                    );
+                }
+            }
+        } catch (notificationError) {
+            console.error('Error al enviar notificaciones:', notificationError);
+            // No interrumpir el flujo principal si las notificaciones fallan
+        }
 
         return new ApiResponse(null, {
             history_id: nuevoHistorial.history_id,

@@ -3,6 +3,7 @@ const User = require('../../users/model/user.model')
 const Simulator = require('../../simulators/model/simulator.model')
 const ApiResponse = require('../../../kernel/api.response')
 const TypesResponse = require('../../../kernel/types.response')
+const { notifyStudentEvaluated } = require('../../notifications/service/notification.service')
 
 const getFeedbackByStudentId = async (studentId) => {
     try{
@@ -66,6 +67,22 @@ const createEvaluation = async({ mentor_id, student_id, simulator_id, comment, f
             final_score,
             date_evaluation: new Date()
         })
+        
+        // Enviar notificación de evaluación completada
+        try {
+            const mentor = await User.findByPk(mentor_id, { attributes: ['name', 'lastname'] });
+            const simulator = await Simulator.findByPk(simulator_id, { attributes: ['name'] });
+            
+            if (mentor && simulator) {
+                const mentorName = `${mentor.name} ${mentor.lastname}`;
+                const simulatorName = simulator.name;
+                await notifyStudentEvaluated(student_id, mentorName, simulatorName, final_score);
+            }
+        } catch (notificationError) {
+            console.error('Error al enviar notificación de evaluación:', notificationError);
+            // No interrumpir el flujo principal si la notificación falla
+        }
+        
         return new ApiResponse(null, newEvalution, TypesResponse.SUCCESS, 'Evaluación creada correctamente', 201)
     }catch(error){
         console.error("Error en createEvaluation:", error.message)
