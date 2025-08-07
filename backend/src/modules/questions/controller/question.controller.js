@@ -1,4 +1,4 @@
-const { createQuestion, createMultipleQuestions } = require('../service/question.service')
+const { createQuestion, createMultipleQuestions, getQuestionsBySimulator } = require('../service/question.service')
 const { Router } = require('express')
 const {protectedEndpoint} = require("../../../security/auth.middleware");
 const routerQuestion = Router()
@@ -31,6 +31,19 @@ const createMultipleQuestionsController = async (req, res) => {
     }
 }
 
+const getQuestionsBySimulatorController = async (req, res) => {
+    try {
+        const { simulator_id } = req.params;
+        
+        const result = await getQuestionsBySimulator(simulator_id);
+        return res.status(result.getStatusCode()).json(result.getResponseBody());
+
+    } catch (error) {
+        console.error('Error en getQuestionsBySimulatorController:', error.message);
+        return res.status(500).json({ message: error.message });
+    }
+}
+
 routerQuestion.post('/create', protectedEndpoint('administrador', 'mentor'),
     // #swagger.tags = ['Preguntas']
     // #swagger.summary = 'Crear una nueva pregunta'
@@ -44,6 +57,13 @@ routerQuestion.post('/create-multiple',
     // #swagger.description = 'Endpoint para crear exactamente 10 preguntas para un simulador específico usando transacciones.'
     // #swagger.security = [{ "bearerAuth": [] }]
     createMultipleQuestionsController)
+
+routerQuestion.get('/simulator/:simulator_id',
+    // #swagger.tags = ['Preguntas']
+    // #swagger.summary = 'Obtener preguntas de un simulador'
+    // #swagger.description = 'Endpoint para obtener todas las preguntas de un simulador específico con sus opciones (sin mostrar las respuestas correctas).'
+    // #swagger.parameters['simulator_id'] = { description: 'ID del simulador', in: 'path', required: true, type: 'integer' }
+    getQuestionsBySimulatorController)
 
 module.exports = {
     routerQuestion

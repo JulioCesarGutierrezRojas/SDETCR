@@ -1,10 +1,27 @@
 const Category = require('../model/category.model')
+const Simulator = require('../../simulators/model/simulator.model')
 const ApiResponse = require('../../../kernel/api.response')
 const TypesResponse = require('../../../kernel/types.response')
 
 const getAllCategories = async () => {
     try {
-        const categorias = await Category.findAll()
+        const categorias = await Category.findAll({
+            include: [{
+                model: Simulator,
+                as: 'Simulator',
+                attributes: [], // No necesitamos los datos del simulador, solo el conteo
+                where: { status: true }, // Solo contar simuladores activos
+                required: false // LEFT JOIN para incluir categorías sin simuladores
+            }],
+            attributes: [
+                'category_id',
+                'name',
+                'description',
+                'status',
+                [Simulator.sequelize.fn('COUNT', Simulator.sequelize.col('Simulator.simulator_id')), 'simulators_count']
+            ],
+            group: ['Category.category_id']
+        })
         return new ApiResponse(null, categorias, TypesResponse.SUCCESS, 'Categorías obtenidas exitosamente', 200)
     } catch (error) {
         console.log('Error en getAllCategories:', error.message)

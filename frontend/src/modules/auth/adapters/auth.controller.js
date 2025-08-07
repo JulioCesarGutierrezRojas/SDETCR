@@ -12,6 +12,7 @@ export const login = async (email, password) => {
         localStorage.setItem('user', user.name)
         localStorage.setItem('role', user.role)
         localStorage.setItem('email', user.email)
+        localStorage.setItem('userId', user.id);
 
         return response
     } catch (e) {
@@ -52,6 +53,58 @@ export const resetPassword = async (email, nuevaPassword, confirmarPassword) => 
             nuevaPassword,
             confirmarPassword
         })
+
+        if (response.type !== 'SUCCESS' || response.status === 'ERROR')
+            throw new Error(response.text)
+
+        return response
+    } catch (e) {
+        throw new Error(e.message)
+    }
+}
+
+export const registerStudent = async (name, lastname, email, category, enrollment, password) => {
+    try {
+        const response = await handleRequest('post', '/users/createStudent', {
+            name,
+            lastname,
+            email,
+            category,
+            enrollment,
+            password
+        })
+
+        if (response.type !== 'SUCCESS' || response.status === 'ERROR')
+            throw new Error(response.text)
+
+        return response
+    } catch (e) {
+        throw new Error(e.message)
+    }
+}
+
+export const registerMentor = async (name, lastname, email, enrollment, password) => {
+    try {
+        const response = await handleRequest('post', '/users/createMentor', {
+            name,
+            lastname,
+            email,
+            enrollment,
+            password
+        })
+
+        if (response.type !== 'SUCCESS' || response.status === 'ERROR')
+            throw new Error(response.text)
+
+        return response
+    } catch (e) {
+        throw new Error(e.message)
+    }
+}
+
+export const getCategories = async () => {
+    try {
+        const response = await handleRequest('get', '/categories/all')
 
         if (response.type !== 'SUCCESS' || response.status === 'ERROR')
             throw new Error(response.text)

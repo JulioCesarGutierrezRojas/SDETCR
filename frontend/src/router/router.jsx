@@ -24,6 +24,7 @@ import SimulatorDetail from "../modules/admin/views/simulatorHistory/SimulatorDe
 import SugerirSimulador from "../modules/student/views/sugerirSimulador";
 import SeleccionarEstudiante from "../modules/teacher/views/SeleccionarEstudiante";
 import AprobarSugerencias from "../modules/admin/views/AprobarSugerencias"; 
+import ProtectedRoute from "../components/ProtectedRoute";
 
 
 const AppRouter = () => {
@@ -34,7 +35,7 @@ const AppRouter = () => {
         <Route path="/signup" element={<RegisterForm />} />
         <Route path="/forgot-password" element={<PasswordRecoveryForm />} />
 
-        <Route path="/student" element={<LayoutStudent />}>
+        <Route path="/student" element={<ProtectedRoute role="estudiantes"><LayoutStudent /></ProtectedRoute>}>
           <Route index element={<Navigate to="simuladores" replace />} />
           <Route path="simuladores" element={<Categorias />} />
           <Route path="simuladores/:categoriaID" element={<Simuladores />} />
@@ -44,7 +45,7 @@ const AppRouter = () => {
           <Route path="sugerirSimulador" element={<SugerirSimulador/>} />
         </Route>
 
-        <Route path="/admin" element={<LayoutAdmin />}>
+        <Route path="/admin" element={<ProtectedRoute role="administrador"><LayoutAdmin /></ProtectedRoute>}>
           <Route index element={<Navigate to="usuarios" replace />} />
           <Route path="usuarios" element={<UsuariosList />} />
           <Route path="categorias" element={<CategoriasAdmin />} />
@@ -55,7 +56,7 @@ const AppRouter = () => {
           <Route path="sugerenciaSimulador" element={<AprobarSugerencias />} />
         </Route>
 
-        <Route path="/teacher" element={<LayoutTeacher />}>
+        <Route path="/teacher" element={<ProtectedRoute role="mentor"><LayoutTeacher /></ProtectedRoute>}>
           <Route index element={<Navigate to="seleccionarEstudiante" replace />} />
           <Route path="seleccionarEstudiante" element={<SeleccionarEstudiante />} />
           <Route path="estudiantesSeleccionados" element={<ListaEstudiantes />} />

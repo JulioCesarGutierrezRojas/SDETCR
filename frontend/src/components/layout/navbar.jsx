@@ -31,7 +31,7 @@ const Navbar = () => {
             </h2>
 
             <div className="flex items-center gap-4 relative">
-                
+
                 {rol && (
                     <span
                         className={`text-sm font-medium px-3 py-1 rounded-full 

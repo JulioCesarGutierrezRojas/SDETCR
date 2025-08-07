@@ -1,4 +1,5 @@
 import React from "react";
+import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 
 const Paginacion = ({ paginaActual, totalPaginas, onPageChange }) => {
   const paginas = Array.from({ length: totalPaginas }, (_, i) => i + 1);
@@ -8,15 +9,15 @@ const Paginacion = ({ paginaActual, totalPaginas, onPageChange }) => {
       <button
         onClick={() => onPageChange(paginaActual - 1)}
         disabled={paginaActual === 1}
-        className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
+        className="px-2 py-1 rounded-full text-sm bg-[var(--color-gris-200)] hover:bg-[var(--color-gris-300)] text-[var(--color-gris-900)]"
       >
-        Anterior
+        <FaAngleLeft />
       </button>
       {paginas.map((num) => (
         <button
           key={num}
           onClick={() => onPageChange(num)}
-          className={`px-3 py-1 rounded ${
+          className={`px-3 py-1 rounded-full ${
             num === paginaActual
               ? "bg-[var(--color-lavanda-700)] text-white"
               : "bg-gray-100 hover:bg-gray-200"
@@ -28,9 +29,9 @@ const Paginacion = ({ paginaActual, totalPaginas, onPageChange }) => {
       <button
         onClick={() => onPageChange(paginaActual + 1)}
         disabled={paginaActual === totalPaginas}
-        className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
+        className="px-2 py-1 rounded-full text-sm bg-[var(--color-gris-200)] hover:bg-[var(--color-gris-300)] text-[var(--color-gris-900)]"
       >
-        Siguiente
+        <FaAngleRight />
       </button>
     </div>
   );
