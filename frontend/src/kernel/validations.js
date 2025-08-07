@@ -160,3 +160,25 @@ export function validateCategoryDescription(description) {
   return "";
 }
 
+export function validateSimulatorName(name) {
+  if (!name || !name.trim()) {
+    return "El nombre del simulador es requerido.";
+  }
+
+  if (name.trim().length < 5) {
+    return "El nombre debe tener al menos 5 caracteres.";
+  }
+
+  if (name.trim().length > 150) {
+    return "El nombre no puede tener más de 150 caracteres.";
+  }
+
+  // Solo letras, números, espacios y algunos caracteres especiales
+  const nameRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9\s'.-]+$/;
+  if (!nameRegex.test(name.trim())) {
+    return "Solo se permiten letras, números, espacios y algunos caracteres especiales.";
+  }
+
+  return "";
+}
+
