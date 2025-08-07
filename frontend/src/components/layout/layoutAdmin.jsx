@@ -4,10 +4,14 @@ import Navbar from "./navbar";
 import SidebarAdmin from "./sidebarAdmin";
 import StudentSimulators from "../../modules/admin/views/simulatorHistory/StudentSimulators";
 import SimulatorDetail from "../../modules/admin/views/simulatorHistory/SimulatorDetail";
+import { useSocketReconnect } from "../../hooks/useSocketReconnect";
 
 
 const LayoutAdmin = () => {
     const [isCollapsed, setIsCollapsed] = useState(false);
+    
+    // Reconectar Socket.IO automáticamente al cargar la página
+    useSocketReconnect();
 
     return (
         <div className="flex h-screen bg-[var(--color-blanco)]">
