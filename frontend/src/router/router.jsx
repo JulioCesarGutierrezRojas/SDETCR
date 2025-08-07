@@ -49,7 +49,7 @@ const AppRouter = () => {
           <Route index element={<Navigate to="usuarios" replace />} />
           <Route path="usuarios" element={<UsuariosList />} />
           <Route path="categorias" element={<CategoriasAdmin />} />
-          <Route path="categoria/:simuladorID" element={<SimuladoresAdmin />} />
+          <Route path="categoria/:categoriaId" element={<SimuladoresAdmin />} />
           <Route path="simulador/:formularioID" element={<SimuladorFormAdmin />} />
           <Route path="historial/:estudianteID" element={<StudentSimulators />} />
           <Route path="historial/:estudianteID/:simuladorID" element={<SimulatorDetail />} />

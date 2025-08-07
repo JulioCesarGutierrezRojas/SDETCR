@@ -11,6 +11,7 @@ const Simulator = require('../../simulators/model/simulator.model')
 const Answer = require('../../answers/model/answer.model')
 const Question = require('../../questions/model/question.model')
 const sequelize = require('../../../config/database')
+const { Op } = require('sequelize')
 
 const login = async (email, password) => {
     try{
@@ -394,6 +395,203 @@ const getAllStudentsWithSimulatorCount = async () => {
     }
 };
 
+// Obtener todos los usuarios (para admin)
+const getAllUsers = async () => {
+    try {
+        const users = await User.findAll({
+            attributes: ['user_id', 'name', 'lastname', 'email', 'role', 'enrollment'],
+            order: [['name', 'ASC'], ['lastname', 'ASC']]
+        });
+
+        if (!users || users.length === 0) {
+            return new ApiResponse(null, [], TypesResponse.SUCCESS, 'No se encontraron usuarios', 200);
+        }
+
+        const formattedUsers = users.map(user => ({
+            user_id: user.user_id,
+            name: user.name,
+            lastname: user.lastname,
+            email: user.email,
+            role: user.role,
+            enrollment: user.enrollment
+        }));
+
+        return new ApiResponse(null, formattedUsers, TypesResponse.SUCCESS, 'Usuarios obtenidos exitosamente', 200);
+
+    } catch (error) {
+        console.error('Error en getAllUsers:', error);
+        return new ApiResponse(null, null, TypesResponse.ERROR, 'Error interno al obtener los usuarios', 500);
+    }
+};
+
+// Actualizar usuario
+const updateUser = async (userId, userData) => {
+    try {
+        if (!userId) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El ID del usuario es requerido', 400);
+        }
+
+        const { name, lastname, email, enrollment, role } = userData;
+
+        if (!name || !lastname) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El nombre y apellido son requeridos', 400);
+        }
+
+        if (!email) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El correo electrónico es requerido', 400);
+        }
+
+        if (!enrollment) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'La matrícula es requerida', 400);
+        }
+
+        if (!role || !['estudiantes', 'mentor', 'administrador'].includes(role)) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El rol es requerido y debe ser válido', 400);
+        }
+
+        // Verificar si el usuario existe
+        const existingUser = await User.findByPk(userId);
+        if (!existingUser) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'Usuario no encontrado', 404);
+        }
+
+        // Verificar si el email o matrícula ya están en uso por otro usuario
+        const duplicateUser = await User.findOne({
+            where: {
+                [Op.and]: [
+                    {
+                        [Op.or]: [
+                            { email },
+                            { enrollment }
+                        ]
+                    },
+                    {
+                        user_id: {
+                            [Op.ne]: userId
+                        }
+                    }
+                ]
+            }
+        });
+
+        if (duplicateUser) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El correo electrónico o la matrícula ya están en uso', 409);
+        }
+
+        // Actualizar el usuario
+        await existingUser.update({
+            name,
+            lastname,
+            email,
+            enrollment,
+            role
+        });
+
+        const updatedUser = {
+            user_id: existingUser.user_id,
+            name: existingUser.name,
+            lastname: existingUser.lastname,
+            email: existingUser.email,
+            role: existingUser.role,
+            enrollment: existingUser.enrollment
+        };
+
+        return new ApiResponse(null, updatedUser, TypesResponse.SUCCESS, 'Usuario actualizado exitosamente', 200);
+
+    } catch (error) {
+        console.error('Error en updateUser:', error);
+        return new ApiResponse(null, null, TypesResponse.ERROR, 'Error interno al actualizar el usuario', 500);
+    }
+};
+
+// Eliminar usuario (soft delete o hard delete)
+const deleteUser = async (userId) => {
+    try {
+        if (!userId) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El ID del usuario es requerido', 400);
+        }
+
+        // Verificar si el usuario existe
+        const existingUser = await User.findByPk(userId);
+        if (!existingUser) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'Usuario no encontrado', 404);
+        }
+
+        // No permitir eliminar administradores
+        if (existingUser.role === 'administrador') {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'No se puede eliminar un usuario administrador', 403);
+        }
+
+        // Eliminar el usuario
+        await existingUser.destroy();
+
+        return new ApiResponse(null, null, TypesResponse.SUCCESS, 'Usuario eliminado exitosamente', 200);
+
+    } catch (error) {
+        console.error('Error en deleteUser:', error);
+        return new ApiResponse(null, null, TypesResponse.ERROR, 'Error interno al eliminar el usuario', 500);
+    }
+};
+
+// Crear usuario (genérico para admin)
+const createUser = async (userData) => {
+    try {
+        const { name, lastname, email, enrollment, role, password } = userData;
+
+        if (!name || !lastname) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El nombre y apellido son requeridos', 400);
+        }
+
+        if (!email) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El correo electrónico es requerido', 400);
+        }
+
+        if (!enrollment) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'La matrícula es requerida', 400);
+        }
+
+        if (!password) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'La contraseña es requerida', 400);
+        }
+
+        if (!role || !['estudiantes', 'mentor', 'administrador'].includes(role)) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El rol es requerido y debe ser válido', 400);
+        }
+
+        // Verificar si el email o matrícula ya están en uso
+        if (await User.findOne({ where: { email } }) || await User.findOne({ where: { enrollment } })) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'El correo electrónico o la matrícula ya están en uso', 409);
+        }
+
+        const encryptedPassword = await hashPassword(password);
+
+        const newUser = await User.create({
+            name,
+            lastname,
+            email,
+            enrollment,
+            role,
+            password: encryptedPassword,
+            category: role === 'estudiantes' ? [] : null
+        });
+
+        const createdUser = {
+            user_id: newUser.user_id,
+            name: newUser.name,
+            lastname: newUser.lastname,
+            email: newUser.email,
+            role: newUser.role,
+            enrollment: newUser.enrollment
+        };
+
+        return new ApiResponse(null, createdUser, TypesResponse.SUCCESS, 'Usuario creado exitosamente', 201);
+
+    } catch (error) {
+        console.error('Error en createUser:', error);
+        return new ApiResponse(null, null, TypesResponse.ERROR, 'Error interno al crear el usuario', 500);
+    }
+};
+
 module.exports = {
     login,
     restaurarPassword,
@@ -403,5 +601,9 @@ module.exports = {
     getStudentByMentor,
     validarTokenRecuperacion,
     getStudentCategories,
-    getAllStudentsWithSimulatorCount
+    getAllStudentsWithSimulatorCount,
+    getAllUsers,
+    updateUser,
+    deleteUser,
+    createUser
 }

@@ -108,3 +108,77 @@ export function validateVideoFileSize(file, maxSizeInMB = 500) {
   return "";
 }
 
+export function validateRole(role) {
+  const validRoles = ['estudiantes', 'mentor', 'administrador'];
+  
+  if (!role || !role.trim()) {
+    return "El rol es requerido.";
+  }
+  
+  if (!validRoles.includes(role.trim())) {
+    return "Debe seleccionar un rol válido.";
+  }
+  
+  return "";
+}
+
+export function validateCategoryName(name) {
+  if (!name || !name.trim()) {
+    return "El nombre de la categoría es requerido.";
+  }
+
+  if (name.trim().length < 3) {
+    return "El nombre debe tener al menos 3 caracteres.";
+  }
+
+  if (name.trim().length > 100) {
+    return "El nombre no puede tener más de 100 caracteres.";
+  }
+
+  // Solo letras, números, espacios y algunos caracteres especiales
+  const nameRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9\s'.-]+$/;
+  if (!nameRegex.test(name.trim())) {
+    return "Solo se permiten letras, números, espacios y algunos caracteres especiales.";
+  }
+
+  return "";
+}
+
+export function validateCategoryDescription(description) {
+  if (!description || !description.trim()) {
+    return "La descripción es requerida.";
+  }
+
+  if (description.trim().length < 10) {
+    return "La descripción debe tener al menos 10 caracteres.";
+  }
+
+  if (description.trim().length > 500) {
+    return "La descripción no puede tener más de 500 caracteres.";
+  }
+
+  return "";
+}
+
+export function validateSimulatorName(name) {
+  if (!name || !name.trim()) {
+    return "El nombre del simulador es requerido.";
+  }
+
+  if (name.trim().length < 5) {
+    return "El nombre debe tener al menos 5 caracteres.";
+  }
+
+  if (name.trim().length > 150) {
+    return "El nombre no puede tener más de 150 caracteres.";
+  }
+
+  // Solo letras, números, espacios y algunos caracteres especiales
+  const nameRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9\s'.-]+$/;
+  if (!nameRegex.test(name.trim())) {
+    return "Solo se permiten letras, números, espacios y algunos caracteres especiales.";
+  }
+
+  return "";
+}
+
