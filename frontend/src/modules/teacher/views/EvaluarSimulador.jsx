@@ -1,60 +1,263 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaUser, FaReply } from "react-icons/fa";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { 
+    getStudentAnswersWithEvaluation,
+    getStudentAnswersWithoutEvaluation,
+    createEvaluation,
+    updateEvaluation 
+} from "../adapters/teacher.controller";
+import { showSuccessToast, showErrorToast, showConfirmation } from "../../../kernel/alerts";
+import Loader from "../../../components/Loader";
 
 const EvaluarSimulador = () => {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const { simuladorId } = useParams();
+    
+    // Estados de la UI
     const [comentario, setComentario] = useState("");
     const [calificacion, setCalificacion] = useState('');
     const [indiceActual, setIndiceActual] = useState(0);
-    const { simuladorId } = useParams();
+    const [loading, setLoading] = useState(true);
+    const [submitting, setSubmitting] = useState(false);
+    
+    // Estados de datos
+    const [student, setStudent] = useState(null);
+    const [preguntas, setPreguntas] = useState([]);
+    const [hasExistingEvaluation, setHasExistingEvaluation] = useState(false);
+    const [simulatorInfo, setSimulatorInfo] = useState(null);
+    
+    const studentId = searchParams.get('studentId');
 
-    const preguntas = [
-        {
-            texto: '¿Qué es React?',
-            tipo: 'texto',
-            opciones: ['Un lenguaje', 'Un framework', 'Una librería de JS', 'Un servidor'],
-            respuesta: 'Una librería de JS',
-            correcta: true,
-        },
-        {
-            texto: 'Explica cómo aplicarías React en un proyecto real.',
-            tipo: 'video',
-            videoURL: '/videos/respuesta1.mp4',
-        },
-        {
-            texto: '¿Qué hook se usa para estado?',
-            tipo: 'texto',
-            opciones: ['useEffect', 'useRef', 'useState', 'useCallback'],
-            respuesta: 'useState',
-            correcta: false,
-        },
-    ];
+    useEffect(() => {
+        if (simuladorId && studentId) {
+            fetchSimulatorData();
+        } else {
+            showErrorToast({
+                title: "Error",
+                text: "No se especificó un ID de simulador o estudiante"
+            });
+            navigate('/teacher/estudiantesSeleccionados');
+        }
+    }, [simuladorId, studentId]);
 
-    const student = {
-        nombre: 'Juan Perwez',
-        correo: 'juan.perez@universidad.edu.mx',
-        matricula: '20230001',
+    const fetchSimulatorData = async () => {
+        try {
+            setLoading(true);
+            console.log('📊 Obteniendo respuestas del simulador ID:', simuladorId, 'para estudiante:', studentId);
+            
+            // Primero intentar obtener respuestas CON evaluación para verificar si ya existe una
+            let simulatorData = null;
+            let existingEvaluation = false;
+            
+            try {
+                const withEvaluationResponse = await getStudentAnswersWithEvaluation(studentId, simuladorId);
+                simulatorData = withEvaluationResponse.result;
+                existingEvaluation = true;
+                console.log('📊 Se encontró evaluación existente:', simulatorData);
+            } catch (error) {
+                // Si no hay evaluación, obtener sin evaluación
+                console.log('📊 No hay evaluación existente, obteniendo respuestas sin evaluación');
+                const withoutEvaluationResponse = await getStudentAnswersWithoutEvaluation(studentId, simuladorId);
+                simulatorData = withoutEvaluationResponse.result;
+                existingEvaluation = false;
+            }
+            
+            if (!simulatorData) {
+                throw new Error('No se encontraron respuestas para este simulador');
+            }
+            
+            // Extraer información del estudiante y simulador
+            setStudent({
+                id: simulatorData.student_id,
+                nombre: `${simulatorData.student_name}`,
+                correo: simulatorData.student_email || 'No disponible',
+                matricula: simulatorData.student_enrollment || 'No disponible'
+            });
+            
+            setSimulatorInfo({
+                id: simulatorData.simulator_id,
+                nombre: simulatorData.simulator_name,
+                descripcion: simulatorData.simulator_description
+            });
+            
+            // Formatear preguntas y respuestas
+            const preguntasFormateadas = simulatorData.questions.map(q => ({
+                id: q.question_id,
+                texto: q.question_text,
+                tipo: q.question_type, // 'multiple_choice', 'true_false', 'open_question', etc.
+                opciones: q.options || [],
+                respuesta: q.user_answer,
+                respuestaCorrecta: q.correct_answer,
+                correcta: q.is_correct,
+                videoURL: q.video_url,
+                puntos: q.points_earned || 0
+            }));
+            
+            setPreguntas(preguntasFormateadas);
+            
+            // Si existe evaluación, cargar los datos
+            if (existingEvaluation && simulatorData.mentor_evaluation) {
+                setComentario(simulatorData.mentor_evaluation.comment || '');
+                setCalificacion(simulatorData.mentor_evaluation.final_score?.toString() || '');
+                setHasExistingEvaluation(true);
+            }
+            
+        } catch (error) {
+            console.error("❌ Error al obtener datos del simulador:", error.message);
+            showErrorToast({
+                title: "Error",
+                text: "No se pudieron cargar las respuestas del simulador"
+            });
+            // Regresar a la pantalla anterior si hay error
+            navigate(`/teacher/evaluarEstudiante?studentId=${studentId}`);
+        } finally {
+            setLoading(false);
+        }
     };
-
+    
+    const handleSaveEvaluation = async () => {
+        if (!comentario.trim()) {
+            showErrorToast({
+                title: "Error de validación",
+                text: "El comentario es obligatorio"
+            });
+            return;
+        }
+        
+        if (!calificacion || calificacion < 1 || calificacion > 10) {
+            showErrorToast({
+                title: "Error de validación",
+                text: "La calificación debe estar entre 1 y 10"
+            });
+            return;
+        }
+        
+        // Mostrar confirmación antes de proceder
+        const confirmed = await new Promise((resolve) => {
+            showConfirmation(
+                hasExistingEvaluation ? "Actualizar evaluación" : "Guardar evaluación",
+                hasExistingEvaluation 
+                    ? "¿Estás seguro de que deseas actualizar esta evaluación?"
+                    : "¿Estás seguro de que deseas guardar esta evaluación?",
+                "warning",
+                () => resolve(true),  // Si confirma
+                () => resolve(false)  // Si cancela
+            );
+        });
+        
+        if (!confirmed) return;
+        
+        try {
+            setSubmitting(true);
+            
+            // Obtener información del usuario logueado (mentor)
+            const getUserInfo = () => {
+                try {
+                    const userId = localStorage.getItem('userId');
+                    return userId;
+                } catch (error) {
+                    console.error('Error al obtener información del usuario:', error);
+                    return null;
+                }
+            };
+            
+            const mentorId = getUserInfo();
+            if (!mentorId) {
+                throw new Error('No se pudo obtener la información del mentor');
+            }
+            
+            let response;
+            if (hasExistingEvaluation) {
+                response = await updateEvaluation(
+                    mentorId,
+                    parseInt(studentId),
+                    parseInt(simuladorId),
+                    comentario.trim(),
+                    parseInt(calificacion)
+                );
+            } else {
+                response = await createEvaluation(
+                    mentorId,
+                    parseInt(studentId),
+                    parseInt(simuladorId),
+                    comentario.trim(),
+                    parseInt(calificacion)
+                );
+            }
+            
+            showSuccessToast({
+                title: "Evaluación guardada",
+                text: hasExistingEvaluation 
+                    ? "La evaluación se actualizó correctamente"
+                    : "La evaluación se guardó correctamente"
+            });
+            
+            // Actualizar estado
+            setHasExistingEvaluation(true);
+            
+            // Navegar de regreso después de un breve delay
+            setTimeout(() => {
+                navigate(`/teacher/evaluarEstudiante?studentId=${studentId}`);
+            }, 1500);
+            
+        } catch (error) {
+            console.error("❌ Error al guardar evaluación:", error.message);
+            showErrorToast({
+                title: "Error",
+                text: `No se pudo ${hasExistingEvaluation ? 'actualizar' : 'guardar'} la evaluación: ${error.message}`
+            });
+        } finally {
+            setSubmitting(false);
+        }
+    };
+    
+    const siguientePregunta = () => {
+        if (indiceActual < preguntas.length - 1) {
+            setIndiceActual(indiceActual + 1);
+        }
+    };
+    
+    const anteriorPregunta = () => {
+        if (indiceActual > 0) {
+            setIndiceActual(indiceActual - 1);
+        }
+    };
+    
     const fechaActual = new Date().toLocaleDateString("es-MX", {
         day: "2-digit",
         month: "long",
         year: "numeric",
     });
 
-    const siguientePregunta = () => {
-        if (indiceActual < preguntas.length - 1) {
-            setIndiceActual(indiceActual + 1);
-        }
-    };
-
-    const anteriorPregunta = () => {
-        if (indiceActual > 0) {
-            setIndiceActual(indiceActual - 1);
-        }
-    };
-
+    if (loading) {
+        return <Loader isLoading={true} />;
+    }
+    
+    if (!preguntas || preguntas.length === 0) {
+        return (
+            <div className="max-w-5xl mx-auto p-4">
+                <div className="text-center py-12">
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-8 max-w-md mx-auto">
+                        <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                            No se encontraron respuestas
+                        </h2>
+                        <p className="text-gray-600 text-sm mb-4">
+                            Este estudiante no ha respondido este simulador aún.
+                        </p>
+                        <button
+                            className="bg-[var(--color-lavanda-600)] text-white px-4 py-2 rounded-lg hover:bg-[var(--color-lavanda-700)] transition-colors"
+                            onClick={() => navigate(`/teacher/evaluarEstudiante?studentId=${studentId}`)}
+                        >
+                            Regresar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+    
     const pregunta = preguntas[indiceActual];
 
     return (
@@ -79,46 +282,87 @@ const EvaluarSimulador = () => {
 
                 <div className="space-y-5">
                     <div className="border border-[var(--color-gris-500)] rounded-md">
-                        {pregunta.tipo === "texto" ? (
+                        {/* Preguntas de opción múltiple o verdadero/falso */}
+                        {(pregunta.tipo === 'multiple_choice' || pregunta.tipo === 'true_false') && pregunta.opciones && pregunta.opciones.length > 0 ? (
                             <div className={`border-l-4 rounded-md p-4 ${pregunta.correcta ? "border-green-500 bg-green-50" : "border-red-500 bg-red-50"}`}>
                                 <p className="text-sm font-medium text-[var(--color-gris-900)] mb-2">
                                     Pregunta {indiceActual + 1}: {pregunta.texto}
                                 </p>
+                                <div className="mb-2">
+                                    <span className={`inline-block text-xs font-semibold px-2 py-1 rounded-md ${pregunta.correcta ? 'bg-green-200 text-green-900' : 'bg-red-200 text-red-900'}`}>
+                                        {pregunta.correcta ? '✅ Correcta' : '❌ Incorrecta'} - Puntos: {pregunta.puntos}
+                                    </span>
+                                </div>
                                 <ul className="space-y-1">
                                     {pregunta.opciones.map((opcion, i) => {
                                         const esSeleccionada = opcion === pregunta.respuesta;
-                                        const color =
-                                            esSeleccionada && pregunta.correcta
-                                                ? "bg-green-100 border-green-500 text-green-700"
-                                                : esSeleccionada && !pregunta.correcta
-                                                    ? "bg-red-100 border-red-500 text-red-700"
-                                                    : "bg-[var(--color-blanco)] border-[var(--color-gris-400)] text-[var(--color-gris-900)]";
+                                        const esCorrecta = opcion === pregunta.respuestaCorrecta;
+                                        let color = "bg-[var(--color-blanco)] border-[var(--color-gris-400)] text-[var(--color-gris-900)]";
+                                        
+                                        if (esSeleccionada && esCorrecta) {
+                                            color = "bg-green-100 border-green-500 text-green-700 font-semibold";
+                                        } else if (esSeleccionada && !esCorrecta) {
+                                            color = "bg-red-100 border-red-500 text-red-700 font-semibold";
+                                        } else if (!esSeleccionada && esCorrecta) {
+                                            color = "bg-blue-50 border-blue-300 text-blue-700";
+                                        }
+                                        
                                         return (
                                             <li
                                                 key={i}
-                                                className={`px-3 py-2 rounded-md border ${color} text-sm`}
+                                                className={`px-3 py-2 rounded-md border ${color} text-sm relative`}
                                             >
                                                 {opcion}
+                                                {esSeleccionada && <span className="ml-2 text-xs">(Tu respuesta)</span>}
+                                                {!esSeleccionada && esCorrecta && <span className="ml-2 text-xs">(Respuesta correcta)</span>}
                                             </li>
                                         );
                                     })}
                                 </ul>
                             </div>
-                        ) : (
+                        ) : pregunta.tipo === 'open_question' ? (
+                            /* Pregunta abierta */
                             <div className="border-l-4 border-[var(--color-lavanda-600)] bg-[var(--color-lavanda-100)] rounded-md p-4">
                                 <p className="text-sm font-medium text-[var(--color-gris-900)] mb-2">
                                     Pregunta {indiceActual + 1}: {pregunta.texto}
                                 </p>
-                                <div className="text-sm text-[var(--color-gris-800)] mb-2">
-                                    Respuesta enviada en video; evaluación a cargo del docente
+                                <div className="mb-2">
+                                    <span className="inline-block text-xs font-semibold px-2 py-1 rounded-md bg-blue-200 text-blue-900">
+                                        📝 Pregunta abierta - Puntos: {pregunta.puntos}
+                                    </span>
                                 </div>
-                                <video
-                                    src={pregunta.videoURL}
-                                    controls
-                                    className="max-w-xs w-full aspect-video rounded-md border border-[var(--color-gris-400)]"
-                                >
-                                    Tu navegador no soporta la reproducción de video.
-                                </video>
+                                <div className="bg-white rounded-md p-3 border border-gray-300 mt-2">
+                                    <p className="text-sm font-medium text-gray-700 mb-1">Respuesta del estudiante:</p>
+                                    <p className="text-sm text-gray-900 whitespace-pre-wrap">{pregunta.respuesta || 'Sin respuesta'}</p>
+                                </div>
+                                {pregunta.videoURL && (
+                                    <div className="mt-3">
+                                        <p className="text-sm font-medium text-gray-700 mb-2">Video adjunto:</p>
+                                        <video
+                                            src={pregunta.videoURL}
+                                            controls
+                                            className="max-w-md w-full aspect-video rounded-md border border-[var(--color-gris-400)]"
+                                        >
+                                            Tu navegador no soporta la reproducción de video.
+                                        </video>
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            /* Tipo de pregunta no reconocido */
+                            <div className="border-l-4 border-gray-400 bg-gray-50 rounded-md p-4">
+                                <p className="text-sm font-medium text-[var(--color-gris-900)] mb-2">
+                                    Pregunta {indiceActual + 1}: {pregunta.texto}
+                                </p>
+                                <div className="mb-2">
+                                    <span className="inline-block text-xs font-semibold px-2 py-1 rounded-md bg-gray-200 text-gray-900">
+                                        Tipo: {pregunta.tipo} - Puntos: {pregunta.puntos}
+                                    </span>
+                                </div>
+                                <div className="bg-white rounded-md p-3 border border-gray-300 mt-2">
+                                    <p className="text-sm font-medium text-gray-700 mb-1">Respuesta:</p>
+                                    <p className="text-sm text-gray-900">{pregunta.respuesta || 'Sin respuesta'}</p>
+                                </div>
                             </div>
                         )}
                     </div>
@@ -180,16 +424,42 @@ const EvaluarSimulador = () => {
 
                 <div className="flex gap-4">
                     <button
-                        className="bg-[var(--color-lavanda-700)] text-white px-6 py-2 rounded-lg hover:bg-[var(--color-lavanda-900)] transition-colors"
-                        onClick={() => alert("Comentario guardado (simulado)")}>
-                        Guardar comentario
+                        className={`px-6 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2 ${
+                            submitting 
+                                ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+                                : 'bg-[var(--color-lavanda-700)] text-white hover:bg-[var(--color-lavanda-900)]'
+                        }`}
+                        onClick={handleSaveEvaluation}
+                        disabled={submitting}
+                    >
+                        {submitting ? (
+                            <>
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                {hasExistingEvaluation ? 'Actualizando...' : 'Guardando...'}
+                            </>
+                        ) : (
+                            <>
+                                {hasExistingEvaluation ? 'Actualizar Evaluación' : 'Guardar Evaluación'}
+                            </>
+                        )}
                     </button>
                     <button
-                        className="bg-[var(--color-gris-600)] text-[var(--color-blanco)] font-semibold px-3 py-2 rounded-lg flex items-center gap-2 hover:bg-[var(--color-gris-700)]"
-                        onClick={() => navigate(`/teacher/evaluarEstudiante`)}>
+                        className="bg-[var(--color-gris-600)] text-[var(--color-blanco)] font-semibold px-3 py-2 rounded-lg flex items-center gap-2 hover:bg-[var(--color-gris-700)] transition-colors"
+                        onClick={() => navigate(`/teacher/evaluarEstudiante?studentId=${studentId}`)}
+                        disabled={submitting}
+                    >
                         <FaReply /> Regresar
                     </button>
                 </div>
+                
+                {/* Indicador de evaluación existente */}
+                {hasExistingEvaluation && (
+                    <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                        <p className="text-sm text-blue-800">
+                            ℹ️ <strong>Esta evaluación ya existe.</strong> Puedes modificar el comentario y la calificación, luego hacer clic en "Actualizar Evaluación".
+                        </p>
+                    </div>
+                )}
             </div>
         </div>
     );

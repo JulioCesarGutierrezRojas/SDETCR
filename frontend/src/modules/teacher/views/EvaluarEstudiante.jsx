@@ -33,21 +33,23 @@ const EvaluarEstudiante = () => {
             setLoading(true);
             console.log('📊 Obteniendo datos del estudiante ID:', studentId);
             
-            // Primero obtener las categorías que eligió el estudiante
+            // Obtener las categorías e información del estudiante en una sola llamada
             const categoriesResponse = await getStudentCategories(studentId);
             console.log('📊 Respuesta de categorías elegidas:', categoriesResponse);
             
-            const studentData = categoriesResponse.result;
-            const studentInfo = studentData.student;
-            const studentCategories = studentData.categories || [];
+            const categoryData = categoriesResponse.result;
+            const studentInfo = categoryData.student;
+            const studentCategories = categoryData.categories || [];
             
-            // Establecer información del estudiante
+            // Establecer información completa del estudiante
             setStudent({
                 id: studentId,
                 nombre: `${studentInfo.name} ${studentInfo.lastname}`,
-                correo: "estudiante@email.com", // Podríamos obtener esto de otro endpoint
-                matricula: "XXXXXXXX" // Podríamos obtener esto de otro endpoint
+                correo: studentInfo.email,
+                matricula: studentInfo.enrollment
             });
+            
+            console.log('📊 Información del estudiante:', studentInfo);
             
             // Ahora obtener los simuladores realizados (si los hay)
             let simuladoresData = [];
@@ -144,8 +146,8 @@ const EvaluarEstudiante = () => {
                         </div>
                         <div>
                             <p className="font-semibold text-[var(--color-gris-900)]">{student?.nombre || 'Estudiante'}</p>
-                            <p className="text-sm text-[var(--color-gris-900)]">ID: {studentId}</p>
-                            <p className="text-sm text-[var(--color-gris-600)]">Simuladores en {categorias.length} categoría{categorias.length !== 1 ? 's' : ''}</p>
+                            <p className="text-sm text-[var(--color-gris-900)]">Correo: {student?.correo || 'cargando...'}</p>
+                            <p className="text-sm text-[var(--color-gris-900)]">Matrícula: {student?.matricula || 'cargando...'}</p>
                         </div>
                     </div>
                 </div>

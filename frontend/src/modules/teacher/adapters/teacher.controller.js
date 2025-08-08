@@ -99,3 +99,48 @@ export const createEvaluation = async (mentorId, studentId, simulatorId, comment
         throw new Error(e.message);
     }
 };
+
+export const updateEvaluation = async (mentorId, studentId, simulatorId, comment, finalScore) => {
+    try {
+        const response = await handleRequest("put", "/evaluation/update", {
+            mentor_id: mentorId,
+            student_id: studentId,
+            simulator_id: simulatorId,
+            comment: comment,
+            final_score: finalScore
+        });
+
+        if (response.type !== 'SUCCESS')
+            throw new Error(response.text);
+
+        return response;
+    } catch (e) {
+        throw new Error(e.message);
+    }
+};
+
+export const getStudentAnswersWithEvaluation = async (studentId, simulatorId) => {
+    try {
+        const response = await handleRequest("get", `/responses/student/${studentId}/simulator/${simulatorId}/with-evaluation`);
+
+        if (response.type !== 'SUCCESS')
+            throw new Error(response.text);
+
+        return response;
+    } catch (e) {
+        throw new Error(e.message);
+    }
+};
+
+export const getStudentAnswersWithoutEvaluation = async (studentId, simulatorId) => {
+    try {
+        const response = await handleRequest("get", `/responses/student/${studentId}/simulator/${simulatorId}/without-evaluation`);
+
+        if (response.type !== 'SUCCESS')
+            throw new Error(response.text);
+
+        return response;
+    } catch (e) {
+        throw new Error(e.message);
+    }
+};
