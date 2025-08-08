@@ -42,3 +42,22 @@ export const saveStudentAnswers = async (studentId, simulatorId, answers, files)
         throw new Error(error.response?.data?.text || 'Error al guardar las respuestas');
     }
 }
+
+export const saveSuggestion = async (category, suggestionName, description) => {
+    try {
+        const response = await handleRequest('post', '/suggestions', {
+            category,
+            suggestionName,
+            description
+        });
+
+        if (response.type !== 'SUCCESS') {
+            throw new Error(response.text || 'Error al guardar la sugerencia');
+        }
+
+        return response;
+    } catch (error) {
+        throw new Error(error.message || 'Error al conectar con el servidor');
+    }
+}
+
