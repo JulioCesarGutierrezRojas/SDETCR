@@ -61,3 +61,45 @@ export const saveSuggestion = async (category, suggestionName, description) => {
     }
 }
 
+export const getStudentCategoriesAndSimulators = async (studentId) => {
+    try {
+        const response = await handleRequest('get', `/history/my-results/${studentId}`);
+
+        if (response.type !== 'SUCCESS' || response.status === 'ERROR') {
+            throw new Error(response.text || 'Error al obtener las categorías y simuladores');
+        }
+
+        return response;
+    } catch (error) {
+        throw new Error(error.message || 'Error al conectar con el servidor');
+    }
+}
+
+export const getStudentAnswersAndComments = async (simulatorId, studentId) => {
+    try {
+        const response = await handleRequest('get', `/answers/student/${studentId}/simulator/${simulatorId}/with-evaluation`);
+
+        if (response.type !== 'SUCCESS' || response.status === 'ERROR') {
+            throw new Error(response.text || 'Error al obtener las respuestas y comentarios');
+        }
+
+        return response;
+    } catch (error) {
+        throw new Error(error.message || 'Error al conectar con el servidor');
+    }
+}
+
+export const getStudentAnswersWithoutComments = async (simulatorId, studentId) => {
+    try {
+        const response = await handleRequest('get', `/answers/student/${studentId}/simulator/${simulatorId}/without-evaluation`);
+
+        if (response.type !== 'SUCCESS' || response.status === 'ERROR') {
+            throw new Error(response.text || 'Error al obtener las respuestas');
+        }
+
+        return response;
+    } catch (error) {
+        throw new Error(error.message || 'Error al conectar con el servidor');
+    }
+}
+

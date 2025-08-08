@@ -230,12 +230,25 @@ const getStudentByMentor = async (mentorId) => {
             return new ApiResponse(null, null, TypesResponse.WARNING, 'El ID del mentor es requerido', 400);
         }
 
-        const students = await User.findAll({
-            where: {
-                mentor_id: mentorId,
-                role: 'estudiantes'
-            },
-            attributes: ['user_id', 'name', 'lastname', 'email', 'enrollment', 'category'],
+        // Usar consulta SQL optimizada para obtener estudiantes del mentor con conteo de simuladores
+        const studentsWithCount = await sequelize.query(`
+            SELECT 
+                u.user_id,
+                u.name,
+                u.lastname,
+                u.email,
+                u.enrollment,
+                u.category,
+                COALESCE(COUNT(DISTINCT q.simulator_id), 0) as simulators_answered
+            FROM users u
+            LEFT JOIN answers a ON u.user_id = a.student_id
+            LEFT JOIN questions q ON a.question_id = q.question_id
+            WHERE u.mentor_id = :mentorId AND u.role = 'estudiantes'
+            GROUP BY u.user_id, u.name, u.lastname, u.email, u.enrollment, u.category
+            ORDER BY u.name ASC, u.lastname ASC
+        `, {
+            replacements: { mentorId },
+            type: sequelize.QueryTypes.SELECT
         });
 
         const mentor = await User.findOne({
@@ -244,11 +257,22 @@ const getStudentByMentor = async (mentorId) => {
                 role: 'mentor'
             },
             attributes: ['user_id', 'name', 'lastname', 'email', 'enrollment']
-        })
+        });
 
-        const totalStudents = Array.isArray(students) ? students.length : 0;
+        // Formatear estudiantes con conteo de simuladores
+        const formattedStudents = studentsWithCount.map(student => ({
+            user_id: student.user_id,
+            name: student.name,
+            lastname: student.lastname,
+            email: student.email,
+            enrollment: student.enrollment,
+            category: student.category || [],
+            simulators_answered_count: parseInt(student.simulators_answered) || 0
+        }));
 
-        return new ApiResponse(null, { mentor, students, totalStudents }, TypesResponse.SUCCESS, 'Estudiantes obtenidos exitosamente', 200);
+        const totalStudents = formattedStudents.length;
+
+        return new ApiResponse(null, { mentor, students: formattedStudents, totalStudents }, TypesResponse.SUCCESS, 'Estudiantes obtenidos exitosamente', 200);
     }catch(error){
         console.error('Error en getStudentByMentor:', error);
         throw new Error(error.message || 'No se pudieron obtener los estudiantes');

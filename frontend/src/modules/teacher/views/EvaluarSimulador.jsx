@@ -68,32 +68,45 @@ const EvaluarSimulador = () => {
                 throw new Error('No se encontraron respuestas para este simulador');
             }
             
-            // Extraer información del estudiante y simulador
-            setStudent({
-                id: simulatorData.student_id,
-                nombre: `${simulatorData.student_name}`,
-                correo: simulatorData.student_email || 'No disponible',
-                matricula: simulatorData.student_enrollment || 'No disponible'
-            });
+            // Extraer información del estudiante
+            if (simulatorData.student) {
+                setStudent({
+                    id: simulatorData.student.user_id,
+                    nombre: `${simulatorData.student.name} ${simulatorData.student.lastname}`,
+                    correo: simulatorData.student.email || 'No disponible',
+                    matricula: simulatorData.student.enrollment || 'No disponible'
+                });
+            }
             
-            setSimulatorInfo({
-                id: simulatorData.simulator_id,
-                nombre: simulatorData.simulator_name,
-                descripcion: simulatorData.simulator_description
-            });
+            // La información del simulador se obtiene desde las preguntas
+            // setSimulatorInfo se mantiene para compatibilidad pero ya no es necesario
             
-            // Formatear preguntas y respuestas
-            const preguntasFormateadas = simulatorData.questions.map(q => ({
-                id: q.question_id,
-                texto: q.question_text,
-                tipo: q.question_type, // 'multiple_choice', 'true_false', 'open_question', etc.
-                opciones: q.options || [],
-                respuesta: q.user_answer,
-                respuestaCorrecta: q.correct_answer,
-                correcta: q.is_correct,
-                videoURL: q.video_url,
-                puntos: q.points_earned || 0
-            }));
+            // Formatear preguntas y respuestas desde la nueva estructura
+            const preguntasFormateadas = simulatorData.answers.map((answerItem, index) => {
+                const question = answerItem.question;
+                const response = answerItem.student_response;
+                
+                // Determinar el tipo de pregunta basado en la respuesta
+                let tipo = 'open_question'; // por defecto
+                if (response.type === 'texto' && question.options && question.options.length > 0) {
+                    // Si tiene opciones y es texto, es multiple choice o true/false
+                    tipo = question.options.length === 2 ? 'true_false' : 'multiple_choice';
+                } else if (response.type === 'video') {
+                    tipo = 'video_question';
+                }
+                
+                return {
+                    id: question.question_id,
+                    texto: question.question_text,
+                    tipo: tipo,
+                    opciones: question.options || [],
+                    respuesta: response.answer,
+                    respuestaCorrecta: question.correct_answer,
+                    correcta: response.is_correct,
+                    videoURL: response.url_video,
+                    puntos: response.is_correct ? 10 : 0 // Calcular puntos basado en corrección
+                };
+            });
             
             setPreguntas(preguntasFormateadas);
             
@@ -320,7 +333,7 @@ const EvaluarSimulador = () => {
                                     })}
                                 </ul>
                             </div>
-                        ) : pregunta.tipo === 'open_question' ? (
+                        ) : (pregunta.tipo === 'open_question' || pregunta.tipo === 'video_question') ? (
                             /* Pregunta abierta */
                             <div className="border-l-4 border-[var(--color-lavanda-600)] bg-[var(--color-lavanda-100)] rounded-md p-4">
                                 <p className="text-sm font-medium text-[var(--color-gris-900)] mb-2">

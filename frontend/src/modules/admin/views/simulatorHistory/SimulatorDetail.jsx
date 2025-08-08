@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { FaUser, FaReply } from "react-icons/fa";
-import { getStudentAnswersWithEvaluation } from "../../adapters/admin.controller";
+import { getStudentAnswersWithEvaluation, getStudentAnswersWithoutEvaluation } from "../../adapters/admin.controller";
 import { showErrorToast } from "../../../../kernel/alerts";
 import Loader from "../../../../components/Loader";
 
@@ -33,60 +33,93 @@ export const SimulatorDetail = () => {
       setLoading(true);
       console.log('📊 Obteniendo detalle del simulador:', simuladorID, 'para estudiante:', estudianteID);
       
-      // Obtener respuestas con evaluación del mentor
-      const response = await getStudentAnswersWithEvaluation(estudianteID, simuladorID);
-      const data = response.result;
+      // Primero intentar obtener respuestas CON evaluación
+      let simulatorData = null;
+      let existingEvaluation = false;
       
-      console.log('📊 Respuesta del simulador con evaluación:', data);
+      try {
+        console.log('📊 Intentando obtener respuestas CON evaluación...');
+        const withEvaluationResponse = await getStudentAnswersWithEvaluation(estudianteID, simuladorID);
+        simulatorData = withEvaluationResponse.result;
+        existingEvaluation = true;
+        console.log('📊 ✅ Respuestas con evaluación obtenidas exitosamente');
+      } catch (error) {
+        console.log('📊 ⚠️ No se pudieron obtener respuestas con evaluación:', error.message);
+        try {
+          console.log('📊 Intentando obtener respuestas SIN evaluación...');
+          // Si falla, intentamos sin evaluación
+          const withoutEvaluationResponse = await getStudentAnswersWithoutEvaluation(estudianteID, simuladorID);
+          simulatorData = withoutEvaluationResponse.result;
+          existingEvaluation = false;
+          console.log('📊 ✅ Respuestas sin evaluación obtenidas exitosamente');
+        } catch (secondError) {
+          console.log('📊 ❌ Tampoco se pudieron obtener respuestas sin evaluación:', secondError.message);
+          throw new Error('No se encontraron respuestas para este simulador');
+        }
+      }
       
-      if (!data) {
+      console.log('📊 Respuesta obtenida:', simulatorData);
+      
+      if (!simulatorData) {
         throw new Error('No se encontraron respuestas para este simulador');
       }
       
-      // Extraer información del estudiante
-      setEstudiante({
-        nombre: data.student_name || 'Estudiante',
-        correo: data.student_email || 'No disponible',
-        matricula: data.student_enrollment || 'No disponible'
-      });
+      // Extraer información del estudiante desde la nueva estructura
+      if (simulatorData.student) {
+        setEstudiante({
+          nombre: `${simulatorData.student.name} ${simulatorData.student.lastname}`,
+          correo: simulatorData.student.email || 'No disponible',
+          matricula: simulatorData.student.enrollment || 'No disponible'
+        });
+      }
       
-      // Extraer información del simulador
-      setSimulatorInfo({
-        id: data.simulator_id,
-        nombre: data.simulator_name,
-        descripcion: data.simulator_description
-      });
+      // La información del simulador se obtiene desde las preguntas
+      // setSimulatorInfo se mantiene para compatibilidad pero ya no es necesario
       
-      // Formatear preguntas y respuestas
-      const preguntasFormateadas = data.questions.map(q => {
-        const preguntaBase = {
-          id: q.question_id,
-          texto: q.question_text,
-          tipo: q.question_type, // 'multiple_choice', 'true_false', 'open_question', etc.
-          respuesta: q.user_answer,
-          respuestaCorrecta: q.correct_answer,
-          correcta: q.is_correct,
-          videoURL: q.video_url,
-          puntos: q.points_earned || 0
-        };
+      // Formatear preguntas y respuestas desde la nueva estructura
+      const preguntasFormateadas = simulatorData.answers.map((answerItem, index) => {
+        const question = answerItem.question;
+        const response = answerItem.student_response;
         
-        // Agregar opciones si las hay
-        if (q.options && Array.isArray(q.options)) {
-          preguntaBase.opciones = q.options;
+        // Determinar el tipo de pregunta basado en la respuesta
+        let tipo = 'open_question'; // por defecto
+        if (response.type === 'texto' && question.options && question.options.length > 0) {
+          // Si tiene opciones y es texto, es multiple choice o true/false
+          tipo = question.options.length === 2 ? 'true_false' : 'multiple_choice';
+        } else if (response.type === 'video') {
+          tipo = 'video_question';
         }
         
-        return preguntaBase;
+        return {
+          id: question.question_id,
+          texto: question.question_text,
+          tipo: tipo,
+          opciones: question.options || [],
+          respuesta: response.answer,
+          respuestaCorrecta: question.correct_answer,
+          correcta: response.is_correct,
+          videoURL: response.url_video,
+          puntos: response.is_correct ? 10 : 0 // Calcular puntos basado en corrección
+        };
       });
       
       setPreguntas(preguntasFormateadas);
       
       // Extraer comentario del docente si existe
-      if (data.mentor_evaluation) {
+      if (existingEvaluation && simulatorData.mentor_evaluation) {
+        const mentorName = simulatorData.mentor_evaluation.mentor ? 
+          `${simulatorData.mentor_evaluation.mentor.name} ${simulatorData.mentor_evaluation.mentor.lastname}` : 'Mentor';
+        
         setComentarioDocente({
-          nombre: data.mentor_evaluation.mentor_name || 'Mentor',
-          fecha: new Date(data.mentor_evaluation.date_evaluation).toLocaleDateString('es-ES'),
-          comentario: data.mentor_evaluation.comment,
-          calificacion: data.mentor_evaluation.final_score
+          nombre: mentorName,
+          fecha: simulatorData.mentor_evaluation.date_evaluation ? 
+            new Date(simulatorData.mentor_evaluation.date_evaluation).toLocaleDateString('es-ES', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            }) : 'Fecha no disponible',
+          comentario: simulatorData.mentor_evaluation.comment,
+          calificacion: simulatorData.mentor_evaluation.final_score
         });
       } else {
         setComentarioDocente(null);
@@ -186,7 +219,7 @@ export const SimulatorDetail = () => {
                       })}
                     </ul>
                   </div>
-                ) : pregunta.tipo === 'open_question' ? (
+                ) : (pregunta.tipo === 'open_question' || pregunta.tipo === 'video_question') ? (
                   /* Pregunta abierta */
                   <div className="border-l-4 border-[var(--color-lavanda-600)] bg-[var(--color-lavanda-100)] rounded-md p-4">
                     <p className="text-sm font-medium text-[var(--color-gris-900)] mb-2">

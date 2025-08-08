@@ -55,11 +55,17 @@ routerHistory.get('/student/:studentId/simulator/:simulatorId',
     // #swagger.description = 'Endpoint para obtener un simulador específico del historial de un estudiante.'
     getSimulatorFromHistoryController)
 
-routerHistory.get('/student/:studentId/categories', 
+routerHistory.get('/student/:studentId/categories', protectedEndpoint('mentor', 'administrador'),
     // #swagger.tags = ['Historial']
-    // #swagger.summary = 'Obtener categorías y simuladores respondidos por estudiante'
+    // #swagger.summary = 'Obtener categorías y simuladores respondidos por estudiante (solo mentores/admin)'
     // #swagger.description = 'Obtiene las categorías en las que ha respondido un estudiante junto con el nombre de los simuladores, la calificación automática y el comentario del mentor.'
     // #swagger.security = [{ "bearerAuth": [] }]
+    getStudentCategoriesAndSimulatorsController)
+
+routerHistory.get('/my-results/:studentId',
+    // #swagger.tags = ['Historial']
+    // #swagger.summary = 'Obtener mis resultados (para estudiantes)'
+    // #swagger.description = 'Permite a un estudiante obtener sus propios resultados de simuladores sin restricciones de rol.'
     getStudentCategoriesAndSimulatorsController)
 
 //routerHistory.get('/byStudent',getHistoriesByStudent) // Este no se quien lo hizo jeje

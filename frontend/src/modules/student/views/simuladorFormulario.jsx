@@ -145,7 +145,7 @@ const SimuladorFormulario = () => {
         setLoading(true);
 
         try {
-            const studentId = localStorage.getItem('user_id');
+            const studentId = localStorage.getItem('userId');
             const answersToSend = preguntas.map(p => ({
                 question_id: p.question_id,
                 type_response: modosPorPregunta[p.question_id],
@@ -184,7 +184,7 @@ const SimuladorFormulario = () => {
     };
 
     const handleSubmit = () => {
-        const studentId = localStorage.getItem('user_id'); // Asumiendo que el ID del estudiante está en localStorage
+        const studentId = localStorage.getItem('userId'); // El ID del estudiante está en localStorage
         if (!studentId) {
             showAlert('Error de autenticación', 'No se pudo identificar al estudiante. Por favor, inicie sesión de nuevo.', 'error');
             return;
