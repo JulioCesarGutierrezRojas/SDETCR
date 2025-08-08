@@ -1,4 +1,4 @@
-const { getFeedbackByStudentId, assignStudentToMentor } = require('../service/evaluation-mentor.service');
+const { getFeedbackByStudentId, assignStudentToMentor, updateEvaluation } = require('../service/evaluation-mentor.service');
 const { createEvaluation } = require('../service/evaluation-mentor.service');
 const { Router } = require('express');
 const routerEvaluation = Router();
@@ -24,6 +24,19 @@ const createEvaluationController = async (req, res) => {
     } catch (error) {
         console.error('Error en createEvaluationController:', error.message)
         return res.status(500).json({ message: error.message })
+    }
+}
+
+const updateEvaluationController = async (req, res) => {
+    try {
+        const mentor_id = req.body.mentor_id;
+        const { student_id, simulator_id, comment, final_score } = req.body;
+        const result = await updateEvaluation({ mentor_id, student_id, simulator_id, comment, final_score });
+
+        return res.status(result.getStatusCode()).json(result.getResponseBody());
+    } catch (error) {
+        console.error('Error en updateEvaluationController:', error.message);
+        return res.status(500).json({ message: error.message });
     }
 }
 
@@ -55,6 +68,14 @@ routerEvaluation.post('/create',
     // #swagger.description = 'Crea una nueva evaluación de mentor para un estudiante'
     // #swagger.security = [{ "bearerAuth": [] }]
     createEvaluationController
+);
+
+routerEvaluation.put('/update',
+    // #swagger.tags = ['Evaluación Mentor']
+    // #swagger.summary = 'Actualizar evaluación de mentor'
+    // #swagger.description = 'Actualiza una evaluación existente de mentor para un estudiante'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    updateEvaluationController
 );
 
 routerEvaluation.post('/mentor/assign',

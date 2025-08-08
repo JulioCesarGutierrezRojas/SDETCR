@@ -90,6 +90,54 @@ const createEvaluation = async({ mentor_id, student_id, simulator_id, comment, f
     }
 }
 
+const updateEvaluation = async ({ mentor_id, student_id, simulator_id, comment, final_score }) => {
+    try {
+        if (!mentor_id || !student_id || !simulator_id || !comment || final_score == null) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'Todos los campos son obligatorios', 400);
+        }
+
+        // Buscar la evaluación existente
+        const existingEvaluation = await EvaluationMentor.findOne({
+            where: {
+                mentor_id,
+                student_id,
+                simulator_id
+            }
+        });
+
+        if (!existingEvaluation) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'No se encontró la evaluación a actualizar', 404);
+        }
+
+        // Actualizar la evaluación
+        const updatedEvaluation = await existingEvaluation.update({
+            comment,
+            final_score,
+            date_evaluation: new Date()
+        });
+
+        // Enviar notificación de evaluación actualizada
+        try {
+            const mentor = await User.findByPk(mentor_id, { attributes: ['name', 'lastname'] });
+            const simulator = await Simulator.findByPk(simulator_id, { attributes: ['name'] });
+            
+            if (mentor && simulator) {
+                const mentorName = `${mentor.name} ${mentor.lastname}`;
+                const simulatorName = simulator.name;
+                await notifyStudentEvaluated(student_id, mentorName, simulatorName, final_score);
+            }
+        } catch (notificationError) {
+            console.error('Error al enviar notificación de actualización:', notificationError);
+            // No interrumpir el flujo principal si la notificación falla
+        }
+
+        return new ApiResponse(null, updatedEvaluation, TypesResponse.SUCCESS, 'Evaluación actualizada correctamente', 200);
+    } catch (error) {
+        console.error("Error en updateEvaluation:", error.message);
+        throw new Error(error.message || 'No se pudo actualizar la evaluación');
+    }
+}
+
 const assignStudentToMentor = async ({ mentor_id, student_ids }) => {
     try {
         if (!mentor_id || !student_ids || !Array.isArray(student_ids) || student_ids.length === 0) {
@@ -172,5 +220,6 @@ const assignStudentToMentor = async ({ mentor_id, student_ids }) => {
 module.exports = {
     getFeedbackByStudentId,
     createEvaluation,
+    updateEvaluation,
     assignStudentToMentor
 }

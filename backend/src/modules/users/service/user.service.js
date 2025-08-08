@@ -294,7 +294,7 @@ const getStudentCategories = async (student_id) => {
                 user_id: student_id,
                 role: 'estudiantes'
             },
-            attributes: ['user_id', 'name', 'lastname', 'category']
+            attributes: ['user_id', 'name', 'lastname', 'email', 'enrollment', 'category']
         });
 
         if (!student) {
@@ -332,7 +332,9 @@ const getStudentCategories = async (student_id) => {
             student: {
                 user_id: student.user_id,
                 name: student.name,
-                lastname: student.lastname
+                lastname: student.lastname,
+                email: student.email,
+                enrollment: student.enrollment
             },
             categories: formattedCategories
         };
