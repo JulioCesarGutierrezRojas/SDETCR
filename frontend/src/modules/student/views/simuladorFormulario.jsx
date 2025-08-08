@@ -9,7 +9,7 @@ import { showAlert, showConfirmation, showErrorToast, showSuccessToast, showWarn
 import { isValidVideoFile, getFileSizeInMB, validateVideoFileSize } from "../../../kernel/validations.js";
 
 const SimuladorFormulario = () => {
-    const { simuladorId } = useParams();
+    const { simuladorID } = useParams();
     const [preguntas, setPreguntas] = useState([]);
     const [respuestas, setRespuestas] = useState({});
     const [modosPorPregunta, setModosPorPregunta] = useState({});
@@ -24,10 +24,28 @@ const SimuladorFormulario = () => {
         const loadQuestions = async () => {
             try {
                 setLoading(true);
-                const response = await getSimulatorQuestions(simuladorId);
+                console.log(`Cargando preguntas para simulador ID: ${simuladorID}`);
                 
-                if (response.metadata) {
-                    const { simulator, questions } = response.metadata;
+                const response = await getSimulatorQuestions(simuladorID);
+                console.log(`Respuesta del backend para simulador ${simuladorID}:`, response);
+                
+                // Los datos vienen en result según el backend
+                let simulator, questions;
+                
+                if (response.result) {
+                    simulator = response.result.simulator;
+                    questions = response.result.questions;
+                } else if (response.metadata) {
+                    // Fallback por si cambia la estructura
+                    simulator = response.metadata.simulator;
+                    questions = response.metadata.questions;
+                } else {
+                    throw new Error('No se encontraron datos de preguntas en la respuesta del servidor');
+                }
+                
+                console.log(`Simulador: ${simulator?.name}, Preguntas encontradas: ${questions?.length || 0}`);
+                
+                if (questions && questions.length > 0) {
                     setSimulatorInfo(simulator);
                     setPreguntas(questions);
                     
@@ -35,6 +53,10 @@ const SimuladorFormulario = () => {
                     const modosIniciales = {};
                     questions.forEach(q => modosIniciales[q.question_id] = "texto");
                     setModosPorPregunta(modosIniciales);
+                    
+                    console.log('Preguntas cargadas exitosamente:', questions.length);
+                } else {
+                    console.warn('No se encontraron preguntas o el arreglo está vacío');
                 }
             } catch (error) {
                 showErrorToast({
@@ -46,10 +68,10 @@ const SimuladorFormulario = () => {
             }
         };
 
-        if (simuladorId) {
+        if (simuladorID) {
             loadQuestions();
         }
-    }, [simuladorId]);
+    }, [simuladorID]);
 
     const handleModoPregunta = (idPregunta, modo) => {
         setModosPorPregunta({ ...modosPorPregunta, [idPregunta]: modo });
@@ -134,7 +156,7 @@ const SimuladorFormulario = () => {
                 .filter(r => r.tipo === 'video' && r.valor instanceof File)
                 .map(r => r.valor);
 
-            const response = await saveStudentAnswers(studentId, simuladorId, answersToSend, videoFiles);
+            const response = await saveStudentAnswers(studentId, simuladorID, answersToSend, videoFiles);
 
             // Capturar la calificación de la respuesta
             if (response.result && response.result.final_score !== undefined) {
@@ -149,7 +171,7 @@ const SimuladorFormulario = () => {
             });
 
             // Redirigir a la página de resultados o a donde sea necesario
-            // navigate(`/student/resultados/${simuladorId}`);
+            // navigate(`/student/resultados/${simuladorID}`);
 
         } catch (error) {
             showErrorToast({
@@ -194,7 +216,7 @@ const SimuladorFormulario = () => {
         <div className="p-4 max-w-6xl mx-auto">
             <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-bold text-[var(--color-lavanda-700)]">
-                    {simulatorInfo?.name || `Simulador #${simuladorId}`}
+                    {simulatorInfo?.name || `Simulador #${simuladorID}`}
                 </h1>
             </div>
 
@@ -343,7 +365,7 @@ const SimuladorFormulario = () => {
                         </button>
 
                         <Link 
-                            to={isSubmitted ? '/student/resultadosObtenidos' : `/student/simuladores/${simuladorId}`} 
+                            to={isSubmitted ? '/student/resultadosObtenidos' : `/student/simuladores/${simuladorID}`}
                             className="px-5 py-2 rounded-md bg-[var(--color-gris-700)] text-white font-semibold hover:bg-[var(--color-gris-900)] transition text-center"
                         >
                             {isSubmitted ? 'Ver mis resultados' : 'Atrás'}
