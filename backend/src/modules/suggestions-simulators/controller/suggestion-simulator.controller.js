@@ -48,7 +48,7 @@ routerSuggestion.post('/', protectedEndpoint('estudiantes'),
 )
 
 // PATCH para actualizar solo el status
-routerSuggestion.patch('/:suggestion_id/status',
+routerSuggestion.patch('/:suggestion_id/status', protectedEndpoint('administrador'),
     // #swagger.tags = ['Sugerencias']
     // #swagger.summary = 'Actualizar status de una sugerencia'
     // #swagger.description = 'Permite cambiar el estado de una sugerencia a aprobado o rechazado.'
