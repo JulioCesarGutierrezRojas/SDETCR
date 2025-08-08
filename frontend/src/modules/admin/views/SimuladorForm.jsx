@@ -35,6 +35,10 @@ const SimuladorFormAdmin = () => {
             
             if (!simuladorId || simuladorId === 'undefined') {
                 console.error('simuladorId es undefined o inválido');
+                showErrorToast({
+                    title: "Error",
+                    text: "ID de simulador inválido"
+                });
                 return;
             }
             
@@ -70,6 +74,10 @@ const SimuladorFormAdmin = () => {
                 console.log("Simulador sin preguntas - mostrando pantalla para crear primera pregunta");
             } else {
                 // Solo mostrar errores realmente problemáticos
+                showErrorToast({
+                    title: "Error",
+                    text: error.message || "No se pudieron cargar las preguntas"
+                });
                 console.log("Error cargando preguntas:", error.message);
             }
         } finally {
