@@ -121,7 +121,7 @@ export const updateEvaluation = async (mentorId, studentId, simulatorId, comment
 
 export const getStudentAnswersWithEvaluation = async (studentId, simulatorId) => {
     try {
-        const response = await handleRequest("get", `/responses/student/${studentId}/simulator/${simulatorId}/with-evaluation`);
+        const response = await handleRequest("get", `/answers/student/${studentId}/simulator/${simulatorId}/with-evaluation`);
 
         if (response.type !== 'SUCCESS')
             throw new Error(response.text);
@@ -134,7 +134,7 @@ export const getStudentAnswersWithEvaluation = async (studentId, simulatorId) =>
 
 export const getStudentAnswersWithoutEvaluation = async (studentId, simulatorId) => {
     try {
-        const response = await handleRequest("get", `/responses/student/${studentId}/simulator/${simulatorId}/without-evaluation`);
+        const response = await handleRequest("get", `/answers/student/${studentId}/simulator/${simulatorId}/without-evaluation`);
 
         if (response.type !== 'SUCCESS')
             throw new Error(response.text);

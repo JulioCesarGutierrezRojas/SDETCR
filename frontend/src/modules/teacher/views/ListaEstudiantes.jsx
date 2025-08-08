@@ -175,6 +175,7 @@ const ListaEstudiantes = () => {
                                 const email = estudiante.email;
                                 const matricula = estudiante.enrollment;
                                 const categorias = Array.isArray(estudiante.category) ? estudiante.category.length : 0;
+                                const simuladoresRespondidos = estudiante.simulators_answered_count || 0;
                                 
                                 return (
                                     <tr key={estudianteId || idx} className="hover:bg-[var(--color-lavanda-100)] transition-colors">
@@ -185,8 +186,24 @@ const ListaEstudiantes = () => {
                                                 {matricula}
                                             </span>
                                         </td>
-                                        <td className="px-4 py-3 text-center text-sm text-gray-700">{categorias}</td>
-                                        <td className="px-4 py-3 text-center text-sm text-gray-700">-</td>
+                                        <td className="px-4 py-3 text-center text-sm">
+                                            <span className={`font-semibold py-1 px-3 rounded-full text-xs ${
+                                                categorias > 0 
+                                                    ? 'bg-blue-200 text-blue-800'
+                                                    : 'bg-gray-200 text-gray-600'
+                                            }`}>
+                                                {categorias}
+                                            </span>
+                                        </td>
+                                        <td className="px-4 py-3 text-center text-sm">
+                                            <span className={`font-semibold py-1 px-3 rounded-full text-xs ${
+                                                simuladoresRespondidos > 0 
+                                                    ? 'bg-green-200 text-green-800'
+                                                    : 'bg-gray-200 text-gray-600'
+                                            }`}>
+                                                {simuladoresRespondidos}
+                                            </span>
+                                        </td>
                                         <td className="px-4 py-3 text-center">
                                             <button
                                                 className="bg-[var(--color-lavanda-700)] text-white text-sm font-semibold px-4 py-1 rounded-full hover:bg-[var(--color-lavanda-900)] transition duration-300 shadow"

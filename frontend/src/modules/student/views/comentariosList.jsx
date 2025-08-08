@@ -51,15 +51,28 @@ const ComentariosEstudiante = () => {
             
             // Primero intentamos obtener las respuestas con evaluación
             let response;
+            let hasEvaluation = true;
             try {
+                console.log('📝 Intentando obtener respuestas CON evaluación...');
                 response = await getStudentAnswersAndComments(simuladorId, studentId);
+                console.log('📝 ✅ Respuestas con evaluación obtenidas exitosamente');
             } catch (error) {
-                console.log('📝 No se pudieron obtener respuestas con evaluación, intentando sin evaluación');
-                // Si falla, intentamos sin evaluación
-                response = await getStudentAnswersWithoutComments(simuladorId, studentId);
+                console.log('📝 ⚠️ No se pudieron obtener respuestas con evaluación:', error.message);
+                hasEvaluation = false;
+                try {
+                    console.log('📝 Intentando obtener respuestas SIN evaluación...');
+                    // Si falla, intentamos sin evaluación
+                    response = await getStudentAnswersWithoutComments(simuladorId, studentId);
+                    console.log('📝 ✅ Respuestas sin evaluación obtenidas exitosamente');
+                } catch (secondError) {
+                    console.log('📝 ❌ Tampoco se pudieron obtener respuestas sin evaluación:', secondError.message);
+                    throw new Error('No se encontraron respuestas para este simulador');
+                }
             }
             
             console.log('📝 Respuesta obtenida:', response);
+            console.log('📝 Tipo de respuesta:', response?.type);
+            console.log('📝 Resultado presente:', !!response?.result);
             
             if (response.type === 'SUCCESS' && response.result) {
                 const data = response.result;
@@ -74,8 +87,9 @@ const ComentariosEstudiante = () => {
                 }
                 
                 // Configurar preguntas y respuestas
+                let preguntasFormateadas = [];
                 if (data.answers && data.answers.length > 0) {
-                    const preguntasFormateadas = data.answers.map((answerItem, index) => {
+                    preguntasFormateadas = data.answers.map((answerItem, index) => {
                         const question = answerItem.question;
                         const response = answerItem.student_response;
                         
@@ -98,6 +112,8 @@ const ComentariosEstudiante = () => {
                     });
                     setPreguntas(preguntasFormateadas);
                     console.log('📝 Preguntas formateadas:', preguntasFormateadas);
+                } else {
+                    console.log('📝 No hay respuestas disponibles en los datos');
                 }
                 
                 // Configurar comentarios de evaluación (puede estar vacío)
