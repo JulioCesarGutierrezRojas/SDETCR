@@ -4,6 +4,7 @@ import styles from '../../../styles/form-login.module.css';
 import { login } from "../adapters/auth.controller.js";
 import { showSuccessToast, showWarningToast } from "../../../kernel/alerts.js";
 import { validateEmail, validatePassword } from "../../../kernel/validations"
+import { useSocket } from '../../../context/SocketContext';
 
 const LoginForm = () => {
   const [password, setPassword] = useState('');
@@ -13,6 +14,7 @@ const LoginForm = () => {
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const navigate = useNavigate();
+  const { connectSocket } = useSocket();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,6 +34,12 @@ const LoginForm = () => {
     try {
       const response = await login(email, password);
       showSuccessToast({ title: 'Inicio de Sesión Exitoso', text: response.text });
+
+      // Conectar Socket.IO después del login exitoso
+      const token = localStorage.getItem('token');
+      if (token) {
+        connectSocket(token);
+      }
 
       const role = localStorage.getItem('role');
       switch (role) {

@@ -2,9 +2,13 @@ import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Navbar from "./navbar";
 import SidebarStudent from "./sidebarStudent";
+import { useSocketReconnect } from "../../hooks/useSocketReconnect";
 
 const LayoutStudent = () => {
     const [isCollapsed, setIsCollapsed] = useState(false);
+    
+    // Reconectar Socket.IO automáticamente al cargar la página
+    useSocketReconnect();
 
     return (
         <div className="flex h-screen bg-[var(--color-blanco)]">

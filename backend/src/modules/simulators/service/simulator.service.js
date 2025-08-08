@@ -6,6 +6,7 @@ const sequelize = require('../../../config/database');
 const Answer = require('../../answers/model/answer.model');
 const History = require('../../history/model/history.model');
 const User = require('../../users/model/user.model');
+const { notifyNewSimulator } = require('../../notifications/service/notification.service');
 
 const saveSimulatorResult = async ({ student_id, simulator_id, final_score, answers }) => {
     const transaction = await sequelize.transaction();
@@ -91,6 +92,22 @@ const createSimulator = async (name, category_id) => {
             category_id,
             status: true //lopuse ooir default pa que esdten habilitados
         })
+
+        // Enviar notificación a todos los estudiantes sobre el nuevo simulador
+        try {
+            const students = await User.findAll({
+                where: { role: 'estudiantes' },
+                attributes: ['user_id']
+            });
+            
+            if (students && students.length > 0) {
+                const studentIds = students.map(student => student.user_id);
+                await notifyNewSimulator(studentIds, name);
+            }
+        } catch (notificationError) {
+            console.error('Error al enviar notificación de nuevo simulador:', notificationError);
+            // No interrumpir el flujo principal si la notificación falla
+        }
 
         return new ApiResponse(null, null, TypesResponse.SUCCESS, 'Simulador creado exitosamente', 201)
     } catch (error) {
