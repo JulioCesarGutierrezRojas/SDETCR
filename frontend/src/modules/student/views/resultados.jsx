@@ -1,77 +1,119 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import { useNavigate } from "react-router-dom";
+import { getStudentCategoriesAndSimulators } from "../adapters/student.controller";
+import { showErrorToast, showInfoToast } from "../../../kernel/alerts";
+import Loader from "../../../components/Loader";
 
 const ResultadosEstudiante = () => {
     const navigate = useNavigate();
     const [expandedCategory, setExpandedCategory] = useState(null);
+    const [categorias, setCategorias] = useState([]);
+    const [loading, setLoading] = useState(true);
 
+    // Obtener el ID del estudiante desde localStorage
+    const getCurrentStudentId = () => {
+        // El ID del estudiante se guarda directamente en localStorage con la clave 'userId'
+        const userId = localStorage.getItem('userId');
+        return userId;
+    };
 
-    const categorias = [
-        {
-            id: 1,
-            nombre: 'Desarrollo de Software',
-            descripcion: 'Entrevistas técnicas de desarrollo web',
-            simuladores: [
-                {
-                    id: 1,
-                    titulo: 'Entrevista para Desarrollador React',
-                    fecha: '14/07/2024',
-                    calificacion: '8',
-                    calificacionFinal: null,
-                },
-                {
-                    id: 2,
-                    titulo: 'Entrevista HTML/CSS',
-                    fecha: '12/07/2024',
-                    calificacion: '9',
-                    calificacionFinal: '9'
-                },
-            ],
-        },
-        {
-            id: 2,
-            nombre: 'Administracion de empresas',
-            descripcion: 'Evaluación de habilidades blandas',
-            simuladores: [
-                {
-                    id: 3,
-                    titulo: 'Entrevista de Comportamiento 1',
-                    fecha: '10/07/2024',
-                    calificacion: '7',
-                    calificacionFinal: null
-                },
-                {
-                    id: 4,
-                    titulo: 'Entrevista de Contabilidad',
-                    fecha: '10/07/2024',
-                    calificacion: '8',
-                    calificacionFinal: '9'
-                },
-            ],
-        },
-        {
-            id: 3,
-            nombre: 'Manejo de Redes',
-            descripcion: 'Evaluación de configuracion basica de un router',
-            simuladores: [
-                {
-                    id: 5,
-                    titulo: 'Seguridad 1',
-                    fecha: '10/07/2024',
-                    calificacion: '6',
-                    calificacionFinal: null
-                },
-                {
-                    id: 6,
-                    titulo: 'Entrevista de analisis',
-                    fecha: '10/07/2024',
-                    calificacion: '5',
-                    calificacionFinal: '7'
-                },
-            ],
-        },
-    ];
+    useEffect(() => {
+        fetchStudentResults();
+    }, []);
+
+    const fetchStudentResults = async () => {
+        try {
+            setLoading(true);
+            const studentId = getCurrentStudentId();
+            
+            if (!studentId) {
+                showErrorToast({
+                    title: "Error",
+                    text: "No se pudo identificar al estudiante. Por favor, inicia sesión nuevamente."
+                });
+                return;
+            }
+
+            console.log('📊 Obteniendo resultados del estudiante ID:', studentId);
+            const response = await getStudentCategoriesAndSimulators(studentId);
+            
+            console.log('📊 Respuesta completa del backend:', response);
+            console.log('📊 Tipo de respuesta:', response.type);
+            console.log('📊 Resultado:', response.result);
+            
+            if (response.type === 'SUCCESS' && response.result) {
+                const simuladoresData = response.result;
+                
+                // Formatear los datos para el componente
+                const categoriasFormateadas = simuladoresData.map(categoria => ({
+                    id: categoria.category_id,
+                    nombre: categoria.category_name,
+                    descripcion: categoria.category_description || `Categoría ${categoria.category_name}`,
+                    simuladores: categoria.simulators.map(sim => ({
+                        id: sim.simulator_id,
+                        titulo: sim.simulator_name,
+                        fecha: new Date(sim.date_realized).toLocaleDateString('es-ES'),
+                        calificacion: sim.automatic_score || 0,
+                        calificacionFinal: sim.mentor_evaluation?.final_score || null,
+                        comentario: sim.mentor_evaluation?.comment || null,
+                        fechaEvaluacion: sim.mentor_evaluation?.date_evaluation || null
+                    }))
+                }));
+                
+                setCategorias(categoriasFormateadas);
+                console.log('📊 Categorías cargadas:', categoriasFormateadas);
+                
+                if (categoriasFormateadas.length === 0) {
+                    showInfoToast({
+                        title: "Sin resultados",
+                        text: "Aún no has completado ningún simulador."
+                    });
+                }
+            } else {
+                throw new Error(response.text || 'Error al obtener los resultados');
+            }
+            
+        } catch (error) {
+            console.error("❌ Error al obtener resultados:", error.message);
+            showErrorToast({
+                title: "Error",
+                text: "No se pudieron cargar tus resultados. Inténtalo nuevamente."
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (loading) {
+        return <Loader isLoading={true} />;
+    }
+
+    // Validación si no hay categorías con simuladores
+    if (!loading && categorias.length === 0) {
+        return (
+            <div className="p-4 space-y-6">
+                <div className="flex justify-between items-center mb-4 pb-2">
+                    <h1 className="text-2xl font-bold text-[var(--color-lavanda-700)]">Mis categorias y simuladores respondidos</h1>
+                </div>
+                
+                <div className="text-center py-12">
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-8 max-w-md mx-auto">
+                        <div className="flex items-center justify-center w-16 h-16 bg-yellow-100 rounded-full mx-auto mb-4">
+                            <IoIosArrowDown className="text-yellow-600 text-2xl" />
+                        </div>
+                        <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                            No hay simuladores completados
+                        </h2>
+                        <p className="text-gray-600 text-sm">
+                            Aún no has completado ningún simulador. Una vez que completes algunos simuladores,
+                            podrás ver tus resultados y comentarios aquí.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="p-4 space-y-6">
