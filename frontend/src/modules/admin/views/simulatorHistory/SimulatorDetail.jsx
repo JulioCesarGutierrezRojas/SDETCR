@@ -1,50 +1,120 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { FaUser, FaReply } from "react-icons/fa";
-
-// 🔹 Datos simulados
-const mockDetalleSimulador = {
-  estudiante: {
-    nombre: "Juan Perez",
-    correo: "juan.perez@universidad.edu.mx",
-    matricula: "20230001",
-  },
-  preguntas: [
-    {
-      id: 1,
-      texto: "¿Qué es una IP?",
-      tipo: "texto",
-      opciones: ["Identificador", "Dirección de red", "Programa", "Ninguna"],
-      respuesta: "Dirección de red",
-      correcta: true,
-    },
-    {
-      id: 2,
-      texto: "¿Qué hace un servidor?",
-      tipo: "texto",
-      opciones: ["Envía datos", "Almacena archivos", "Responde peticiones", "Todas las anteriores"],
-      respuesta: "Envía datos",
-      correcta: false,
-    },
-    {
-      id: 3,
-      texto: "Explica un algoritmo que hayas implementado recientemente.",
-      tipo: "video",
-      videoURL: "https://mi-servidor/videos/respuesta123.mp4",
-    },
-  ],
-  comentarioDocente: {
-    nombre: "Dra. Laura Mendoza",
-    fecha: "2025-07-21",
-    comentario: "Buen desempeño general del estudiante, aunque hay áreas de mejora en las preguntas teóricas.",
-    calificacion: 8.5,
-  },
-};
+import { getStudentAnswersWithEvaluation } from "../../adapters/admin.controller";
+import { showErrorToast } from "../../../../kernel/alerts";
+import Loader from "../../../../components/Loader";
 
 export const SimulatorDetail = () => {
-  const { simuladorID } = useParams();
+  const { estudianteID, simuladorID } = useParams();
   const navigate = useNavigate();
-
-  const { estudiante, preguntas, comentarioDocente } = mockDetalleSimulador;
+  
+  // Estados del componente
+  const [loading, setLoading] = useState(true);
+  const [estudiante, setEstudiante] = useState(null);
+  const [preguntas, setPreguntas] = useState([]);
+  const [comentarioDocente, setComentarioDocente] = useState(null);
+  const [simulatorInfo, setSimulatorInfo] = useState(null);
+  
+  useEffect(() => {
+    if (estudianteID && simuladorID) {
+      fetchSimulatorDetail();
+    } else {
+      showErrorToast({
+        title: "Error",
+        text: "No se especificaron los parámetros necesarios"
+      });
+      navigate(-1);
+    }
+  }, [estudianteID, simuladorID]);
+  
+  const fetchSimulatorDetail = async () => {
+    try {
+      setLoading(true);
+      console.log('📊 Obteniendo detalle del simulador:', simuladorID, 'para estudiante:', estudianteID);
+      
+      // Obtener respuestas con evaluación del mentor
+      const response = await getStudentAnswersWithEvaluation(estudianteID, simuladorID);
+      const data = response.result;
+      
+      console.log('📊 Respuesta del simulador con evaluación:', data);
+      
+      if (!data) {
+        throw new Error('No se encontraron respuestas para este simulador');
+      }
+      
+      // Extraer información del estudiante
+      setEstudiante({
+        nombre: data.student_name || 'Estudiante',
+        correo: data.student_email || 'No disponible',
+        matricula: data.student_enrollment || 'No disponible'
+      });
+      
+      // Extraer información del simulador
+      setSimulatorInfo({
+        id: data.simulator_id,
+        nombre: data.simulator_name,
+        descripcion: data.simulator_description
+      });
+      
+      // Formatear preguntas y respuestas
+      const preguntasFormateadas = data.questions.map(q => {
+        const preguntaBase = {
+          id: q.question_id,
+          texto: q.question_text,
+          tipo: q.question_type, // 'multiple_choice', 'true_false', 'open_question', etc.
+          respuesta: q.user_answer,
+          respuestaCorrecta: q.correct_answer,
+          correcta: q.is_correct,
+          videoURL: q.video_url,
+          puntos: q.points_earned || 0
+        };
+        
+        // Agregar opciones si las hay
+        if (q.options && Array.isArray(q.options)) {
+          preguntaBase.opciones = q.options;
+        }
+        
+        return preguntaBase;
+      });
+      
+      setPreguntas(preguntasFormateadas);
+      
+      // Extraer comentario del docente si existe
+      if (data.mentor_evaluation) {
+        setComentarioDocente({
+          nombre: data.mentor_evaluation.mentor_name || 'Mentor',
+          fecha: new Date(data.mentor_evaluation.date_evaluation).toLocaleDateString('es-ES'),
+          comentario: data.mentor_evaluation.comment,
+          calificacion: data.mentor_evaluation.final_score
+        });
+      } else {
+        setComentarioDocente(null);
+      }
+      
+    } catch (error) {
+      console.error("❌ Error al obtener detalle del simulador:", error.message);
+      showErrorToast({
+        title: "Error",
+        text: "No se pudo cargar el detalle del simulador"
+      });
+      
+      // Datos por defecto en caso de error
+      setEstudiante({
+        nombre: 'Estudiante no encontrado',
+        correo: 'No disponible',
+        matricula: 'No disponible'
+      });
+      setPreguntas([]);
+      setComentarioDocente(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  if (loading) {
+    return <Loader isLoading={true} />;
+  }
 
   return (
     <div className="max-w-5xl mx-auto p-4">
@@ -74,79 +144,139 @@ export const SimulatorDetail = () => {
           Respuestas del simulador
         </h3>
 
-        <div className="space-y-5 max-h-60 overflow-y-auto pr-2">
-          {preguntas.map((pregunta, index) => (
-            <div key={index} className="border border-[var(--color-gris-500)] rounded-md">
-              {pregunta.tipo === "texto" ? (
-                <div
-                  className={`border-l-4 rounded-md p-4 ${
-                    pregunta.correcta
-                      ? "border-green-500 bg-green-50"
-                      : "border-red-500 bg-red-50"
-                  }`}
-                >
-                  <p className="text-sm font-medium text-[var(--color-gris-900)] mb-2">
-                    Pregunta {index + 1}: {pregunta.texto}
-                  </p>
-                  <ul className="space-y-1">
-                    {pregunta.opciones.map((opcion, i) => {
-                      const esSeleccionada = opcion === pregunta.respuesta;
-                      const color =
-                        esSeleccionada && pregunta.correcta
-                          ? "bg-green-100 border-green-500 text-green-700"
-                          : esSeleccionada && !pregunta.correcta
-                          ? "bg-red-100 border-red-500 text-red-700"
-                          : "bg-[var(--color-blanco)] border-[var(--color-gris-400)] text-[var(--color-gris-900)]";
-                      return (
-                        <li
-                          key={i}
-                          className={`px-3 py-2 rounded-md border ${color} text-sm`}
-                        >
-                          {opcion}
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              ) : (
-                <div className="border-l-4 border-[var(--color-lavanda-600)] bg-[var(--color-lavanda-100)] rounded-md p-4">
-                  <p className="text-sm font-medium text-[var(--color-gris-900)] mb-2">
-                    Pregunta {index + 1}: {pregunta.texto}
-                  </p>
-
-                  <div className="text-sm text-[var(--color-gris-800)] mb-2">
-                    Respuesta enviada en video; evaluación a cargo del docente.
+        {preguntas && preguntas.length > 0 ? (
+          <div className="space-y-5 max-h-60 overflow-y-auto pr-2">
+            {preguntas.map((pregunta, index) => (
+              <div key={pregunta.id || index} className="border border-[var(--color-gris-500)] rounded-md">
+                {/* Preguntas de opción múltiple o verdadero/falso */}
+                {(pregunta.tipo === 'multiple_choice' || pregunta.tipo === 'true_false') && pregunta.opciones && pregunta.opciones.length > 0 ? (
+                  <div className={`border-l-4 rounded-md p-4 ${pregunta.correcta ? "border-green-500 bg-green-50" : "border-red-500 bg-red-50"}`}>
+                    <p className="text-sm font-medium text-[var(--color-gris-900)] mb-2">
+                      Pregunta {index + 1}: {pregunta.texto}
+                    </p>
+                    <div className="mb-2">
+                      <span className={`inline-block text-xs font-semibold px-2 py-1 rounded-md ${pregunta.correcta ? 'bg-green-200 text-green-900' : 'bg-red-200 text-red-900'}`}>
+                        {pregunta.correcta ? '✅ Correcta' : '❌ Incorrecta'} - Puntos: {pregunta.puntos}
+                      </span>
+                    </div>
+                    <ul className="space-y-1">
+                      {pregunta.opciones.map((opcion, i) => {
+                        const esSeleccionada = opcion === pregunta.respuesta;
+                        const esCorrecta = opcion === pregunta.respuestaCorrecta;
+                        let color = "bg-[var(--color-blanco)] border-[var(--color-gris-400)] text-[var(--color-gris-900)]";
+                        
+                        if (esSeleccionada && esCorrecta) {
+                          color = "bg-green-100 border-green-500 text-green-700 font-semibold";
+                        } else if (esSeleccionada && !esCorrecta) {
+                          color = "bg-red-100 border-red-500 text-red-700 font-semibold";
+                        } else if (!esSeleccionada && esCorrecta) {
+                          color = "bg-blue-50 border-blue-300 text-blue-700";
+                        }
+                        
+                        return (
+                          <li
+                            key={i}
+                            className={`px-3 py-2 rounded-md border ${color} text-sm relative`}
+                          >
+                            {opcion}
+                            {esSeleccionada && <span className="ml-2 text-xs">(Respuesta del estudiante)</span>}
+                            {!esSeleccionada && esCorrecta && <span className="ml-2 text-xs">(Respuesta correcta)</span>}
+                          </li>
+                        );
+                      })}
+                    </ul>
                   </div>
-
-                  <video
-                    src={pregunta.videoURL}
-                    controls
-                    className="max-w-xs w-full aspect-video rounded-md border border-[var(--color-gris-400)]"
-                  >
-                    Tu navegador no soporta la reproducción de video.
-                  </video>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+                ) : pregunta.tipo === 'open_question' ? (
+                  /* Pregunta abierta */
+                  <div className="border-l-4 border-[var(--color-lavanda-600)] bg-[var(--color-lavanda-100)] rounded-md p-4">
+                    <p className="text-sm font-medium text-[var(--color-gris-900)] mb-2">
+                      Pregunta {index + 1}: {pregunta.texto}
+                    </p>
+                    <div className="mb-2">
+                      <span className="inline-block text-xs font-semibold px-2 py-1 rounded-md bg-blue-200 text-blue-900">
+                        📝 Pregunta abierta - Puntos: {pregunta.puntos}
+                      </span>
+                    </div>
+                    <div className="bg-white rounded-md p-3 border border-gray-300 mt-2">
+                      <p className="text-sm font-medium text-gray-700 mb-1">Respuesta del estudiante:</p>
+                      <p className="text-sm text-gray-900 whitespace-pre-wrap">{pregunta.respuesta || 'Sin respuesta'}</p>
+                    </div>
+                    {pregunta.videoURL && (
+                      <div className="mt-3">
+                        <p className="text-sm font-medium text-gray-700 mb-2">Video adjunto:</p>
+                        <video
+                          src={pregunta.videoURL}
+                          controls
+                          className="max-w-md w-full aspect-video rounded-md border border-[var(--color-gris-400)]"
+                        >
+                          Tu navegador no soporta la reproducción de video.
+                        </video>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  /* Tipo de pregunta no reconocido o pregunta tipo "texto" legacy */
+                  <div className="border-l-4 border-gray-400 bg-gray-50 rounded-md p-4">
+                    <p className="text-sm font-medium text-[var(--color-gris-900)] mb-2">
+                      Pregunta {index + 1}: {pregunta.texto}
+                    </p>
+                    <div className="mb-2">
+                      <span className="inline-block text-xs font-semibold px-2 py-1 rounded-md bg-gray-200 text-gray-900">
+                        Tipo: {pregunta.tipo} - Puntos: {pregunta.puntos}
+                      </span>
+                    </div>
+                    <div className="bg-white rounded-md p-3 border border-gray-300 mt-2">
+                      <p className="text-sm font-medium text-gray-700 mb-1">Respuesta:</p>
+                      <p className="text-sm text-gray-900">{pregunta.respuesta || 'Sin respuesta'}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-8">
+            <p className="text-gray-600 text-sm">No se encontraron preguntas para este simulador.</p>
+          </div>
+        )}
       </div>
 
       {/* 🧑‍🏫 Comentario del docente */}
       <div className="bg-white border border-[var(--color-lavanda-400)] rounded-xl shadow-md p-5 mb-6">
         <h3 className="text-xl font-semibold text-[var(--color-gris-900)] mb-2">Comentario del Docente</h3>
-        <p className="text-sm text-[var(--color-gris-700)] mb-1">
-          <strong>Docente:</strong> {comentarioDocente.nombre}
-        </p>
-        <p className="text-sm text-[var(--color-gris-700)] mb-1">
-          <strong>Fecha:</strong> {comentarioDocente.fecha}
-        </p>
-        <p className="text-sm text-[var(--color-gris-800)] mb-2">
-          <strong>Comentario:</strong> {comentarioDocente.comentario}
-        </p>
-        <p className="text-sm text-[var(--color-gris-800)]">
-          <strong>Calificación final:</strong> <span className="font-bold">{comentarioDocente.calificacion}/10</span>
-        </p>
+        
+        {comentarioDocente ? (
+          <div>
+            <p className="text-sm text-[var(--color-gris-700)] mb-1">
+              <strong>Docente:</strong> {comentarioDocente.nombre}
+            </p>
+            <p className="text-sm text-[var(--color-gris-700)] mb-1">
+              <strong>Fecha:</strong> {comentarioDocente.fecha}
+            </p>
+            <p className="text-sm text-[var(--color-gris-800)] mb-2">
+              <strong>Comentario:</strong> {comentarioDocente.comentario}
+            </p>
+            <p className="text-sm text-[var(--color-gris-800)]">
+              <strong>Calificación final:</strong> <span className="font-bold">{comentarioDocente.calificacion}/10</span>
+            </p>
+          </div>
+        ) : (
+          <div className="text-center py-8">
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+              <div className="flex items-center justify-center w-12 h-12 bg-yellow-100 rounded-full mx-auto mb-3">
+                <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h4 className="text-lg font-medium text-yellow-800 mb-2">
+                Sin evaluación del docente
+              </h4>
+              <p className="text-yellow-700 text-sm">
+                Este simulador aún no ha sido evaluado por un docente. La calificación automática está disponible, pero falta la retroalimentación personalizada.
+              </p>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* 🔙 Botón regresar */}

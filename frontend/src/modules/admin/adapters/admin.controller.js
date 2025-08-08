@@ -55,3 +55,31 @@ export const getSimulatorFromHistory = async (studentId, simulatorId) => {
         throw new Error(e.message);
     }
 };
+
+// Obtener respuestas del estudiante con evaluación del mentor
+export const getStudentAnswersWithEvaluation = async (studentId, simulatorId) => {
+    try {
+        const response = await handleRequest("get", `/responses/student/${studentId}/simulator/${simulatorId}/with-evaluation`);
+
+        if (response.type !== 'SUCCESS')
+            throw new Error(response.text);
+
+        return response;
+    } catch (e) {
+        throw new Error(e.message);
+    }
+};
+
+// Obtener respuestas del estudiante sin evaluación del mentor
+export const getStudentAnswersWithoutEvaluation = async (studentId, simulatorId) => {
+    try {
+        const response = await handleRequest("get", `/responses/student/${studentId}/simulator/${simulatorId}/without-evaluation`);
+
+        if (response.type !== 'SUCCESS')
+            throw new Error(response.text);
+
+        return response;
+    } catch (e) {
+        throw new Error(e.message);
+    }
+};
