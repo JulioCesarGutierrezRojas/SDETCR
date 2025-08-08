@@ -2,6 +2,7 @@ const User = require('../model/user.model')
 const { compararPassword, hashPassword } = require('../../../kernel/bcrypt')
 const { getAllCategories } = require('../../../modules/categories/service/category.service')
 const { generarToken } = require('../../../security/jwt')
+const { addToBlacklist } = require('../../../security/tokenBlacklist')
 const { sendEmail } = require('../../../kernel/configEmail')
 const crypto = require('crypto')
 const ApiResponse = require('../../../kernel/api.response')
@@ -45,6 +46,23 @@ const login = async (email, password) => {
     }catch(error){
         console.log('Error en login service: ', error.message)
         throw new Error(error.message || 'Error al iniciar sesión')
+    }
+}
+
+const logout = async (token) => {
+    try {
+        if (!token) {
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'Token es requerido para cerrar sesión', 400);
+        }
+
+        // Agregar token a blacklist
+        addToBlacklist(token);
+        console.log('🚪 Token agregado a blacklist para logout');
+        
+        return new ApiResponse(null, null, TypesResponse.SUCCESS, 'Sesión cerrada exitosamente', 200);
+    } catch (error) {
+        console.error('Error en logout service:', error.message);
+        return new ApiResponse(null, null, TypesResponse.ERROR, 'Error al cerrar sesión', 500);
     }
 }
 
@@ -620,6 +638,7 @@ const createUser = async (userData) => {
 
 module.exports = {
     login,
+    logout,
     restaurarPassword,
     enviarCodigoRecuperacion,
     createStudent,

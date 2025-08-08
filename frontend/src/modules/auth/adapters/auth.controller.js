@@ -102,6 +102,26 @@ export const registerMentor = async (name, lastname, email, enrollment, password
     }
 }
 
+export const logout = async () => {
+    try {
+        const response = await handleRequest('post', '/users/logout', {})
+
+        // Nota: No lanzamos error si falla el logout del servidor,
+        // ya que siempre queremos limpiar el estado local
+        if (response.type === 'SUCCESS') {
+            console.log('✅ Token invalidado correctamente en el servidor');
+        } else {
+            console.warn('⚠️ No se pudo invalidar el token en el servidor, pero se procede con el logout local');
+        }
+
+        return response
+    } catch (e) {
+        console.warn('⚠️ Error al comunicarse con el servidor para logout:', e.message);
+        // Retornamos un objeto válido para que continúe el logout local
+        return { type: 'WARNING', text: 'Logout local realizado' };
+    }
+}
+
 export const getCategories = async () => {
     try {
         const response = await handleRequest('get', '/categories/all')

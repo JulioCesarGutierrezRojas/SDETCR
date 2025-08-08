@@ -1,4 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { showSuccessToast } from '../kernel/alerts';
+import { logout as logoutService } from '../modules/auth/adapters/auth.controller';
 
 const AuthContext = createContext();
 
@@ -20,13 +22,33 @@ export const AuthProvider = ({ children }) => {
         setUser(userData);
     };
 
-    const logout = () => {
+    const logout = async () => {
+        const token = localStorage.getItem("token");
+        
+        // Si hay token, intentar invalidarlo en el backend usando el servicio
+        if (token) {
+            await logoutService();
+        }
+        
+        // Limpiar estado local siempre
         setUser(null);
         localStorage.removeItem("token");
         localStorage.removeItem("user");
         localStorage.removeItem("role");
         localStorage.removeItem("email");
         localStorage.removeItem("userId");
+        
+        // Limpiar todas las claves de toast del sessionStorage
+        Object.keys(sessionStorage).forEach(key => {
+            if (key.startsWith('toast_shown_')) {
+                sessionStorage.removeItem(key);
+            }
+        });
+        
+        showSuccessToast({
+            title: 'Sesión cerrada',
+            text: 'Sesión cerrada correctamente'
+        });
     };
 
     return (

@@ -25,15 +25,17 @@ import SugerirSimulador from "../modules/student/views/sugerirSimulador";
 import SeleccionarEstudiante from "../modules/teacher/views/SeleccionarEstudiante";
 import AprobarSugerencias from "../modules/admin/views/AprobarSugerencias"; 
 import ProtectedRoute from "../components/ProtectedRoute";
+import PublicRoute from "../components/PublicRoute";
+import ErrorPage from "../components/ErrorPage";
 
 
 const AppRouter = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/signup" element={<RegisterForm />} />
-        <Route path="/forgot-password" element={<PasswordRecoveryForm />} />
+        <Route path="/" element={<PublicRoute><Login /></PublicRoute>} />
+        <Route path="/signup" element={<PublicRoute><RegisterForm /></PublicRoute>} />
+        <Route path="/forgot-password" element={<PublicRoute><PasswordRecoveryForm /></PublicRoute>} />
 
         <Route path="/student" element={<ProtectedRoute role="estudiantes"><LayoutStudent /></ProtectedRoute>}>
           <Route index element={<Navigate to="simuladores" replace />} />
@@ -64,6 +66,9 @@ const AppRouter = () => {
           <Route path="evaluarSimulador/:simuladorId" element={<EvaluarSimulador />} />
           <Route path="videos" element={<Videos />} />
         </Route>
+
+        {/* Catch-all route for 404 errors */}
+        <Route path="*" element={<ErrorPage />} />
   
       </Routes>
     </BrowserRouter>

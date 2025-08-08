@@ -1,4 +1,4 @@
-const { login, restaurarPassword, enviarCodigoRecuperacion, createStudent, createMentor, getStudentByMentor, validarTokenRecuperacion, getStudentCategories, getAllStudentsWithSimulatorCount, getAllUsers, updateUser, deleteUser, createUser } = require('../service/user.service')
+const { login, logout, restaurarPassword, enviarCodigoRecuperacion, createStudent, createMentor, getStudentByMentor, validarTokenRecuperacion, getStudentCategories, getAllStudentsWithSimulatorCount, getAllUsers, updateUser, deleteUser, createUser } = require('../service/user.service')
 const { Router } = require('express')
 const routerUser = Router()
 
@@ -10,6 +10,24 @@ const loginController = async (req, res) => {
     }catch(error){
         console.log('Error en loginController: ', error.message)
         return res.status(500).json({ message: error.message })
+    }
+}
+
+const logoutController = async (req, res) => {
+    try {
+        // Extraer token del header Authorization
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.status(400).json({ message: 'Token no proporcionado' });
+        }
+
+        const token = authHeader.substring(7); // Remover "Bearer "
+        
+        const result = await logout(token);
+        return res.status(result.getStatusCode()).json(result.getResponseBody());
+    } catch (error) {
+        console.log('Error en logoutController: ', error.message);
+        return res.status(500).json({ message: error.message });
     }
 }
 
@@ -166,6 +184,13 @@ routerUser.post('/login',
     // #swagger.summary = 'Iniciar sesión'
     // #swagger.description = 'Endpoint para autenticar usuarios en el sistema.'
     loginController)
+
+routerUser.post('/logout',
+    // #swagger.tags = ['Usuarios']
+    // #swagger.summary = 'Cerrar sesión'
+    // #swagger.description = 'Endpoint para cerrar sesión e invalidar el token JWT en el servidor.'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    logoutController)
 
 routerUser.post('/restaurar-password',
     // #swagger.tags = ['Usuarios']

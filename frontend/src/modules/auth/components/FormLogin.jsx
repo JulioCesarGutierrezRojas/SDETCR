@@ -5,6 +5,7 @@ import { login } from "../adapters/auth.controller.js";
 import { showSuccessToast, showWarningToast } from "../../../kernel/alerts.js";
 import { validateEmail, validatePassword } from "../../../kernel/validations"
 import { useSocket } from '../../../context/SocketContext';
+import { useAuth } from '../../../context/AuthContext';
 
 const LoginForm = () => {
   const [password, setPassword] = useState('');
@@ -15,6 +16,7 @@ const LoginForm = () => {
   const [passwordError, setPasswordError] = useState('');
   const navigate = useNavigate();
   const { connectSocket } = useSocket();
+  const { login: setUserInContext } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,13 +37,24 @@ const LoginForm = () => {
       const response = await login(email, password);
       showSuccessToast({ title: 'Inicio de Sesión Exitoso', text: response.text });
 
+      // Actualizar el estado del AuthContext con los datos del usuario
+      const name = localStorage.getItem('user');
+      const role = localStorage.getItem('role');
+      const userEmail = localStorage.getItem('email');
+      const userId = localStorage.getItem('userId');
+      
+      setUserInContext({
+        name,
+        role,
+        email: userEmail,
+        id: userId
+      });
+
       // Conectar Socket.IO después del login exitoso
       const token = localStorage.getItem('token');
       if (token) {
         connectSocket(token);
       }
-
-      const role = localStorage.getItem('role');
       switch (role) {
         case 'administrador':
           navigate('/admin');
