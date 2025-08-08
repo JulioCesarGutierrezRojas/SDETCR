@@ -1,4 +1,5 @@
 const { verificarToken } = require('./jwt')
+const { isBlacklisted } = require('./tokenBlacklist')
 
 const protectedEndpoint = ( ...allowedRoles ) => {
     return (req, res, next) => {
@@ -9,6 +10,12 @@ const protectedEndpoint = ( ...allowedRoles ) => {
                 return res.status(403).json({ message: 'Token no proporcionado' })
 
             const token = auth.split(' ')[1]
+            
+            // Verificar si el token está en blacklist
+            if (isBlacklisted(token)) {
+                return res.status(401).json({ message: 'Token inválido - sesión cerrada' })
+            }
+            
             const decoded = verificarToken(token)
 
             if(!decoded)
