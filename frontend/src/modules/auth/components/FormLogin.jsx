@@ -6,6 +6,7 @@ import { showSuccessToast, showWarningToast } from "../../../kernel/alerts.js";
 import { validateEmail, validatePassword } from "../../../kernel/validations"
 import { useSocket } from '../../../context/SocketContext';
 import { useAuth } from '../../../context/AuthContext';
+import logoSdetcr from '../../../assets/logo-sdetcr.jpeg';
 
 const LoginForm = () => {
   const [password, setPassword] = useState('');
@@ -79,7 +80,14 @@ const LoginForm = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.leftPanel}></div>
+      <div className={styles.leftPanel}>
+        <div className={styles.logoContainer}>
+          <div className={styles.logoWrapper}>
+            <img src={logoSdetcr} alt="SDETCR Logo" className={styles.logo} />
+          </div>
+          <h1 className={styles.appName}>SDETCR</h1>
+        </div>
+      </div>
 
       <div className={styles.rightPanel}>
         <form className={styles.form} onSubmit={handleSubmit}>
