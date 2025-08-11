@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@theme {
+:root {
   --color-nude-100: #FEF9F6;  /* casi blanco con matiz piel */
   --color-nude-200: #FCEFE9;  /* rosa claro suave */
   --color-nude-300: #F8DFD1;  /* durazno muy claro */
@@ -49,4 +49,37 @@
   /* fondo de mensaje sugerencia */
   --color-rojo-claro: #FFE5E5;
   /* fondo de error leve */
+  --color-blanco: #ffffff;
+  /* fondo de blanco para el fondo */
+
+  /* Nuevos colores OKLCH para botones */
+  --color-aceptar-oklch: oklch(79.2% 0.209 151.711);
+  --color-rechazar-oklch: oklch(64.5% 0.246 16.439);
+
+  --color-verde-suave-1: #D9F2E6;
+  --color-verde-suave-2: #C7EFD9;
+  --color-verde-suave-oklch: oklch(86.281% 0.13788 148.793);
+
+  --color-rojo-suave-1: #FBE4E4;
+  --color-rojo-suave-2: #F5CFCF;
+  --color-rojo-suave-oklch: oklch(70.985% 0.11875 21.717);
+
+}
+
+:root {
+  --primary: var(--color-lavanda-700);        /* Lavanda profundo */
+  --secondary: var(--color-nude-500);         /* Nude clásico */
+  --white: var(--color-nude-100);             /* Casi blanco */
+  --tomato: var(--color-lavanda-500);         /* Lavanda tono medio */
+  --blue: var(--color-gris-400);              /* Gris claro para bordes */
+}
+
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-lavanda-600);
+  border-radius: 4px;
 }

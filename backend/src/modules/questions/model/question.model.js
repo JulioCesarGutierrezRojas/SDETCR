@@ -34,7 +34,6 @@ const Question = sequelize.define('Question', {
 	tableName: 'questions'
 })
 
-// Relación uno a muchos con Simulator
 Question.belongsTo(Simulator, { as: 'Simulator', foreignKey: 'simulator_id' })
 Simulator.hasMany(Question, { as: 'Questions', foreignKey: 'simulator_id' })
 
