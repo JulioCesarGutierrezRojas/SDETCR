@@ -30,7 +30,6 @@ const SimuladoresAdmin = () => {
     const fetchSimuladores = async () => {
         try {
             setLoading(true);
-            console.log(`Cargando simuladores para categoría ID: ${categoriaId}`);
             
             // Si categoriaId es undefined, no hacer la petición
             if (!categoriaId || categoriaId === 'undefined') {
@@ -42,7 +41,6 @@ const SimuladoresAdmin = () => {
             
             if (response.result) {
                 const { category, simulators } = response.result;
-                console.log(`Categoría cargada: ${category.category_name}, Simuladores: ${simulators.length}`);
                 setCategoryInfo(category);
                 
                 const simuladoresMapeados = simulators.map((sim) => ({
@@ -58,7 +56,6 @@ const SimuladoresAdmin = () => {
             console.error("Categoria ID:", categoriaId);
             
             // No mostrar toast de error, solo mostrar la validación de "no hay datos"
-            console.log("Error cargando simuladores:", error.message);
         } finally {
             setLoading(false);
         }
@@ -126,11 +123,6 @@ const SimuladoresAdmin = () => {
         
         try {
             setSubmitting(true);
-            console.log('Guardando simulador:', {
-                name: formNombre.trim(),
-                category_id: parseInt(categoriaId),
-                isEdit
-            });
             
             if (isEdit) {
                 await updateSimulator(editId, {

@@ -35,12 +35,7 @@ const ResultadosEstudiante = () => {
                 return;
             }
 
-            console.log('📊 Obteniendo resultados del estudiante ID:', studentId);
             const response = await getStudentCategoriesAndSimulators(studentId);
-            
-            console.log('📊 Respuesta completa del backend:', response);
-            console.log('📊 Tipo de respuesta:', response.type);
-            console.log('📊 Resultado:', response.result);
             
             if (response.type === 'SUCCESS' && response.result) {
                 const simuladoresData = response.result;
@@ -62,7 +57,6 @@ const ResultadosEstudiante = () => {
                 }));
                 
                 setCategorias(categoriasFormateadas);
-                console.log('📊 Categorías cargadas:', categoriasFormateadas);
                 
                 if (categoriasFormateadas.length === 0) {
                     showInfoToast({

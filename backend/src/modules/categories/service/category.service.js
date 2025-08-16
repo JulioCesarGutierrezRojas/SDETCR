@@ -58,13 +58,15 @@ const disableCategory = async (name) => {
             return new ApiResponse(null, null, TypesResponse.WARNING, 'Categoria no encontrada', 404)
         }
 
-        category.status = false;
+        // Toggle del status: si está activa la desactiva, si está inactiva la activa
+        category.status = !category.status;
         await category.save();
 
-        return new ApiResponse(null, null, TypesResponse.SUCCESS, 'Categoria deshabilitada con exito', 200)
+        const action = category.status ? 'activada' : 'desactivada';
+        return new ApiResponse(null, null, TypesResponse.SUCCESS, `Categoria ${action} con exito`, 200)
     } catch (error) {
-        console.log('Error al deshabilitar una categoria:', error.message)
-        throw new Error(error.message || 'Error al deshabilitar la categoría')
+        console.log('Error al cambiar el status de la categoria:', error.message)
+        throw new Error(error.message || 'Error al cambiar el status de la categoría')
     }
 }
 

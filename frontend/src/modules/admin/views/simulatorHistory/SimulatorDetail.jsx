@@ -31,34 +31,25 @@ export const SimulatorDetail = () => {
   const fetchSimulatorDetail = async () => {
     try {
       setLoading(true);
-      console.log('📊 Obteniendo detalle del simulador:', simuladorID, 'para estudiante:', estudianteID);
       
       // Primero intentar obtener respuestas CON evaluación
       let simulatorData = null;
       let existingEvaluation = false;
       
       try {
-        console.log('📊 Intentando obtener respuestas CON evaluación...');
         const withEvaluationResponse = await getStudentAnswersWithEvaluation(estudianteID, simuladorID);
         simulatorData = withEvaluationResponse.result;
         existingEvaluation = true;
-        console.log('📊 ✅ Respuestas con evaluación obtenidas exitosamente');
       } catch (error) {
-        console.log('📊 ⚠️ No se pudieron obtener respuestas con evaluación:', error.message);
         try {
-          console.log('📊 Intentando obtener respuestas SIN evaluación...');
           // Si falla, intentamos sin evaluación
           const withoutEvaluationResponse = await getStudentAnswersWithoutEvaluation(estudianteID, simuladorID);
           simulatorData = withoutEvaluationResponse.result;
           existingEvaluation = false;
-          console.log('📊 ✅ Respuestas sin evaluación obtenidas exitosamente');
         } catch (secondError) {
-          console.log('📊 ❌ Tampoco se pudieron obtener respuestas sin evaluación:', secondError.message);
           throw new Error('No se encontraron respuestas para este simulador');
         }
       }
-      
-      console.log('📊 Respuesta obtenida:', simulatorData);
       
       if (!simulatorData) {
         throw new Error('No se encontraron respuestas para este simulador');

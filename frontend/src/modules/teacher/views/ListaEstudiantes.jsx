@@ -61,19 +61,13 @@ const ListaEstudiantes = () => {
             }
             
             const userId = userInfo.user_id || userInfo.id;
-            console.log('📊 Obteniendo estudiantes para mentor ID:', userId);
             
             const response = await getStudentsByMentor(userId);
-            console.log('📊 Respuesta de estudiantes asignados:', response);
             
             const data = response.result || {};
             const estudiantesData = data.students || [];
             const mentorData = data.mentor || null;
             const total = data.totalStudents || 0;
-            
-            console.log('📊 Estudiantes asignados:', estudiantesData);
-            console.log('📊 Info del mentor:', mentorData);
-            console.log('📊 Total estudiantes:', total);
             
             setEstudiantes(estudiantesData);
             setMentorInfo(mentorData);

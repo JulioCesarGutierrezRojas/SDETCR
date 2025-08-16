@@ -33,7 +33,6 @@ export const StudentSimulators = () => {
   const fetchStudentData = async () => {
     try {
       setLoading(true);
-      console.log('📊 Obteniendo datos del estudiante ID:', estudianteID);
       
       // Obtener información básica del estudiante
       let studentInfo = {
@@ -46,7 +45,6 @@ export const StudentSimulators = () => {
       // Intentar obtener información completa del estudiante desde las categorías
       try {
         const categoriesResponse = await getStudentCategories(estudianteID);
-        console.log('📊 Respuesta de categorías:', categoriesResponse);
         
         if (categoriesResponse.result && categoriesResponse.result.student) {
           const studentData = categoriesResponse.result.student;
@@ -56,13 +54,9 @@ export const StudentSimulators = () => {
             correo: studentData.email,
             matricula: studentData.enrollment
           };
-          console.log('📊 Información del estudiante obtenida:', studentInfo);
-        } else {
-          console.log('📊 Estructura de respuesta inesperada:', categoriesResponse.result);
         }
       } catch (error) {
-        console.log('📊 Error al obtener categorías del estudiante:', error.message);
-        console.log('📊 Usando datos del state o por defecto');
+        // Usar datos del state o por defecto si falla
       }
       
       setStudent(studentInfo);
@@ -71,8 +65,6 @@ export const StudentSimulators = () => {
       try {
         const historyResponse = await getStudentHistory(estudianteID);
         const historyData = historyResponse.result;
-        
-        console.log('📊 Historial obtenido:', historyData);
         
         if (historyData && historyData.histories && Array.isArray(historyData.histories)) {
           const simuladoresFormateados = historyData.histories.map(history => ({
@@ -93,7 +85,6 @@ export const StudentSimulators = () => {
         }
         
       } catch (historyError) {
-        console.log('📊 No se encontró historial para este estudiante');
         setSimuladores([]);
       }
       

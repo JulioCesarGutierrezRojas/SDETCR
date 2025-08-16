@@ -4,6 +4,7 @@ import RequestEmailComponent from '../components/RequestEmailComponent'
 import VerifyTokenComponent from '../components/VerifyTokenComponent'
 import ChangePasswordComponent from '../components/ChangePasswordComponent'
 import styles from '../../../styles/form-login.module.css'
+import logoSdetcr from '../../../assets/logo-sdetcr.jpeg'
 
 const PasswordRecoveryForm = () => {
   const [step, setStep] = useState(1)
@@ -20,6 +21,15 @@ const PasswordRecoveryForm = () => {
         justifyContent: 'center'
       }}>
         <div style={{textAlign: 'center', color: 'var(--white)'}}>
+          <div style={{marginBottom: '1.5rem', display: 'flex', justifyContent: 'center'}}>
+            <img src={logoSdetcr} alt="SDETCR Logo" style={{
+              width: '80px',
+              height: '80px',
+              borderRadius: '50%',
+              border: '4px solid var(--white)',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)'
+            }} />
+          </div>
           <h1 style={{
             fontSize: '2.5rem',
             fontWeight: '700',
@@ -27,6 +37,7 @@ const PasswordRecoveryForm = () => {
             color: 'var(--secondary)'
           }}>SDETCR</h1>
           <p style={{fontSize: '1.2rem'}}>Simulador de Entrevistas Laborales con Retroalimentación</p>
+          <p style={{fontSize: '0.9rem', marginTop: '0.5rem', opacity: '0.9'}}>Recupera el acceso a tu cuenta</p>
         </div>
       </div>
 

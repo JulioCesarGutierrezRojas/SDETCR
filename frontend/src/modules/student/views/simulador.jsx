@@ -19,11 +19,6 @@ const Simuladores = () => {
     const fetchSimuladores = async () => {
         try {
             setLoading(true);
-            console.log(`Cargando simuladores para categoría ID: ${categoriaID}`);
-            console.log(`Tipo de categoriaID: ${typeof categoriaID}`);
-            console.log(`categoriaID es null: ${categoriaID === null}`);
-            console.log(`categoriaID es undefined: ${categoriaID === undefined}`);
-            console.log(`categoriaID es 'undefined' string: ${categoriaID === 'undefined'}`);
             
             // Validar que tenemos categoriaID válido
             if (!categoriaID || categoriaID === 'undefined' || categoriaID === null || 
@@ -36,13 +31,10 @@ const Simuladores = () => {
                 return;
             }
             
-            console.log(`categoriaID válido, procediendo con la petición: ${categoriaID}`);
-            
             const response = await getSimulatorsByCategory(categoriaID);
             
             if (response.result) {
                 const { category, simulators } = response.result;
-                console.log(`Categoría cargada: ${category.category_name}, Simuladores: ${simulators.length}`);
                 setCategoryInfo(category);
                 
                 // Filtrar solo simuladores activos para estudiantes
@@ -54,7 +46,6 @@ const Simuladores = () => {
                     }));
                 
                 setSimuladores(simuladoresActivos);
-                console.log(`Simuladores activos cargados: ${simuladoresActivos.length}`);
             }
         } catch (error) {
             console.error("Error al obtener simuladores:", error);

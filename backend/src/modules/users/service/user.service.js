@@ -22,12 +22,12 @@ const login = async (email, password) => {
 
         const user = await User.findOne({where: { email }})
         if(!user){
-            return new ApiResponse(null, null, TypesResponse.WARNING, 'Usuario no encontrado', 404)
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'Usuario no encontrado', 400)
         }
 
         const valid = await compararPassword(password, user.password)
         if(!valid){
-            return new ApiResponse(null, null, TypesResponse.WARNING, 'Credenciales invalidas', 401)
+            return new ApiResponse(null, null, TypesResponse.WARNING, 'Credenciales invalidas', 400)
         }
 
         const token = generarToken({ user_id: user.user_id, role: user.role })

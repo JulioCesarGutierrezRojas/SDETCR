@@ -47,32 +47,20 @@ const ComentariosEstudiante = () => {
                 return;
             }
 
-            console.log('📝 Obteniendo respuestas y comentarios para simulador:', simuladorId, 'estudiante:', studentId);
-            
             // Primero intentamos obtener las respuestas con evaluación
             let response;
             let hasEvaluation = true;
             try {
-                console.log('📝 Intentando obtener respuestas CON evaluación...');
                 response = await getStudentAnswersAndComments(simuladorId, studentId);
-                console.log('📝 ✅ Respuestas con evaluación obtenidas exitosamente');
             } catch (error) {
-                console.log('📝 ⚠️ No se pudieron obtener respuestas con evaluación:', error.message);
                 hasEvaluation = false;
                 try {
-                    console.log('📝 Intentando obtener respuestas SIN evaluación...');
                     // Si falla, intentamos sin evaluación
                     response = await getStudentAnswersWithoutComments(simuladorId, studentId);
-                    console.log('📝 ✅ Respuestas sin evaluación obtenidas exitosamente');
                 } catch (secondError) {
-                    console.log('📝 ❌ Tampoco se pudieron obtener respuestas sin evaluación:', secondError.message);
                     throw new Error('No se encontraron respuestas para este simulador');
                 }
             }
-            
-            console.log('📝 Respuesta obtenida:', response);
-            console.log('📝 Tipo de respuesta:', response?.type);
-            console.log('📝 Resultado presente:', !!response?.result);
             
             if (response.type === 'SUCCESS' && response.result) {
                 const data = response.result;
@@ -99,6 +87,7 @@ const ComentariosEstudiante = () => {
                                 tipo: 'texto',
                                 opciones: question.options || [],
                                 respuesta: response.answer,
+                                respuestaCorrecta: question.correct_answer,
                                 correcta: response.is_correct || false
                             };
                         } else {
@@ -111,9 +100,6 @@ const ComentariosEstudiante = () => {
                         }
                     });
                     setPreguntas(preguntasFormateadas);
-                    console.log('📝 Preguntas formateadas:', preguntasFormateadas);
-                } else {
-                    console.log('📝 No hay respuestas disponibles en los datos');
                 }
                 
                 // Configurar comentarios de evaluación (puede estar vacío)
@@ -133,17 +119,9 @@ const ComentariosEstudiante = () => {
                         calificacionFinal: data.mentor_evaluation.final_score
                     }];
                     setComentarios(comentariosFormateados);
-                    console.log('📝 Comentarios encontrados:', comentariosFormateados);
                 } else {
-                    console.log('📝 No hay evaluación del mentor');
                     setComentarios([]);
                 }
-                
-                console.log('📝 Datos cargados:', {
-                    student: data.student,
-                    preguntasCount: preguntasFormateadas?.length || 0,
-                    tieneEvaluacion: !!data.mentor_evaluation
-                });
                 
             } else {
                 throw new Error(response.text || 'Error al obtener las respuestas y comentarios');
@@ -202,12 +180,15 @@ const ComentariosEstudiante = () => {
                                         <ul className="space-y-1">
                                             {pregunta.opciones.map((opcion, i) => {
                                                 const esSeleccionada = opcion === pregunta.respuesta;
-                                                const color =
-                                                    esSeleccionada && pregunta.correcta
-                                                        ? "bg-green-100 border-green-500 text-green-700"
-                                                        : esSeleccionada && !pregunta.correcta
-                                                            ? "bg-red-100 border-red-500 text-red-700"
-                                                            : "bg-[var(--color-blanco)] border-[var(--color-gris-400)] text-[var(--color-gris-900)]";
+                                                let color = "bg-[var(--color-blanco)] border-[var(--color-gris-400)] text-[var(--color-gris-900)]";
+                                                
+                                                if (esSeleccionada && pregunta.correcta) {
+                                                    color = "bg-green-100 border-green-500 text-green-700 font-semibold";
+                                                } else if (esSeleccionada && !pregunta.correcta) {
+                                                    color = "bg-red-100 border-red-500 text-red-700 font-semibold";
+                                                } else if (!esSeleccionada && opcion === pregunta.respuestaCorrecta) {
+                                                    color = "bg-blue-50 border-blue-300 text-blue-700";
+                                                }
                                                 return (
                                                     <li
                                                         key={i}

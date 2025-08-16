@@ -31,11 +31,9 @@ const EvaluarEstudiante = () => {
     const fetchStudentData = async () => {
         try {
             setLoading(true);
-            console.log('📊 Obteniendo datos del estudiante ID:', studentId);
             
             // Obtener las categorías e información del estudiante en una sola llamada
             const categoriesResponse = await getStudentCategories(studentId);
-            console.log('📊 Respuesta de categorías elegidas:', categoriesResponse);
             
             const categoryData = categoriesResponse.result;
             const studentInfo = categoryData.student;
@@ -49,16 +47,12 @@ const EvaluarEstudiante = () => {
                 matricula: studentInfo.enrollment
             });
             
-            console.log('📊 Información del estudiante:', studentInfo);
-            
             // Ahora obtener los simuladores realizados (si los hay)
             let simuladoresData = [];
             try {
                 const simuladoresResponse = await getStudentCategoriesAndSimulators(studentId);
                 simuladoresData = simuladoresResponse.result || [];
-                console.log('📊 Simuladores realizados:', simuladoresData);
             } catch (simuladorError) {
-                console.log('📊 El estudiante no ha realizado simuladores aún');
                 // No es un error, simplemente no tiene simuladores
             }
             
@@ -85,7 +79,6 @@ const EvaluarEstudiante = () => {
             }));
             
             setCategorias(categoriasFormateadas);
-            console.log('📊 Categorías finales:', categoriasFormateadas);
             
         } catch (error) {
             console.error("❌ Error al obtener datos del estudiante:", error.message);

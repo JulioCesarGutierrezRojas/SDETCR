@@ -222,7 +222,8 @@ const getStudentAnswersWithEvaluation = async (student_id, simulator_id) => {
                 question: {
                     question_id: answer.Question.question_id,
                     question_text: answer.Question.question,
-                    options: answer.Question.options
+                    options: answer.Question.options,
+                    correct_answer: answer.Question.correct_answer
                 },
                 student_response: {
                     type: answer.type_response,
@@ -318,7 +319,8 @@ const getStudentAnswersWithoutEvaluation = async (student_id, simulator_id) => {
                 question: {
                     question_id: answer.Question.question_id,
                     question_text: answer.Question.question,
-                    options: answer.Question.options
+                    options: answer.Question.options,
+                    correct_answer: answer.Question.correct_answer
                 },
                 student_response: {
                     type: answer.type_response,

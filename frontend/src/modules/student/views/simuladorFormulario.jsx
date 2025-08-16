@@ -24,10 +24,8 @@ const SimuladorFormulario = () => {
         const loadQuestions = async () => {
             try {
                 setLoading(true);
-                console.log(`Cargando preguntas para simulador ID: ${simuladorID}`);
                 
                 const response = await getSimulatorQuestions(simuladorID);
-                console.log(`Respuesta del backend para simulador ${simuladorID}:`, response);
                 
                 // Los datos vienen en result según el backend
                 let simulator, questions;
@@ -43,8 +41,6 @@ const SimuladorFormulario = () => {
                     throw new Error('No se encontraron datos de preguntas en la respuesta del servidor');
                 }
                 
-                console.log(`Simulador: ${simulator?.name}, Preguntas encontradas: ${questions?.length || 0}`);
-                
                 if (questions && questions.length > 0) {
                     setSimulatorInfo(simulator);
                     setPreguntas(questions);
@@ -53,8 +49,6 @@ const SimuladorFormulario = () => {
                     const modosIniciales = {};
                     questions.forEach(q => modosIniciales[q.question_id] = "texto");
                     setModosPorPregunta(modosIniciales);
-                    
-                    console.log('Preguntas cargadas exitosamente:', questions.length);
                 } else {
                     console.warn('No se encontraron preguntas o el arreglo está vacío');
                 }
@@ -204,11 +198,7 @@ const SimuladorFormulario = () => {
             '¿Estás seguro?',
             'Una vez enviado, no podrás cambiar tus respuestas.',
             'warning',
-            handleConfirmSubmit, // <- Aquí se usa la nueva función
-            () => {
-                // Callback de cancelación (opcional)
-                console.log('Envío cancelado por el usuario');
-            }
+            handleConfirmSubmit // <- Aquí se usa la nueva función
         );
     };
 

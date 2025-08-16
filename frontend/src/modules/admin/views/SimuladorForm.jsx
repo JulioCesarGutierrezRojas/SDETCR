@@ -31,7 +31,6 @@ const SimuladorFormAdmin = () => {
     const fetchQuestions = async () => {
         try {
             setLoading(true);
-            console.log(`Cargando preguntas para simulador ID: ${simuladorId}`);
             
             if (!simuladorId || simuladorId === 'undefined') {
                 console.error('simuladorId es undefined o inválido');
@@ -57,7 +56,6 @@ const SimuladorFormAdmin = () => {
                 }));
                 
                 setPreguntas(preguntasMapeadas);
-                console.log(`Preguntas cargadas: ${questions.length}`);
             }
         } catch (error) {
             console.error("Error al obtener preguntas:", error);
@@ -71,14 +69,12 @@ const SimuladorFormAdmin = () => {
                 // El simulador existe pero no tiene preguntas - esto es normal
                 setHasExistingQuestions(false);
                 setPreguntas([]);
-                console.log("Simulador sin preguntas - mostrando pantalla para crear primera pregunta");
             } else {
                 // Solo mostrar errores realmente problemáticos
                 showErrorToast({
                     title: "Error",
                     text: error.message || "No se pudieron cargar las preguntas"
                 });
-                console.log("Error cargando preguntas:", error.message);
             }
         } finally {
             setLoading(false);
@@ -240,11 +236,6 @@ const SimuladorFormAdmin = () => {
                         options: pregunta.respuestas.map(resp => resp.trim()),
                         correct_answer: pregunta.respuestas[pregunta.correcta].trim()
                     }));
-                    
-                    console.log('Enviando preguntas:', {
-                        simulator_id: parseInt(simuladorId),
-                        questions: questionsForBackend
-                    });
                     
                     if (hasExistingQuestions) {
                         await updateMultipleQuestions(parseInt(simuladorId), questionsForBackend);

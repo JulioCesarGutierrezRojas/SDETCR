@@ -4,6 +4,7 @@ import { registerStudent, registerMentor, getCategories } from '../adapters/auth
 import { showSuccessToast, showWarningToast } from '../../../kernel/alerts.js';
 import { validateEmail, validatePassword, validateName, validateEnrollment } from '../../../kernel/validations.js';
 import styles from '../../../styles/form-login.module.css';
+import logoSdetcr from '../../../assets/logo-sdetcr.jpeg';
 
 const RegisterForm = () => {
     const navigate = useNavigate();
@@ -161,7 +162,14 @@ const RegisterForm = () => {
     return (
         <div className="flex min-h-screen">
             <div className="flex-1 bg-gradient-to-br from-[var(--color-lavanda-500)] to-[var(--color-nude-500)] flex items-center justify-center p-8">
-                <h1 className="text-white text-4xl font-bold">Bienvenido a SDETCR</h1>
+                <div className="text-center text-white">
+                    <div className="mb-6 flex justify-center">
+                        <img src={logoSdetcr} alt="SDETCR Logo" className="w-20 h-20 rounded-full border-4 border-white shadow-lg" />
+                    </div>
+                    <h1 className="text-4xl font-bold mb-2">SDETCR</h1>
+                    <p className="text-lg opacity-90">Sistema de Entrevistas Laborales con Retroalimentación</p>
+                    <p className="text-base opacity-80 mt-2">Únete a nuestra plataforma</p>
+                </div>
             </div>
 
             <div className='flex-1 flex items-center justify-center bg-[var(--white)] p-6'>

@@ -68,7 +68,11 @@ const LoginForm = () => {
           break;
       }
     } catch (error) {
-      showWarningToast({ title: 'Errors', text: error.message });
+      // Los mensajes de error específicos ya están personalizados en auth.controller.js
+      showWarningToast({ 
+        title: 'Error de Autenticación', 
+        text: error.message || 'Ocurrió un error al intentar iniciar sesión' 
+      });
     } finally {
       setIsLoading(false);
     }

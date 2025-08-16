@@ -45,7 +45,6 @@ const EvaluarSimulador = () => {
     const fetchSimulatorData = async () => {
         try {
             setLoading(true);
-            console.log('📊 Obteniendo respuestas del simulador ID:', simuladorId, 'para estudiante:', studentId);
             
             // Primero intentar obtener respuestas CON evaluación para verificar si ya existe una
             let simulatorData = null;
@@ -55,10 +54,8 @@ const EvaluarSimulador = () => {
                 const withEvaluationResponse = await getStudentAnswersWithEvaluation(studentId, simuladorId);
                 simulatorData = withEvaluationResponse.result;
                 existingEvaluation = true;
-                console.log('📊 Se encontró evaluación existente:', simulatorData);
             } catch (error) {
                 // Si no hay evaluación, obtener sin evaluación
-                console.log('📊 No hay evaluación existente, obteniendo respuestas sin evaluación');
                 const withoutEvaluationResponse = await getStudentAnswersWithoutEvaluation(studentId, simuladorId);
                 simulatorData = withoutEvaluationResponse.result;
                 existingEvaluation = false;
@@ -94,6 +91,7 @@ const EvaluarSimulador = () => {
                 } else if (response.type === 'video') {
                     tipo = 'video_question';
                 }
+                
                 
                 return {
                     id: question.question_id,
@@ -135,6 +133,16 @@ const EvaluarSimulador = () => {
             showErrorToast({
                 title: "Error de validación",
                 text: "El comentario es obligatorio"
+            });
+            return;
+        }
+        
+        // Validar que el comentario contenga al menos una letra
+        const tieneLetras = /[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ]/.test(comentario.trim());
+        if (!tieneLetras) {
+            showErrorToast({
+                title: "Error de validación",
+                text: "El comentario debe contener al menos una letra, no solo caracteres especiales o números"
             });
             return;
         }

@@ -23,13 +23,6 @@ const SeleccionarEstudiante = () => {
       const userId = localStorage.getItem('userId');      // El ID del usuario
       const userEmail = localStorage.getItem('email');    // El email
       const userRole = localStorage.getItem('role');      // El rol
-      
-      console.log('🔍 Datos del localStorage:');
-      console.log('  - user (nombre):', userName);
-      console.log('  - userId:', userId);
-      console.log('  - email:', userEmail);
-      console.log('  - role:', userRole);
-      
       if (!userName || !userId) {
         console.warn('⚠️ No se encontró información completa del usuario en localStorage');
         return null;
@@ -44,7 +37,6 @@ const SeleccionarEstudiante = () => {
         role: userRole
       };
       
-      console.log('👤 Usuario construido:', userInfo);
       return userInfo;
     } catch (error) {
       console.error('❌ Error al obtener información del usuario:', error);
@@ -61,13 +53,8 @@ const SeleccionarEstudiante = () => {
     try {
       setLoading(true);
       const response = await getAllStudentsWithSimulatorCount();
-      console.log('📊 Respuesta completa de la API:', response);
-      console.log('📊 response.result:', response.result);
-      console.log('📊 response.result.students:', response.result?.students);
-      
       // Los estudiantes están en response.result.students según el backend
       const estudiantesData = response.result?.students || [];
-      console.log('📊 Estudiantes obtenidos:', estudiantesData);
       setEstudiantes(estudiantesData);
     } catch (error) {
       console.error("❌ Error al obtener estudiantes:", error.message);
@@ -130,21 +117,16 @@ const SeleccionarEstudiante = () => {
           setSubmitting(true);
           const userInfo = getUserInfo();
           
-          console.log('🔍 userInfo obtenido:', userInfo);
-          
           if (!userInfo) {
             throw new Error("No se encontró información del usuario. Por favor, inicia sesión nuevamente.");
           }
           
           // Intentar diferentes campos para el ID del usuario
           const userId = userInfo.user_id || userInfo.id;
-          console.log('🆔 userId a usar:', userId);
           
           if (!userId) {
             throw new Error("No se pudo obtener el ID del usuario. Estructura del usuario: " + JSON.stringify(userInfo));
           }
-          
-          console.log('📤 Enviando asignación - mentorId:', userId, 'studentIds:', seleccionados);
           await assignStudentsToMentor(userId, seleccionados);
           
           showSuccessToast({ 
